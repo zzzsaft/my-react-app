@@ -60,47 +60,64 @@ const MeteringPumpForm = forwardRef(
       form,
     }));
 
-    const handleFieldsChange = async (changedFields: any) => {
-      if (changedFields.type) {
-        const model = form.getFieldValue("model");
-        if (
-          changedFields.type == "内冷式计量泵" &&
-          model &&
-          !model.endsWith("-NL")
-        ) {
-          form.setFieldsValue({
-            model: model.includes("（定制）")
-              ? model.replace("（定制）", "-NL（定制）")
-              : `${model}-NL`,
-          });
-        } // 如果不是内冷式，且当前值带 -NL，自动移除
-        else if (model.includes("-NL")) {
-          form.setFieldsValue({ model: model.replace("-NL", "") });
-        }
-      } else if (changedFields.model || changedFields.shearSensitivity) {
-        const model = form.getFieldValue("model");
-        const shearSensitivity = form.getFieldValue("shearSensitivity");
-        if (!model || !shearSensitivity) return;
-        console.log(model.replace("-NL", "").replace("（定制）", ""));
-        const selectedPump = pump.find(
-          (p) =>
-            p.shearSensitivity == shearSensitivity &&
-            p.model == model.replace("-NL", "").replace("（定制）", "")
-        );
-        form.setFieldValue("pumpage", selectedPump?.pumpage);
-        form.setFieldValue("heatingPower", selectedPump?.heatingPower);
-        form.setFieldValue("production", selectedPump?.production);
-        form.setFieldValue("rotateSpeed", selectedPump?.rotateSpeed);
-      } else if (changedFields.pumpBracket == true) {
+    const updateModel = () => {
+      const rawModel: string = form.getFieldValue("model") ?? "";
+      const type = form.getFieldValue("type");
+      const isCustomization = form.getFieldValue("isCustomization") === "定制";
+
+      let baseModel = rawModel.replace("-NL", "").replace("（定制）", "");
+      if (!baseModel) return form.setFieldsValue({ model: "" });
+
+      if (type === "内冷式计量泵") baseModel += "-NL";
+      if (isCustomization) baseModel += "（定制）";
+
+      form.setFieldsValue({ model: baseModel });
+    };
+
+    const syncPumpInfo = () => {
+      const model = form.getFieldValue("model");
+      const shearSensitivity = form.getFieldValue("shearSensitivity");
+      if (!model || !shearSensitivity) return;
+
+      const selectedPump = pump.find(
+        (p) =>
+          p.shearSensitivity === shearSensitivity &&
+          p.model === model.replace("-NL", "").replace("（定制）", "")
+      );
+
+      form.setFieldValue("pumpage", selectedPump?.pumpage);
+      form.setFieldValue("heatingPower", selectedPump?.heatingPower);
+      form.setFieldValue("production", selectedPump?.production);
+      form.setFieldValue("rotateSpeed", selectedPump?.rotateSpeed);
+    };
+
+    const handlePumpBracket = async (value: boolean) => {
+      if (value) {
         const result = await showProductActionModal(
           addProp(["模具配件", "计量泵支架"], "pumpBracket", false)
         );
         if (!result.result) form.setFieldValue("pumpBracket", false);
-      } else if (changedFields.pumpBracket == false) {
-        const result = await showProductActionModal(
-          deleteProp(["模具配件", "计量泵支架"])
-        );
-        if (!result.result) form.setFieldValue("pumpBracket", true);
+        return;
+      }
+
+      const result = await showProductActionModal(
+        deleteProp(["模具配件", "计量泵支架"])
+      );
+      if (!result.result) form.setFieldValue("pumpBracket", true);
+    };
+
+    const fieldHandlers: Record<string, (value: any) => void | Promise<void>> = {
+      type: updateModel,
+      isCustomization: updateModel,
+      model: syncPumpInfo,
+      shearSensitivity: syncPumpInfo,
+      pumpBracket: handlePumpBracket,
+    };
+
+    const handleFieldsChange = async (changedFields: any) => {
+      for (const [key, value] of Object.entries(changedFields)) {
+        const handler = fieldHandlers[key];
+        if (handler) await handler(value);
       }
     };
 

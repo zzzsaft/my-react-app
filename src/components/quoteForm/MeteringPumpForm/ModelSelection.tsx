@@ -135,22 +135,54 @@ export const ModelSelection = () => {
                   </Col>
                   <Col xs={12} md={6}>
                     <Form.Item label="排量" name="pumpage">
-                      <Input readOnly={!isCustomization} />
+                      <InputNumber
+                        disabled={!isCustomization}
+                        controls={false}
+                        formatter={(value) => `${value}cm³/rev`}
+                        parser={(value) =>
+                          Number(value?.replace(/cm³\/rev/g, "")) || 0
+                        }
+                        style={{ width: "100%" }}
+                      />
                     </Form.Item>
                   </Col>
                   <Col xs={12} md={6}>
                     <Form.Item label="转速" name="rotateSpeed">
-                      <Input readOnly={!isCustomization} />
+                      <InputNumber
+                        disabled={!isCustomization}
+                        controls={false}
+                        formatter={(value) => `${value}rpm`}
+                        parser={(value) =>
+                          Number(value?.replace(/rpm/g, "")) || 0
+                        }
+                        style={{ width: "100%" }}
+                      />
                     </Form.Item>
                   </Col>
                   <Col xs={12} md={6}>
                     <Form.Item label="产量" name="production">
-                      <Input readOnly={!isCustomization} />
+                      <InputNumber
+                        disabled={!isCustomization}
+                        controls={false}
+                        formatter={(value) => `${value}kg/h`}
+                        parser={(value) =>
+                          Number(value?.replace(/kg\/h/g, "")) || 0
+                        }
+                        style={{ width: "100%" }}
+                      />
                     </Form.Item>
                   </Col>
                   <Col xs={12} md={6}>
                     <Form.Item label="加热功率" name="heatingPower">
-                      <Input readOnly={!isCustomization} />
+                      <InputNumber
+                        disabled={!isCustomization}
+                        controls={false}
+                        formatter={(value) => `${value}kw`}
+                        parser={(value) =>
+                          Number(value?.replace(/kw/g, "")) || 0
+                        }
+                        style={{ width: "100%" }}
+                      />
                     </Form.Item>
                   </Col>
                 </>
