@@ -10,9 +10,11 @@ import {
   Select,
   AutoComplete,
 } from "antd";
+
 import { forwardRef, useImperativeHandle } from "react";
 import ProForm, { ProFormDependency } from "@ant-design/pro-form";
 import TextArea from "antd/es/input/TextArea";
+
 import MaterialSelect from "../../general/MaterialSelect";
 import AutoSlashInput from "../../general/AutoSlashInput";
 import RatioInput from "../../general/RatioInput";
@@ -32,6 +34,7 @@ const FeedblockForm = forwardRef(
       form,
     }));
 
+
     const countMap: Record<string, number> = {
       两台机: 2,
       三台机: 3,
@@ -42,6 +45,7 @@ const FeedblockForm = forwardRef(
       八台机: 8,
       九台机: 9,
     };
+
 
     const handleFieldsChange = (changedFields: any) => {
       if (changedFields.compositeStructure != null) {
@@ -85,7 +89,9 @@ const FeedblockForm = forwardRef(
           submitter={false}
           onValuesChange={handleFieldsChange}
         >
+
           <Row gutter={16}>
+
               <Col xs={24} md={12}>
                 <Form.Item
                   name="material"

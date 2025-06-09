@@ -1,6 +1,5 @@
 import * as ww from "@wecom/jssdk";
 import { AuthService } from "../api/services/auth.service";
-import { message } from "antd";
 export const register = () => {
   ww.register({
     corpId: import.meta.env.VITE_CORP_ID,

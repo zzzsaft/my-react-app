@@ -1,6 +1,7 @@
 import ProForm from "@ant-design/pro-form";
 import { AutoComplete, Col, Form, InputNumber, Row, Select } from "antd";
 import { DefaultOptionType } from "antd/es/select";
+import { IntervalInput } from "../../general/IntervalInput";
 
 export const ScrewFormItem = ({ items }: { items: string[] }) => {
   return (
@@ -59,12 +60,7 @@ export const ScrewFormItem = ({ items }: { items: string[] }) => {
       </Col>
       <Col xs={12} sm={5}>
         <ProForm.Item name="output" label="产量">
-          <InputNumber
-            min={0}
-            precision={0}
-            controls={false}
-            addonAfter={"kg/h"}
-          />
+          <IntervalInput unit={"kg/h"} />
         </ProForm.Item>
       </Col>
     </Row>

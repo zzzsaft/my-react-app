@@ -25,7 +25,7 @@ export const powerInputRules: Rule[] = [
   {
     required: true,
     message: "请选择相类型",
-    validator: (_, value) => {
+    validator: (_: any, value) => {
       if (!value?.phase) {
         return Promise.reject(new Error("请选择相类型"));
       }
@@ -37,7 +37,7 @@ export const DieWidthInputRule: Rule[] = [
   {
     required: true,
     message: "请选择宽度类型",
-    validator: (_, value) => {
+    validator: (_: any, value) => {
       if (!value?.widthType) {
         return Promise.reject(new Error("请选择宽度类型"));
       }
@@ -47,7 +47,7 @@ export const DieWidthInputRule: Rule[] = [
   {
     required: true,
     message: "请输入宽度",
-    validator: (_, value) => {
+    validator: (_: any, value) => {
       if (!value?.length?.trim()) {
         return Promise.reject(new Error("请输入宽度"));
       }
@@ -55,7 +55,7 @@ export const DieWidthInputRule: Rule[] = [
     },
   },
   {
-    validator: (_, value) => {
+    validator: (_: any, value) => {
       if (!value?.length?.trim()) {
         return Promise.resolve(); // 前一条规则已经处理了空值情况
       }
@@ -82,7 +82,7 @@ export const DieWidthInputRule: Rule[] = [
 ];
 export const intervalInputRules: Rule[] = [
   {
-    validator: (_, value) => {
+    validator: (_: any, value) => {
       if (!value || !value.includes("-")) {
         return Promise.resolve();
       }
@@ -97,7 +97,7 @@ export const intervalInputRules: Rule[] = [
   },
   {
     // required: true,
-    validator: (_, value) => {
+    validator: (_: any, value) => {
       if (!value || !value.includes("-")) {
         return Promise.resolve();
       }
@@ -116,7 +116,7 @@ export const intervalInputRules: Rule[] = [
 export const autoCompleteIntervalInputRules: Rule[] = [
   {
     // required: true,
-    validator: (_, value1) => {
+    validator: (_: any, value1) => {
       const value = value1?.value;
       if (!value || !value.includes("-")) {
         return Promise.resolve();
@@ -134,7 +134,10 @@ export const autoCompleteIntervalInputRules: Rule[] = [
 export const RadioWithInputRules: Rule[] = [
   {
     required: true,
-    validator: (_, value: { value: number | string; inputValue?: string }) => {
+    validator: (
+      _: any,
+      value: { value: number | string; inputValue?: string }
+    ) => {
       // 1. 首先检查是否选择了选项
       if (!value?.value) {
         return Promise.reject(new Error("请选择一个选项"));
@@ -153,7 +156,7 @@ export const RadioWithInputRules: Rule[] = [
   },
 ];
 export const inputRule: Rule = {
-  validator: (_, value: string) => {
+  validator: (_: any, value: string) => {
     if (value.includes("【") || value.includes("】"))
       return Promise.reject("输入框中不应出现【】字符");
 

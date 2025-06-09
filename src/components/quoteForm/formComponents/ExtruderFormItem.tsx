@@ -1,6 +1,7 @@
 import ProForm from "@ant-design/pro-form";
 import { AutoComplete, Col, Form, InputNumber, Row, Select } from "antd";
 import { DefaultOptionType } from "antd/es/select";
+import { IntervalInput } from "../../general/IntervalInput";
 
 export const ExtruderFormItem = ({ items }: { items: string[] }) => {
   return (
@@ -47,7 +48,11 @@ export const ExtruderFormItem = ({ items }: { items: string[] }) => {
         </ProForm.Item>
       </Col>
       <Col xs={12} sm={5}>
-        <ProForm.Item name="extruderModel" label="挤出机型号">
+        <ProForm.Item
+          name="extruderModel"
+          label="挤出机型号"
+          rules={[{ required: true, message: "请选择挤出机型号" }]}
+        >
           <AutoComplete
             options={[
               { label: "单螺杆挤出机", value: "单螺杆挤出机" },
@@ -58,12 +63,7 @@ export const ExtruderFormItem = ({ items }: { items: string[] }) => {
       </Col>
       <Col xs={12} sm={5}>
         <ProForm.Item name="output" label="产量">
-          <InputNumber
-            min={0}
-            precision={0}
-            controls={false}
-            addonAfter={"kg/h"}
-          />
+          <IntervalInput unit={"kg/h"} />
         </ProForm.Item>
       </Col>
     </Row>
