@@ -61,20 +61,14 @@ const MeteringPumpForm = forwardRef(
     }));
 
     const updateModel = () => {
-      let model: string = form.getFieldValue("model");
-      if (!model) return;
+      let model: string = form.getFieldValue("model") ?? "";
       const type = form.getFieldValue("type");
       const isCustomization = form.getFieldValue("isCustomization") === "定制";
 
       model = model.replace("-NL", "").replace("（定制）", "");
 
-      if (type === "内冷式计量泵") {
-        model += "-NL";
-      }
-
-      if (isCustomization) {
-        model += "（定制）";
-      }
+      if (type === "内冷式计量泵") model += "-NL";
+      if (isCustomization) model += "（定制）";
 
       form.setFieldsValue({ model });
     };
@@ -83,11 +77,13 @@ const MeteringPumpForm = forwardRef(
       const model = form.getFieldValue("model");
       const shearSensitivity = form.getFieldValue("shearSensitivity");
       if (!model || !shearSensitivity) return;
+
       const selectedPump = pump.find(
         (p) =>
           p.shearSensitivity === shearSensitivity &&
           p.model === model.replace("-NL", "").replace("（定制）", "")
       );
+
       form.setFieldValue("pumpage", selectedPump?.pumpage);
       form.setFieldValue("heatingPower", selectedPump?.heatingPower);
       form.setFieldValue("production", selectedPump?.production);
@@ -100,25 +96,27 @@ const MeteringPumpForm = forwardRef(
           addProp(["模具配件", "计量泵支架"], "pumpBracket", false)
         );
         if (!result.result) form.setFieldValue("pumpBracket", false);
-      } else {
-        const result = await showProductActionModal(
-          deleteProp(["模具配件", "计量泵支架"])
-        );
-        if (!result.result) form.setFieldValue("pumpBracket", true);
+        return;
       }
+
+      const result = await showProductActionModal(
+        deleteProp(["模具配件", "计量泵支架"])
+      );
+      if (!result.result) form.setFieldValue("pumpBracket", true);
+    };
+
+    const fieldHandlers: Record<string, (value: any) => void | Promise<void>> = {
+      type: updateModel,
+      isCustomization: updateModel,
+      model: syncPumpInfo,
+      shearSensitivity: syncPumpInfo,
+      pumpBracket: handlePumpBracket,
     };
 
     const handleFieldsChange = async (changedFields: any) => {
-      if (changedFields.type !== undefined || changedFields.isCustomization !== undefined) {
-        updateModel();
-      }
-
-      if (changedFields.model !== undefined || changedFields.shearSensitivity !== undefined) {
-        syncPumpInfo();
-      }
-
-      if (changedFields.pumpBracket !== undefined) {
-        await handlePumpBracket(changedFields.pumpBracket);
+      for (const [key, value] of Object.entries(changedFields)) {
+        const handler = fieldHandlers[key];
+        if (handler) await handler(value);
       }
     };
 
