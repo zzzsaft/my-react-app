@@ -89,19 +89,19 @@ const MeteringPumpForm = forwardRef(
 
       form.setFieldValue(
         "pumpage",
-        parseNumber(selectedPump?.pumpage, /cm³\/rev/g)
+        selectedPump?.pumpage.replace("cm³/rev", "")
       );
       form.setFieldValue(
         "heatingPower",
-        parseNumber(selectedPump?.heatingPower, /kw/g)
+        selectedPump?.heatingPower.replace("kw", "")
       );
       form.setFieldValue(
         "production",
-        parseNumber(selectedPump?.production, /kg\/h/g)
+        selectedPump?.production.replace("kg/h", "")
       );
       form.setFieldValue(
         "rotateSpeed",
-        parseNumber(selectedPump?.rotateSpeed, /rpm/g)
+        selectedPump?.rotateSpeed.replace("rmp", "")
       );
     };
 
@@ -122,10 +122,7 @@ const MeteringPumpForm = forwardRef(
 
     const handleOptionsChange = async (value: string[]) => {
       const prev = optionsRef.current;
-      const handle = async (
-        checked: boolean,
-        prevChecked: boolean
-      ) => {
+      const handle = async (checked: boolean, prevChecked: boolean) => {
         if (checked && !prevChecked) {
           const result = await showProductActionModal(
             addProp(["熔体计量泵", "传动系统"], "options", prev)
@@ -157,14 +154,15 @@ const MeteringPumpForm = forwardRef(
       optionsRef.current = value;
     };
 
-    const fieldHandlers: Record<string, (value: any) => void | Promise<void>> = {
-      type: updateModel,
-      isCustomization: updateModel,
-      model: syncPumpInfo,
-      shearSensitivity: syncPumpInfo,
-      pumpBracket: handlePumpBracket,
-      options: handleOptionsChange,
-    };
+    const fieldHandlers: Record<string, (value: any) => void | Promise<void>> =
+      {
+        type: updateModel,
+        isCustomization: updateModel,
+        model: syncPumpInfo,
+        shearSensitivity: syncPumpInfo,
+        pumpBracket: handlePumpBracket,
+        options: handleOptionsChange,
+      };
 
     const handleFieldsChange = async (changedFields: any) => {
       for (const [key, value] of Object.entries(changedFields)) {

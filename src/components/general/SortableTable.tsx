@@ -111,13 +111,13 @@ export function SortableTable<
     const overItem = dataSource.find(
       (item) => item[rowKey as keyof T] === over.id
     );
-    if (
-      activeItem?.parentId &&
-      !overItem?.parentId &&
-      activeItem.parentId !== overItem?.id
-    ) {
-      return;
-    }
+    // if (
+    //   activeItem?.parentId &&
+    //   !overItem?.parentId &&
+    //   activeItem.parentId !== overItem?.id
+    // ) {
+    //   return;
+    // }
     const newData = arrayMove(
       [...dataSource],
       dataSource.findIndex((item) => item[rowKey as keyof T] === active.id),

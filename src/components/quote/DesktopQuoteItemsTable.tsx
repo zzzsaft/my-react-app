@@ -14,31 +14,17 @@ interface QuoteItemsTableProps {
   confirmDelete: (item: QuoteItem) => void;
 }
 
+// light color palette used for differentiating linked items
 const linkColors = [
-  "#f5222d",
-  "#fa8c16",
-  "#52c41a",
-  "#1890ff",
-  "#722ed1",
-  "#13c2c2",
-  "#eb2f96",
-  "#fa541c",
-  "#2f54eb",
-  "#fadb14",
+  "rgba(83, 196, 26, 0.2)",
+  "rgba(24, 144, 255, 0.2)",
+  "rgba(114, 46, 209, 0.2)",
+  "rgba(19, 194, 194, 0.2)",
+  "rgba(235, 47, 150, 0.2)",
+  "rgba(250, 84, 28, 0.2)",
+  "rgba(47, 84, 235, 0.2)",
+  "rgba(250, 219, 20, 0.2)",
 ];
-
-
-const darkenColor = (color: string, amount = 0.2) => {
-  const [r, g, b] = color
-    .replace("#", "")
-    .match(/.{2}/g)!
-    .map((x) => parseInt(x, 16));
-  const darker = (v: number) => Math.max(0, Math.min(255, Math.floor(v * (1 - amount))));
-  return `#${[darker(r), darker(g), darker(b)]
-    .map((v) => v.toString(16).padStart(2, "0"))
-    .join("")}`;
-};
-
 
 const flattenItems = (items: QuoteItem[]): QuoteItem[] => {
   const result: QuoteItem[] = [];
@@ -108,7 +94,6 @@ const DesktopQuoteItemsTable: React.FC<QuoteItemsTableProps> = ({
     return map;
   }, [flatItems]);
 
-
   const linkedTargets = useMemo(() => {
     const set = new Set<number>();
     flatItems.forEach((item) => {
@@ -119,24 +104,23 @@ const DesktopQuoteItemsTable: React.FC<QuoteItemsTableProps> = ({
     return set;
   }, [flatItems]);
 
-
   const columns = [
     {
       ...SortableColumn,
       render: (text: string, record: QuoteItem) => {
         let color: string | undefined;
-        if (linkedTargets.has(record.id)) {
-          const base = linkColorMap.get(record.id);
-          color = base ? darkenColor(base, 0.3) : undefined;
-        } else if (record.linkId) {
+        if (record.linkId) {
           color = linkColorMap.get(record.linkId);
+        } else if (linkedTargets.has(record.id)) {
+          color = linkColorMap.get(record.id);
         }
-        const background = color
-          ? `linear-gradient(to right, ${color}, #fff)`
-          : undefined;
         return (
           <div
-            style={{ display: "flex", alignItems: "center", background }}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              backgroundColor: color,
+            }}
           >
             <DragHandle disabled={isLocked} />
           </div>
@@ -161,7 +145,12 @@ const DesktopQuoteItemsTable: React.FC<QuoteItemsTableProps> = ({
           </span>
         ) : (
           <span
-            style={{ display: "flex", justifyContent: "center", color, fontSize: 10 }}
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              color,
+              fontSize: 10,
+            }}
           >
             ●
           </span>

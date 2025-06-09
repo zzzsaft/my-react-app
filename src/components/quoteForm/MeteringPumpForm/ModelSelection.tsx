@@ -28,6 +28,7 @@ export const ModelSelection = () => {
     if (pump.length == 0) {
       fetchPump();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const [runnerType, setRunnerType] = useState("");
   const [material, setMaterial] = useState([""]);
@@ -134,56 +135,40 @@ export const ModelSelection = () => {
                     </Form.Item>
                   </Col>
                   <Col xs={12} md={6}>
-                    <Form.Item label="排量" name="pumpage">
-                      <InputNumber
-                        readOnly={!isCustomization}
-                        controls={false}
-                        formatter={(value) => `${value}cm³/rev`}
-                        parser={(value) =>
-                          Number(value?.replace(/cm³\/rev/g, "")) || 0
-                        }
-                        style={{ width: "100%" }}
-                      />
-                    </Form.Item>
+                    <IntervalInputFormItem
+                      label="排量"
+                      name="pumpage"
+                      unit="cm³/rev"
+                      readOnly={!isCustomization}
+                      style={{ width: "100%" }}
+                    />
                   </Col>
                   <Col xs={12} md={6}>
-                    <Form.Item label="转速" name="rotateSpeed">
-                      <InputNumber
-                        readOnly={!isCustomization}
-                        controls={false}
-                        formatter={(value) => `${value}rpm`}
-                        parser={(value) =>
-                          Number(value?.replace(/rpm/g, "")) || 0
-                        }
-                        style={{ width: "100%" }}
-                      />
-                    </Form.Item>
+                    <IntervalInputFormItem
+                      label="转速"
+                      name="rotateSpeed"
+                      unit="rpm"
+                      readOnly={!isCustomization}
+                      style={{ width: "100%" }}
+                    />
                   </Col>
                   <Col xs={12} md={6}>
-                    <Form.Item label="产量" name="production">
-                      <InputNumber
-                        readOnly={!isCustomization}
-                        controls={false}
-                        formatter={(value) => `${value}kg/h`}
-                        parser={(value) =>
-                          Number(value?.replace(/kg\/h/g, "")) || 0
-                        }
-                        style={{ width: "100%" }}
-                      />
-                    </Form.Item>
+                    <IntervalInputFormItem
+                      label="产量"
+                      name="production"
+                      unit="kg/h"
+                      readOnly={!isCustomization}
+                      style={{ width: "100%" }}
+                    />
                   </Col>
                   <Col xs={12} md={6}>
-                    <Form.Item label="加热功率" name="heatingPower">
-                      <InputNumber
-                        readOnly={!isCustomization}
-                        controls={false}
-                        formatter={(value) => `${value}kw`}
-                        parser={(value) =>
-                          Number(value?.replace(/kw/g, "")) || 0
-                        }
-                        style={{ width: "100%" }}
-                      />
-                    </Form.Item>
+                    <IntervalInputFormItem
+                      label="加热功率"
+                      name="heatingPower"
+                      unit="kw"
+                      readOnly={!isCustomization}
+                      style={{ width: "100%" }}
+                    />
                   </Col>
                 </>
               );

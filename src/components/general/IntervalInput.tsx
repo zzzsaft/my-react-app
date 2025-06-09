@@ -15,7 +15,11 @@ export interface IntervalInputProps {
   placeholder?: string;
   addonAfter?: string | null;
   addonBefore?: string | null;
+  /** Display unit inside the input */
+  unit?: string;
   disabled?: boolean;
+  /** When true, user cannot modify the value but it remains selectable */
+  readOnly?: boolean;
   id?: string;
   extra?: boolean;
   decimalPlace?: number;
@@ -28,9 +32,11 @@ const IntervalInput: React.FC<IntervalInputProps> = forwardRef(
       onChange = () => {},
       placeholder = "请输入数值",
       disabled = false,
+      readOnly = false,
       id,
-      addonAfter = "mm",
+      addonAfter = null,
       addonBefore = null,
+      unit,
       extra = false,
       decimalPlace = 2,
     },
@@ -179,20 +185,21 @@ const IntervalInput: React.FC<IntervalInputProps> = forwardRef(
     };
 
     return (
-      <span id={id}>
-        <Input
-          ref={inputRef}
-          addonBefore={addonBefore}
-          value={formatDisplayValue(internalValue)}
-          onChange={handleChange}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          // onKeyDown={handleKeyDown}
-          placeholder={placeholder}
-          disabled={disabled}
-          addonAfter={addonAfter}
-        />
-      </span>
+      <Input
+        id={id}
+        ref={inputRef}
+        addonBefore={addonBefore}
+        value={formatDisplayValue(internalValue)}
+        onChange={handleChange}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        // onKeyDown={handleKeyDown}
+        placeholder={placeholder}
+        disabled={disabled}
+        addonAfter={addonAfter}
+        readOnly={readOnly}
+        suffix={unit}
+      />
     );
   }
 );
@@ -204,6 +211,8 @@ interface NumberRangeInputFormItemProps extends FormItemProps {
   placeholder?: string;
   addonAfter?: string;
   isSecondNumberGreater?: boolean;
+  unit?: string;
+  readOnly?: boolean;
 }
 
 const IntervalInputFormItem: React.FC<NumberRangeInputFormItemProps> = ({
@@ -212,6 +221,8 @@ const IntervalInputFormItem: React.FC<NumberRangeInputFormItemProps> = ({
   placeholder,
   addonAfter,
   isSecondNumberGreater = true,
+  unit,
+  readOnly,
   ...formItemProps
 }) => {
   return (
@@ -228,6 +239,8 @@ const IntervalInputFormItem: React.FC<NumberRangeInputFormItemProps> = ({
         id={id}
         placeholder={placeholder}
         addonAfter={addonAfter}
+        unit={unit}
+        readOnly={readOnly}
       />
     </Form.Item>
   );
