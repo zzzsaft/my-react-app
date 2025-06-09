@@ -76,7 +76,6 @@ const MeteringPumpForm = forwardRef(
       form.setFieldsValue({ model: baseModel });
     };
 
-
     const syncPumpInfo = () => {
       const model = form.getFieldValue("model");
       const shearSensitivity = form.getFieldValue("shearSensitivity");
