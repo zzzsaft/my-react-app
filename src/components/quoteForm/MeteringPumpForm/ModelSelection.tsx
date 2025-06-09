@@ -136,7 +136,7 @@ export const ModelSelection = () => {
                   <Col xs={12} md={6}>
                     <Form.Item label="排量" name="pumpage">
                       <InputNumber
-                        disabled={!isCustomization}
+                        readOnly={!isCustomization}
                         controls={false}
                         formatter={(value) => `${value}cm³/rev`}
                         parser={(value) =>
@@ -149,7 +149,7 @@ export const ModelSelection = () => {
                   <Col xs={12} md={6}>
                     <Form.Item label="转速" name="rotateSpeed">
                       <InputNumber
-                        disabled={!isCustomization}
+                        readOnly={!isCustomization}
                         controls={false}
                         formatter={(value) => `${value}rpm`}
                         parser={(value) =>
@@ -162,7 +162,7 @@ export const ModelSelection = () => {
                   <Col xs={12} md={6}>
                     <Form.Item label="产量" name="production">
                       <InputNumber
-                        disabled={!isCustomization}
+                        readOnly={!isCustomization}
                         controls={false}
                         formatter={(value) => `${value}kg/h`}
                         parser={(value) =>
@@ -175,7 +175,7 @@ export const ModelSelection = () => {
                   <Col xs={12} md={6}>
                     <Form.Item label="加热功率" name="heatingPower">
                       <InputNumber
-                        disabled={!isCustomization}
+                        readOnly={!isCustomization}
                         controls={false}
                         formatter={(value) => `${value}kw`}
                         parser={(value) =>

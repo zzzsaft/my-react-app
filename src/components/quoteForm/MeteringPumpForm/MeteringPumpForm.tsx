@@ -74,6 +74,11 @@ const MeteringPumpForm = forwardRef(
       form.setFieldsValue({ model: baseModel });
     };
 
+    const parseNumber = (value: string | number | undefined, reg: RegExp) => {
+      if (value === undefined) return undefined;
+      return Number(String(value).replace(reg, "")) || 0;
+    };
+
     const syncPumpInfo = () => {
       const model = form.getFieldValue("model");
       const shearSensitivity = form.getFieldValue("shearSensitivity");
@@ -85,10 +90,22 @@ const MeteringPumpForm = forwardRef(
           p.model === model.replace("-NL", "").replace("（定制）", "")
       );
 
-      form.setFieldValue("pumpage", selectedPump?.pumpage);
-      form.setFieldValue("heatingPower", selectedPump?.heatingPower);
-      form.setFieldValue("production", selectedPump?.production);
-      form.setFieldValue("rotateSpeed", selectedPump?.rotateSpeed);
+      form.setFieldValue(
+        "pumpage",
+        parseNumber(selectedPump?.pumpage, /cm³\/rev/g)
+      );
+      form.setFieldValue(
+        "heatingPower",
+        parseNumber(selectedPump?.heatingPower, /kw/g)
+      );
+      form.setFieldValue(
+        "production",
+        parseNumber(selectedPump?.production, /kg\/h/g)
+      );
+      form.setFieldValue(
+        "rotateSpeed",
+        parseNumber(selectedPump?.rotateSpeed, /rpm/g)
+      );
     };
 
     const handlePumpBracket = async (value: boolean) => {
