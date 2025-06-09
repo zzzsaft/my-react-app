@@ -13,6 +13,7 @@ import {
 import { forwardRef, useImperativeHandle, useState } from "react";
 import ProForm, { ProCard, ProFormDependency } from "@ant-design/pro-form";
 import TextArea from "antd/es/input/TextArea";
+
 import MaterialSelect from "../../general/MaterialSelect";
 import AutoSlashInput from "../../general/AutoSlashInput";
 import RatioInput from "../../general/RatioInput";
@@ -32,6 +33,7 @@ const FeedblockForm = forwardRef(
     useImperativeHandle(ref, () => ({
       form,
     }));
+
 
     const handleFieldsChange = (changedFields: any) => {
       if (changedFields.compositeStructure != null) {

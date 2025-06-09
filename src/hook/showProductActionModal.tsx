@@ -5,7 +5,6 @@ import { QuoteItem } from "../types/types";
 
 interface PartAddingProps {
   method: "add";
-  isChild?: boolean;
   quoteItems?: QuoteItem[];
   quoteId: number;
   productCategory: string[];
@@ -79,20 +78,12 @@ const useProductActionModal = () => {
               prop;
 
             setIsLoading(true);
-            if (prop.isChild) {
-              addedId = await addChildQuoteItem(quoteId, linkId, {
-                productCategory,
-                productName,
-                linkId,
-                source,
-              });
-            } else
-              addedId = await addQuoteItem(quoteId, {
-                productCategory,
-                productName,
-                linkId,
-                source,
-              });
+            addedId = await addQuoteItem(quoteId, {
+              productCategory,
+              productName,
+              linkId,
+              source,
+            });
             setIsLoading(false);
             resolve({ id: addedId, result: true });
           } else if (prop.method === "delete") {
