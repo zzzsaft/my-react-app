@@ -95,6 +95,7 @@ const DesktopQuoteItemsTable: React.FC<QuoteItemsTableProps> = ({
     return map;
   }, [flatItems]);
 
+
   const linkedTargets = useMemo(() => {
     const set = new Set<number>();
     flatItems.forEach((item) => {
@@ -104,6 +105,7 @@ const DesktopQuoteItemsTable: React.FC<QuoteItemsTableProps> = ({
     });
     return set;
   }, [flatItems]);
+
 
   const columns = [
     {
