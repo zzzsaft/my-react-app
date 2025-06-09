@@ -13,6 +13,7 @@ import { useQuoteStore } from "../../../store/useQuoteStore";
 import { ModelSelection } from "./ModelSelection";
 import { useProductStore } from "../../../store/useProductStore";
 import { ModelOption } from "./ModelOption";
+import { parseNumber } from "../../../util/valueUtil";
 interface PriceFormRef {
   form: FormInstance; // 明确定义暴露的form实例
 }
@@ -74,10 +75,6 @@ const MeteringPumpForm = forwardRef(
       form.setFieldsValue({ model: baseModel });
     };
 
-    const parseNumber = (value: string | number | undefined, reg: RegExp) => {
-      if (value === undefined) return undefined;
-      return Number(String(value).replace(reg, "")) || 0;
-    };
 
     const syncPumpInfo = () => {
       const model = form.getFieldValue("model");
