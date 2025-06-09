@@ -25,3 +25,11 @@ export function insertAfter<T>(
   if (index === -1) return [...arr, newItem]; // 未找到则追加到末尾
   return [...arr.slice(0, index + 1), newItem, ...arr.slice(index + 1)];
 }
+
+export const parseNumber = (
+  value: string | number | undefined,
+  reg: RegExp
+): number | undefined => {
+  if (value === undefined) return undefined;
+  return Number(String(value).replace(reg, "")) || 0;
+};

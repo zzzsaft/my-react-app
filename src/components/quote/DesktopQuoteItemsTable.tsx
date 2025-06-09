@@ -27,6 +27,7 @@ const linkColors = [
   "#fadb14",
 ];
 
+
 const darkenColor = (color: string, amount = 0.2) => {
   const [r, g, b] = color
     .replace("#", "")
@@ -37,6 +38,7 @@ const darkenColor = (color: string, amount = 0.2) => {
     .map((v) => v.toString(16).padStart(2, "0"))
     .join("")}`;
 };
+
 
 const flattenItems = (items: QuoteItem[]): QuoteItem[] => {
   const result: QuoteItem[] = [];
@@ -106,6 +108,7 @@ const DesktopQuoteItemsTable: React.FC<QuoteItemsTableProps> = ({
     return map;
   }, [flatItems]);
 
+
   const linkedTargets = useMemo(() => {
     const set = new Set<number>();
     flatItems.forEach((item) => {
@@ -115,6 +118,7 @@ const DesktopQuoteItemsTable: React.FC<QuoteItemsTableProps> = ({
     });
     return set;
   }, [flatItems]);
+
 
   const columns = [
     {
@@ -142,6 +146,7 @@ const DesktopQuoteItemsTable: React.FC<QuoteItemsTableProps> = ({
     {
       title: "",
       dataIndex: "isCompleted",
+
       width: 24,
       render: (completed: boolean, record: QuoteItem) => {
         const color = completed ? "green" : "red";
