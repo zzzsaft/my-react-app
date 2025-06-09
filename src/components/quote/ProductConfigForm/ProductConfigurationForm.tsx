@@ -59,7 +59,7 @@ const ProductConfigurationForm = forwardRef(
           ),
           ref: meteringPumpFormRef.current?.form,
         };
-      if (category?.[1] == "共挤复合分配器")
+      if (category?.at(-1) == "共挤复合分配器")
         return {
           form: (
             <FeedblockForm
