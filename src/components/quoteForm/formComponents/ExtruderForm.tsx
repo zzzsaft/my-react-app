@@ -20,9 +20,11 @@ import { ExtruderFormItem } from "./ExtruderFormItem";
 
 const ExtruderForm = ({
   items,
+  count,
   creatorButtonProps = { position: "bottom" },
 }: {
   items: string[];
+  count?: number;
   creatorButtonProps?:
     | false
     | (ButtonProps & {
@@ -36,11 +38,10 @@ const ExtruderForm = ({
       name="extruderModel"
       label="挤出机型号"
       copyIconProps={false}
-      deleteIconProps={{
-        Icon: CloseCircleOutlined,
-        tooltipText: "不需要这行了",
-      }}
-      creatorButtonProps={creatorButtonProps}
+      deleteIconProps={count ? false : { Icon: CloseCircleOutlined, tooltipText: "不需要这行了" }}
+      min={count}
+      max={count}
+      creatorButtonProps={count ? false : creatorButtonProps}
       alwaysShowItemLabel
       itemRender={({ listDom, action }, { index }) => {
         console.log(action);

@@ -2,7 +2,6 @@ import { ProCard, ProFormDependency } from "@ant-design/pro-components";
 import { Col, Form, Input, InputNumber, Radio, Row } from "antd";
 import { IntervalInputFormItem } from "../../general/IntervalInput";
 import { CustomSelect } from "../../general/CustomSelect";
-import { useState } from "react";
 import ScrewForm from "../formComponents/ScrewForm";
 import AutoSlashInput from "../../general/AutoSlashInput";
 import RatioInput from "../../general/RatioInput";
@@ -12,9 +11,6 @@ const RUNNER_NUMBER_OPTIONS = {
   流道形式: ["单腔流道", "模内共挤", "分配器共挤", "分配器+模内共挤"],
 };
 export const Product = () => {
-  const [runnerType, setRunnerType] = useState("");
-  const [material, setMaterial] = useState([""]);
-
   return (
     <>
       <ProCard
@@ -48,11 +44,7 @@ export const Product = () => {
               label="适用原料"
               rules={[{ required: true, message: "请选择适用原料" }]}
             >
-              <MaterialSelect
-                onChange={(value) => {
-                  setMaterial(Array.isArray(value) ? value : [value]);
-                }}
-              />
+              <MaterialSelect />
             </Form.Item>
           </Col>
           <Col xs={12} md={6}>
@@ -110,93 +102,99 @@ export const Product = () => {
               rules={[{ required: true, message: "请选择流道数量" }]}
             >
               <CustomSelect
-                onChange={(value) => {
-                  setRunnerType(value as string);
-                }}
                 showSearch={false}
                 dropdown={false}
                 initialGroups={RUNNER_NUMBER_OPTIONS}
               />
             </Form.Item>
           </Col>
-          {runnerType.includes("模内共挤") && (
-            <>
-              <Col xs={12} md={6}>
-                <Form.Item
-                  name="runnerNumber"
-                  label="模内共挤层数"
-                  rules={[{ required: true, message: "请输入模内共挤层数" }]}
-                >
-                  <InputNumber min={2} max={6} style={{ width: "100%" }} />
-                </Form.Item>
-              </Col>
-              <Col xs={12} md={6}>
-                <Form.Item
-                  name="compositeStructure"
-                  label="复合结构"
-                  rules={[{ required: true, message: "请输入复合结构" }]}
-                >
-                  <AutoSlashInput />
-                </Form.Item>
-              </Col>
-              <Col xs={12} md={6}>
-                <ProFormDependency name={["compositeStructure"]}>
-                  {({ compositeStructure }) => {
-                    return (
-                      <Form.Item
-                        name="compositeRatio"
-                        label="复合比例"
-                        rules={[
-                          { required: true, message: "请输入复合比例" },
-                          {
-                            validator: (_, value) => {
-                              const length1 = value?.split(":").length;
-                              const length2 =
-                                compositeStructure?.split("").length;
-                              if (length1 != length2) {
-                                return Promise.reject(
-                                  new Error("复合比例与复合结构数量不匹配")
-                                );
-                              }
-
-                              return Promise.resolve();
+          <Form.Item noStyle dependencies={["runnerType"]}>
+            {({ getFieldValue }) =>
+              getFieldValue("runnerType")?.includes("模内共挤") ? (
+                <>
+                  <Col xs={12} md={6}>
+                    <Form.Item
+                      name="runnerNumber"
+                      label="模内共挤层数"
+                      rules={[{ required: true, message: "请输入模内共挤层数" }]}
+                    >
+                      <InputNumber min={2} max={6} style={{ width: "100%" }} />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={12} md={6}>
+                    <Form.Item
+                      name="compositeStructure"
+                      label="复合结构"
+                      rules={[{ required: true, message: "请输入复合结构" }]}
+                    >
+                      <AutoSlashInput />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={12} md={6}>
+                    <ProFormDependency name={["compositeStructure"]}>
+                      {({ compositeStructure }) => (
+                        <Form.Item
+                          name="compositeRatio"
+                          label="复合比例"
+                          rules={[
+                            { required: true, message: "请输入复合比例" },
+                            {
+                              validator: (_, value) => {
+                                const length1 = value?.split(":").length;
+                                const length2 =
+                                  compositeStructure?.split("").length;
+                                if (length1 != length2) {
+                                  return Promise.reject(
+                                    new Error("复合比例与复合结构数量不匹配")
+                                  );
+                                }
+                                return Promise.resolve();
+                              },
                             },
-                          },
-                        ]}
-                      >
-                        <RatioInput />
-                      </Form.Item>
-                    );
-                  }}
-                </ProFormDependency>
-              </Col>
-              <Col xs={12} md={6}>
-                <Form.Item
-                  name="haveThermalInsulation"
-                  label="是否选配隔热装置"
-                  rules={[{ required: true, message: "是否选配隔热装置" }]}
-                >
-                  <Radio.Group>
-                    <Radio value={true}>是</Radio>
-                    <Radio value={false}>否</Radio>
-                  </Radio.Group>
-                </Form.Item>
-              </Col>
-            </>
-          )}
+                          ]}
+                        >
+                          <RatioInput />
+                        </Form.Item>
+                      )}
+                    </ProFormDependency>
+                  </Col>
+                  <Col xs={12} md={6}>
+                    <Form.Item
+                      name="haveThermalInsulation"
+                      label="是否选配隔热装置"
+                      rules={[{ required: true, message: "是否选配隔热装置" }]}
+                    >
+                      <Radio.Group>
+                        <Radio value={true}>是</Radio>
+                        <Radio value={false}>否</Radio>
+                      </Radio.Group>
+                    </Form.Item>
+                  </Col>
+                </>
+              ) : null
+            }
+          </Form.Item>
         </Row>
       </ProCard>
-      {runnerType.includes("模内共挤") && (
-        <ProCard
-          title="螺杆信息"
-          collapsible
-          defaultCollapsed={false}
-          style={{ marginBottom: 16 }}
-          headerBordered
-        >
-          <ScrewForm items={material} />
-        </ProCard>
-      )}
+      <Form.Item noStyle dependencies={["runnerType", "material"]}>
+        {({ getFieldValue }) =>
+          getFieldValue("runnerType")?.includes("模内共挤") ? (
+            <ProCard
+              title="螺杆信息"
+              collapsible
+              defaultCollapsed={false}
+              style={{ marginBottom: 16 }}
+              headerBordered
+            >
+              <ScrewForm
+                items={Array.isArray(getFieldValue("material"))
+                  ? getFieldValue("material")
+                  : [getFieldValue("material")]}
+              />
+            </ProCard>
+          ) : null
+        }
+      </Form.Item>
     </>
   );
 };
