@@ -1,0 +1,103 @@
+import { Col, Form, FormInstance, Input, Radio, Row } from "antd";
+import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
+
+import TextArea from "antd/es/input/TextArea";
+import ProForm from "@ant-design/pro-form";
+import CustomRadioGroup from "../general/CustomRadioGroup";
+import { TooltipLabel } from "../general/TooltipLabel";
+import { RadioWithInputRules } from "../../util/rules";
+interface PriceFormRef {
+  form: FormInstance; // 明确定义暴露的form实例
+}
+
+// 常量定义
+const torque = [
+  { label: "小扭矩", value: "小扭矩" },
+  { label: "大扭矩", value: "大扭矩" },
+];
+
+const operator = [
+  { label: "单机头", value: "单机头" },
+  { label: "双机头", value: "双机头" },
+];
+
+const vison = [
+  { label: "含视觉", value: "含视觉" },
+  { label: "不含视觉", value: "不含视觉" },
+];
+
+const SmartRegulator = forwardRef<PriceFormRef>((props, ref) => {
+  const [form] = Form.useForm();
+  const [isBundled, setIsBundled] = useState<boolean>(true);
+
+  // 暴露form实例给父组件
+  useImperativeHandle(ref, () => ({
+    form,
+  }));
+
+  return (
+    <>
+      <ProForm layout={"vertical"} form={form} submitter={false}>
+        <Row gutter={16}>
+          <Col xs={12} md={8}>
+            <Form.Item
+              name="isBundled"
+              label="是否配套新产品"
+              rules={[{ required: true, message: "是否配套新产品" }]}
+              initialValue={false}
+            >
+              <Radio.Group disabled>
+                <Radio value={true}>是</Radio>
+                <Radio value={false}>否</Radio>
+              </Radio.Group>
+            </Form.Item>
+          </Col>
+          {form.getFieldValue("isBundled") == false && (
+            <Col xs={12} md={8}>
+              <Form.Item
+                name="lastProductCode"
+                label="原产品编号"
+                rules={[{ required: true, message: "请输入原产品名称编号" }]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+          )}
+
+          <Col xs={24} sm={12}>
+            <Form.Item label="扭矩" name="torque" rules={RadioWithInputRules}>
+              <CustomRadioGroup options={torque} />
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={12}>
+            <Form.Item
+              rules={RadioWithInputRules}
+              label={
+                <TooltipLabel
+                  label="机头"
+                  tooltip={`长度在2500及以下的，建议选“单”机头\n长度在2500以上的，建议选“双”机头`}
+                />
+              }
+              name="operator"
+            >
+              <CustomRadioGroup options={operator} />
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={12}>
+            <Form.Item label="视觉" name="vison" rules={RadioWithInputRules}>
+              <CustomRadioGroup options={vison} showCustomInput={false} />
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={24}>
+            <Form.Item label="其他备注" name="remark">
+              <TextArea rows={3} />
+            </Form.Item>
+          </Col>
+        </Row>
+      </ProForm>
+      {/* <FloatButton.BackTop visibilityHeight={0} /> */}
+    </>
+  );
+});
+
+export default SmartRegulator;

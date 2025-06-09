@@ -1,0 +1,115 @@
+export interface Customer {
+  id: string;
+  name: string;
+  charger?: string;
+  contact?: string;
+  phone?: string;
+}
+
+export interface Opportunity {
+  id: string;
+  name: string;
+  customerId: string;
+  companyName: string;
+  quoteCount: number;
+  status: "none" | "quoting" | "reviewing" | "completed";
+  creator: string;
+  lastQuoteDate?: string;
+}
+
+export const statusTagColor = {
+  none: "gray",
+  quoting: "blue",
+  reviewing: "orange",
+  completed: "green",
+};
+
+export const statusText = {
+  none: "未报价",
+  quoting: "报价中",
+  reviewing: "审核中",
+  completed: "报价完成",
+};
+
+export type Position = {
+  latitude: number;
+  longitude: number;
+};
+
+export interface Quote {
+  id: number;
+  quoteId?: string;
+  orderId?: string;
+  quoteNumber: number;
+  quoteName: string;
+  type: string;
+  opportunityId?: string;
+  opportunityName?: string; // opportunityName
+  material: string[]; // 适用原料
+  finalProduct: string[]; // 最终产品
+  applicationField: string[]; // 应用领域
+  currencyType: string; // 货币类型
+  customerName: string; // 客户名称
+  customerId: string; // 客户id
+  creatorId: string; // 创建人id
+  chargerId: string; // 负责人id
+  salesSupportId: string; // 销售支持id
+  projectManagerId: string; // 项目管理id
+  totalProductPrice: number; // 产品价格合计
+  discountAmount: number; // 优惠金额
+  quoteAmount: number; // 报价单金额
+  deliveryDays: number; // 交期天数
+  address: any; // 地址
+  contactName: string; // 联系人姓名
+  contactPhone: string; // 联系人手机号
+  technicalLevel: string; // 技术等级
+  projectLevel: string; // 项目等级
+  flowState: string; // 报价状态
+  currentApprovalNode: string; // 当前审批节点
+  currentApprover: string; // 当前审批人
+  quoteTime: Date | null; // 报价时间
+  items: QuoteItem[];
+  status: "draft" | "completed" | "locked";
+}
+
+export interface QuoteItem {
+  id: number;
+  productCategory: string[] | null;
+  index: number;
+  productName?: string;
+  productCode?: string;
+  config?: ProductConfig;
+  quantity: number;
+  unitPrice: number | null;
+  discountRate: number | null;
+  unit: string;
+  brand: string;
+  subtotal: number | null;
+  isCompleted: boolean;
+  children?: QuoteItem[];
+  parentId: number;
+  linkId?: number;
+  source?: {
+    name: string;
+    value: any;
+    key: string;
+  };
+  isCategoryLocked: boolean;
+}
+
+interface ProductConfig {
+  [key: string]: any;
+}
+
+export interface ProductCategory {
+  level1Category: string;
+  level2Category: string;
+  level3Category: string;
+}
+
+export interface CompanyOption {
+  jdyid?: string;
+  name: string;
+  erpid: string;
+  label?: string;
+}
