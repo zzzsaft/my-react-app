@@ -14,30 +14,20 @@ interface QuoteItemsTableProps {
   confirmDelete: (item: QuoteItem) => void;
 }
 
+// light color palette used for differentiating linked items
 const linkColors = [
-  "#f5222d",
-  "#fa8c16",
-  "#52c41a",
-  "#1890ff",
-  "#722ed1",
-  "#13c2c2",
-  "#eb2f96",
-  "#fa541c",
-  "#2f54eb",
-  "#fadb14",
+  "rgba(245, 34, 45, 0.2)",
+  "rgba(250, 140, 22, 0.2)",
+  "rgba(82, 196, 26, 0.2)",
+  "rgba(24, 144, 255, 0.2)",
+  "rgba(114, 46, 209, 0.2)",
+  "rgba(19, 194, 194, 0.2)",
+  "rgba(235, 47, 150, 0.2)",
+  "rgba(250, 84, 28, 0.2)",
+  "rgba(47, 84, 235, 0.2)",
+  "rgba(250, 219, 20, 0.2)",
 ];
 
-
-const darkenColor = (color: string, amount = 0.2) => {
-  const [r, g, b] = color
-    .replace("#", "")
-    .match(/.{2}/g)!
-    .map((x) => parseInt(x, 16));
-  const darker = (v: number) => Math.max(0, Math.min(255, Math.floor(v * (1 - amount))));
-  return `#${[darker(r), darker(g), darker(b)]
-    .map((v) => v.toString(16).padStart(2, "0"))
-    .join("")}`;
-};
 
 
 const flattenItems = (items: QuoteItem[]): QuoteItem[] => {
@@ -96,25 +86,38 @@ const DesktopQuoteItemsTable: React.FC<QuoteItemsTableProps> = ({
 
   const flatItems = useMemo(() => flattenItems(items), [items]);
 
-  const linkColorMap = useMemo(() => {
-    const map = new Map<number, string>();
-    let colorIndex = 0;
-    flatItems.forEach((item) => {
-      if (item.linkId && !map.has(item.linkId)) {
-        map.set(item.linkId, linkColors[colorIndex % linkColors.length]);
-        colorIndex += 1;
-      }
-    });
-    return map;
-  }, [flatItems]);
+        if (record.linkId) {
+        } else if (linkedTargets.has(record.id)) {
+          color = linkColorMap.get(record.id);
+            style={{ display: "flex", alignItems: "center", backgroundColor: color }}
+        const dotColor = completed ? "green" : "red";
+        const isTarget = linkedTargets.has(record.id);
+        const linkColor = record.linkId
+          ? linkColorMap.get(record.linkId)
+          : isTarget
+          ? linkColorMap.get(record.id)
+          : undefined;
 
+        const linkTooltip = record.linkId
+          : isTarget
+          ? flatItems
+              .filter((i) => i.linkId === record.id)
+              .map((i) => i.productName)
+              .join("，")
 
-  const linkedTargets = useMemo(() => {
-    const set = new Set<number>();
-    flatItems.forEach((item) => {
-      if (item.linkId) {
-        set.add(item.linkId);
-      }
+        return (
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: 2,
+            }}
+            <span style={{ color: dotColor, fontSize: 10, lineHeight: 1 }}>●</span>
+            {(record.linkId || isTarget) && (
+              <Tooltip title={linkTooltip}>
+                <LinkOutlined style={{ fontSize: 10, color: linkColor }} />
+              </Tooltip>
+            )}
     });
     return set;
   }, [flatItems]);
