@@ -10,8 +10,9 @@ import {
   Select,
   AutoComplete,
 } from "antd";
-import { forwardRef, useImperativeHandle, useState } from "react";
-import ProForm, { ProCard, ProFormDependency } from "@ant-design/pro-form";
+
+import { forwardRef, useImperativeHandle } from "react";
+import ProForm, { ProFormDependency } from "@ant-design/pro-form";
 import TextArea from "antd/es/input/TextArea";
 
 import MaterialSelect from "../../general/MaterialSelect";
@@ -28,11 +29,22 @@ interface PriceFormRef {
 const FeedblockForm = forwardRef(
   ({ quoteId, quoteItemId }: { quoteId: number; quoteItemId: number }, ref) => {
     const [form] = Form.useForm();
-    const [material, setMaterial] = useState<string[]>([]);
 
     useImperativeHandle(ref, () => ({
       form,
     }));
+
+
+    const countMap: Record<string, number> = {
+      两台机: 2,
+      三台机: 3,
+      四台机: 4,
+      五台机: 5,
+      六台机: 6,
+      七台机: 7,
+      八台机: 8,
+      九台机: 9,
+    };
 
 
     const handleFieldsChange = (changedFields: any) => {
@@ -40,6 +52,32 @@ const FeedblockForm = forwardRef(
         const structs = changedFields.compositeStructure.split("");
         const list = structs.map((s: any) => ({ layer: s }));
         form.setFieldValue("screwList", list);
+      }
+      if (changedFields.layers != null) {
+        const map: Record<string, string[]> = {
+          两层: ["两台机"],
+          三层: ["两台机", "三台机"],
+          五层: ["三台机", "四台机", "五台机"],
+          七层: ["四台机", "五台机", "六台机", "七台机"],
+          九层: ["五台机", "六台机", "七台机", "八台机", "九台机"],
+        };
+        const opts = map[changedFields.layers as string] || [];
+        const current = form.getFieldValue("extruderNumber");
+        if (current && !opts.includes(current)) {
+          form.setFieldValue("extruderNumber", undefined);
+        }
+      }
+      if (changedFields.extruderNumber != null) {
+        const count = countMap[changedFields.extruderNumber as string];
+        if (count) {
+          const list = (form.getFieldValue("extruderModel") || []) as any[];
+          const base = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+          const next = Array.from({ length: count }, (_, i) => ({ layer: base[i] }));
+          form.setFieldValue(
+            "extruderModel",
+            list.slice(0, count).concat(next.slice(list.length))
+          );
+        }
       }
     };
 
@@ -51,23 +89,16 @@ const FeedblockForm = forwardRef(
           submitter={false}
           onValuesChange={handleFieldsChange}
         >
-          <ProCard
-            title="共挤复合分配器配置"
-            collapsible
-            defaultCollapsed={false}
-            style={{ marginBottom: 16 }}
-            headerBordered
-          >
-            <Row gutter={16}>
+
+          <Row gutter={16}>
+
               <Col xs={24} md={12}>
                 <Form.Item
                   name="material"
                   label="适用塑料原料"
                   rules={[{ required: true, message: "请选择适用原料" }]}
                 >
-                  <MaterialSelect
-                    onChange={(v) => setMaterial(Array.isArray(v) ? v : [v])}
-                  />
+                  <MaterialSelect />
                 </Form.Item>
               </Col>
               <Col xs={24} md={12}>
@@ -213,20 +244,32 @@ const FeedblockForm = forwardRef(
                   <HeatingMethodSelect />
                 </Form.Item>
               </Col>
-              <Col span={24}>
-                <ExtruderForm items={material} />
-              </Col>
+              <Form.Item noStyle dependencies={["material", "extruderNumber"]}>
+                {({ material, extruderNumber }) => (
+                  <Col span={24}>
+                    <ExtruderForm
+                      items={Array.isArray(material) ? material : material ? [material] : []}
+                      count={countMap[extruderNumber as string]}
+                      creatorButtonProps={false}
+                    />
+                  </Col>
+                )}
+              </Form.Item>
               <Col xs={24} md={12}>
                 <Form.Item
                   name="extruderOrientation"
                   label="挤出机排列方向"
                   initialValue="按供方提供图纸确认回传为准"
                 >
-                  <AutoComplete options={[{ label: "按供方提供图纸确认回传为准", value: "按供方提供图纸确认回传为准" }]} />
+                  <AutoComplete
+                    options={[{
+                      label: "按供方提供图纸确认回传为准",
+                      value: "按供方提供图纸确认回传为准",
+                    }]}
+                  />
                 </Form.Item>
               </Col>
             </Row>
-          </ProCard>
           <Form.Item label="其他备注" name="remark">
             <TextArea />
           </Form.Item>
