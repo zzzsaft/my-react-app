@@ -1,6 +1,5 @@
-import { Table, Button, Typography, App } from "antd";
+import { Button, Typography, App, Tooltip } from "antd";
 import { PlusOutlined, DeleteOutlined, LinkOutlined } from "@ant-design/icons";
-import * as _ from "lodash";
 import { useQuoteStore } from "../../store/useQuoteStore";
 import ProductCascader from "./ProductCascader";
 import { formatPrice } from "../../util/valueUtil";
@@ -14,6 +13,41 @@ interface QuoteItemsTableProps {
   items: QuoteItem[];
   confirmDelete: (item: QuoteItem) => void;
 }
+
+const linkColors = [
+  "#f5222d",
+  "#fa8c16",
+  "#52c41a",
+  "#1890ff",
+  "#722ed1",
+  "#13c2c2",
+  "#eb2f96",
+  "#fa541c",
+  "#2f54eb",
+  "#fadb14",
+];
+
+const darkenColor = (color: string, amount = 0.2) => {
+  const [r, g, b] = color
+    .replace("#", "")
+    .match(/.{2}/g)!
+    .map((x) => parseInt(x, 16));
+  const darker = (v: number) => Math.max(0, Math.min(255, Math.floor(v * (1 - amount))));
+  return `#${[darker(r), darker(g), darker(b)]
+    .map((v) => v.toString(16).padStart(2, "0"))
+    .join("")}`;
+};
+
+const flattenItems = (items: QuoteItem[]): QuoteItem[] => {
+  const result: QuoteItem[] = [];
+  items.forEach((item) => {
+    result.push(item);
+    if (item.children) {
+      result.push(...flattenItems(item.children));
+    }
+  });
+  return result;
+};
 
 const DesktopQuoteItemsTable: React.FC<QuoteItemsTableProps> = ({
   quoteId,
@@ -58,35 +92,76 @@ const DesktopQuoteItemsTable: React.FC<QuoteItemsTableProps> = ({
     [items]
   );
 
+  const flatItems = useMemo(() => flattenItems(items), [items]);
+
+  const linkColorMap = useMemo(() => {
+    const map = new Map<number, string>();
+    let colorIndex = 0;
+    flatItems.forEach((item) => {
+      if (item.linkId && !map.has(item.linkId)) {
+        map.set(item.linkId, linkColors[colorIndex % linkColors.length]);
+        colorIndex += 1;
+      }
+    });
+    return map;
+  }, [flatItems]);
+
+  const linkedTargets = useMemo(() => {
+    const set = new Set<number>();
+    flatItems.forEach((item) => {
+      if (item.linkId) {
+        set.add(item.linkId);
+      }
+    });
+    return set;
+  }, [flatItems]);
+
   const columns = [
     {
       ...SortableColumn,
-      render: (text: string, record: QuoteItem) => (
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <DragHandle disabled={isLocked} />
-        </div>
-      ),
+      render: (text: string, record: QuoteItem) => {
+        let color: string | undefined;
+        if (linkedTargets.has(record.id)) {
+          const base = linkColorMap.get(record.id);
+          color = base ? darkenColor(base, 0.3) : undefined;
+        } else if (record.linkId) {
+          color = linkColorMap.get(record.linkId);
+        }
+        const background = color
+          ? `linear-gradient(to right, ${color}, #fff)`
+          : undefined;
+        return (
+          <div
+            style={{ display: "flex", alignItems: "center", background }}
+          >
+            <DragHandle disabled={isLocked} />
+          </div>
+        );
+      },
     },
     {
       title: "",
       dataIndex: "isCompleted",
-      width: 10,
-      render: (completed: boolean, record: any) => (
-        <span style={{ display: "flex", justifyContent: "center" }}>
-          {record.linkId ? (
-            <LinkOutlined
-              style={{
-                fontSize: 10,
-                color: completed ? "green" : "red", // 根据 completed 设置颜色
-              }}
-            />
-          ) : completed ? (
-            <span style={{ color: "green", fontSize: 10 }}>●</span>
-          ) : (
-            <span style={{ color: "red", fontSize: 10 }}>●</span>
-          )}
-        </span>
-      ),
+      width: 24,
+      render: (completed: boolean, record: QuoteItem) => {
+        const color = completed ? "green" : "red";
+        const linkedName = record.linkId
+          ? flatItems.find((i) => i.id === record.linkId)?.productName ?? ""
+          : "";
+        return record.linkId ? (
+          <span style={{ display: "flex", justifyContent: "center" }}>
+            <Tooltip title={linkedName}>
+              <LinkOutlined style={{ fontSize: 10, color }} />
+            </Tooltip>
+          </span>
+        ) : (
+          <span
+            style={{ display: "flex", justifyContent: "center", color, fontSize: 10 }}
+          >
+            ●
+          </span>
+        );
+      },
     },
     {
       title: "产品类型",
