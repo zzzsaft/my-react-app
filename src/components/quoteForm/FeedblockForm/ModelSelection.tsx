@@ -75,7 +75,7 @@ export const ModelSelection = () => {
               />
             </Form.Item>
           </Col>
-          <Form.Item noStyle dependencies={["type"]}>
+          {/* <Form.Item noStyle dependencies={["type"]}>
             {({ getFieldValue }) => {
               const type = getFieldValue("type");
               let option = [...new Set(pump.map((p) => p.model))].map(
@@ -121,7 +121,7 @@ export const ModelSelection = () => {
             <Form.Item label="加热功率" name="heatingPower">
               <Input readOnly />
             </Form.Item>
-          </Col>
+          </Col> */}
 
           <ExtruderForm items={material} />
         </Row>

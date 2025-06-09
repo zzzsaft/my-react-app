@@ -45,7 +45,7 @@ const StatusSelector: React.FC<StatusSelectorProps> = ({
       onChange={onChange}
       options={options}
       className="statusSelector"
-      dropdownRender={(menu) => (
+      popupRender={(menu) => (
         <>
           <div className="selectAllContainer">
             <Checkbox

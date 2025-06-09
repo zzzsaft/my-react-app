@@ -114,7 +114,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
         onChange?.(value);
         // console.log(value);
       }}
-      dropdownRender={dropdown ? dropdownRender : undefined}
+      popupRender={dropdown ? dropdownRender : undefined}
       //   tagRender={tagRender}
       options={selectOptions}
       open={open}
