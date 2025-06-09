@@ -1,5 +1,5 @@
 import { Form, FormInstance } from "antd";
-import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
+import { forwardRef, useImperativeHandle } from "react";
 import { Product } from "./Product";
 import { DieBody } from "./DieBody";
 import { DieInstall } from "./DieInstall";
@@ -27,55 +27,112 @@ const DieForm = forwardRef(
       form,
     }));
 
+    const addProp: any = (
+      productCategory: string[],
+      key: string,
+      value: any
+    ) => ({
+      method: "add",
+      quoteId,
+      quoteItems,
+      productCategory,
+      productName: productCategory.at(-1) ?? "",
+      linkId: quoteItemId,
+      source: {
+        name: productCategory.at(-1),
+        value,
+        key,
+      },
+    });
+
+    const deleteProp: any = (productCategory: string[]) => ({
+      method: "delete",
+      linkId: quoteItemId,
+      quoteId,
+      quoteItems,
+      productCategory,
+      items: [
+        {
+          name: productCategory.at(-1),
+        },
+      ],
+    });
+
+    const handleDieWidth = (value: string) => {
+      const width = Number(value?.split("-")[0]);
+      const zone = nearestOdd(width);
+      form.setFieldValue("heatingZones", zone);
+      form.setFieldValue("powerCableLength", width <= 1500 ? 3 : 5);
+      form.setFieldValue("glassHeatingZones", zone);
+    };
+
+    const handleHeatingZones = (value: number) => {
+      form.setFieldValue("glassHeatingZones", value);
+    };
+
+    const handleCompositeStructure = (value: string) => {
+      const list = value.split("").map((s: any) => ({ layer: s }));
+      form.setFieldValue("screwList", list);
+    };
+
+    const handleHasCart = async (value: string) => {
+      if (value === "有") {
+        const result = await showProductActionModal(
+          addProp(["模具配件", "模具拆装小车"], "hasCart", "无")
+        );
+        if (!result.result) form.setFieldValue("hasCart", "无");
+        return;
+      }
+
+      const result = await showProductActionModal(
+        deleteProp(["模具配件", "模具拆装小车"])
+      );
+      if (!result.result) form.setFieldValue("hasCart", "有");
+    };
+
+    const handleSmartRegulator = async (value: boolean) => {
+      if (value) {
+        const result = await showProductActionModal(
+          addProp(["模具配件", "智能调节器"], "smartRegulator", false)
+        );
+        if (!result.result) form.setFieldValue("smartRegulator", false);
+        return;
+      }
+
+      const result = await showProductActionModal(
+        deleteProp(["模具配件", "智能调节器"])
+      );
+      if (!result.result) form.setFieldValue("smartRegulator", true);
+    };
+
+    const handleThermalInsulation = async (value: boolean) => {
+      if (value) {
+        const result = await showProductActionModal(
+          addProp(["模具配件", "隔热装置"], "haveThermalInsulation", false)
+        );
+        if (!result.result) form.setFieldValue("haveThermalInsulation", false);
+        return;
+      }
+
+      const result = await showProductActionModal(
+        deleteProp(["模具配件", "隔热装置"])
+      );
+      if (!result.result) form.setFieldValue("haveThermalInsulation", true);
+    };
+
+    const fieldHandlers: Record<string, (value: any) => void | Promise<void>> = {
+      dieWidth: handleDieWidth,
+      heatingZones: handleHeatingZones,
+      compositeStructure: handleCompositeStructure,
+      hasCart: handleHasCart,
+      smartRegulator: handleSmartRegulator,
+      haveThermalInsulation: handleThermalInsulation,
+    };
+
     const handleFieldsChange = async (changedFields: any) => {
-      if (changedFields.dieWidth) {
-        const width = Number(changedFields.dieWidth?.split("-")[0]);
-        const zone = nearestOdd(width);
-        form.setFieldValue("heatingZones", zone);
-        form.setFieldValue("powerCableLength", width <= 1500 ? 3 : 5);
-        form.setFieldValue("glassHeatingZones", zone);
-      }
-      if (changedFields.heatingZones) {
-        form.setFieldValue("glassHeatingZones", changedFields.heatingZones);
-      }
-      if (changedFields.compositeStructure != null) {
-        const structs = changedFields.compositeStructure.split("");
-        const list = structs.map((s: any) => {
-          return { layer: s };
-        });
-        form.setFieldValue("screwList", list);
-      }
-      if (changedFields.hasCart != null) {
-        if (changedFields.hasCart == "有") {
-          const result = await showProductActionModal({
-            method: "add",
-            quoteId,
-            quoteItems,
-            productCategory: ["模具配件", "模具拆装小车"],
-            productName: "模具拆装小车",
-            linkId: quoteItemId,
-            source: {
-              name: "模具固定小车",
-              value: "无",
-              key: "hasCart",
-            },
-          });
-          if (!result.result) form.setFieldValue("hasCart", "无");
-        } else {
-          const result = await showProductActionModal({
-            method: "delete",
-            linkId: quoteItemId,
-            quoteId,
-            quoteItems,
-            productCategory: ["模具配件", "模具拆装小车"],
-            items: [
-              {
-                name: "模具拆装小车",
-              },
-            ],
-          });
-          if (!result.result) form.setFieldValue("hasCart", "有");
-        }
+      for (const [key, value] of Object.entries(changedFields)) {
+        const handler = fieldHandlers[key];
+        if (handler) await handler(value);
       }
     };
 
