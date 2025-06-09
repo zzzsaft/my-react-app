@@ -1,5 +1,5 @@
 import { Form, FormInstance } from "antd";
-import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
+import { forwardRef, useImperativeHandle, useRef } from "react";
 import { Product } from "../dieForm/Product";
 import { DieBody } from "../dieForm/DieBody";
 import { DieInstall } from "../dieForm/DieInstall";
@@ -13,6 +13,7 @@ import { useQuoteStore } from "../../../store/useQuoteStore";
 import { ModelSelection } from "./ModelSelection";
 import { useProductStore } from "../../../store/useProductStore";
 import { ModelOption } from "./ModelOption";
+import { parseNumber } from "../../../util/valueUtil";
 interface PriceFormRef {
   form: FormInstance; // 明确定义暴露的form实例
 }
@@ -20,6 +21,7 @@ interface PriceFormRef {
 const MeteringPumpForm = forwardRef(
   ({ quoteId, quoteItemId }: { quoteId: number; quoteItemId: number }, ref) => {
     const [form] = Form.useForm();
+    const optionsRef = useRef<string[]>([]);
     const quoteItems = useQuoteStore
       .getState()
       .quotes.find((quote) => quote.id === quoteId)?.items;
@@ -61,16 +63,17 @@ const MeteringPumpForm = forwardRef(
     }));
 
     const updateModel = () => {
-      let model: string = form.getFieldValue("model") ?? "";
+      const rawModel: string = form.getFieldValue("model") ?? "";
       const type = form.getFieldValue("type");
       const isCustomization = form.getFieldValue("isCustomization") === "定制";
 
-      model = model.replace("-NL", "").replace("（定制）", "");
+      let baseModel = rawModel.replace("-NL", "").replace("（定制）", "");
+      if (!baseModel) return form.setFieldsValue({ model: "" });
 
-      if (type === "内冷式计量泵") model += "-NL";
-      if (isCustomization) model += "（定制）";
+      if (type === "内冷式计量泵") baseModel += "-NL";
+      if (isCustomization) baseModel += "（定制）";
 
-      form.setFieldsValue({ model });
+      form.setFieldsValue({ model: baseModel });
     };
 
     const syncPumpInfo = () => {
@@ -84,10 +87,22 @@ const MeteringPumpForm = forwardRef(
           p.model === model.replace("-NL", "").replace("（定制）", "")
       );
 
-      form.setFieldValue("pumpage", selectedPump?.pumpage);
-      form.setFieldValue("heatingPower", selectedPump?.heatingPower);
-      form.setFieldValue("production", selectedPump?.production);
-      form.setFieldValue("rotateSpeed", selectedPump?.rotateSpeed);
+      form.setFieldValue(
+        "pumpage",
+        parseNumber(selectedPump?.pumpage, /cm³\/rev/g)
+      );
+      form.setFieldValue(
+        "heatingPower",
+        parseNumber(selectedPump?.heatingPower, /kw/g)
+      );
+      form.setFieldValue(
+        "production",
+        parseNumber(selectedPump?.production, /kg\/h/g)
+      );
+      form.setFieldValue(
+        "rotateSpeed",
+        parseNumber(selectedPump?.rotateSpeed, /rpm/g)
+      );
     };
 
     const handlePumpBracket = async (value: boolean) => {
@@ -105,12 +120,50 @@ const MeteringPumpForm = forwardRef(
       if (!result.result) form.setFieldValue("pumpBracket", true);
     };
 
+    const handleOptionsChange = async (value: string[]) => {
+      const prev = optionsRef.current;
+      const handle = async (
+        checked: boolean,
+        prevChecked: boolean
+      ) => {
+        if (checked && !prevChecked) {
+          const result = await showProductActionModal(
+            addProp(["熔体计量泵", "传动系统"], "options", prev)
+          );
+          if (!result.result) {
+            form.setFieldValue("options", prev);
+            return false;
+          }
+        } else if (!checked && prevChecked) {
+          const result = await showProductActionModal(
+            deleteProp(["熔体计量泵", "传动系统"])
+          );
+          if (!result.result) {
+            form.setFieldValue("options", prev);
+            return false;
+          }
+        }
+        return true;
+      };
+
+      const trans = value.includes("传动系统");
+      const prevTrans = prev.includes("传动系统");
+      if (!(await handle(trans, prevTrans))) return;
+
+      const control = value.includes("控制系统");
+      const prevControl = prev.includes("控制系统");
+      if (!(await handle(control, prevControl))) return;
+
+      optionsRef.current = value;
+    };
+
     const fieldHandlers: Record<string, (value: any) => void | Promise<void>> = {
       type: updateModel,
       isCustomization: updateModel,
       model: syncPumpInfo,
       shearSensitivity: syncPumpInfo,
       pumpBracket: handlePumpBracket,
+      options: handleOptionsChange,
     };
 
     const handleFieldsChange = async (changedFields: any) => {
