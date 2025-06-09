@@ -1,5 +1,5 @@
 import { Form, FormInstance } from "antd";
-import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
+import { forwardRef, useImperativeHandle, useRef } from "react";
 import { Product } from "../dieForm/Product";
 import { DieBody } from "../dieForm/DieBody";
 import { DieInstall } from "../dieForm/DieInstall";
@@ -21,6 +21,7 @@ interface PriceFormRef {
 const MeteringPumpForm = forwardRef(
   ({ quoteId, quoteItemId }: { quoteId: number; quoteItemId: number }, ref) => {
     const [form] = Form.useForm();
+    const optionsRef = useRef<string[]>([]);
     const quoteItems = useQuoteStore
       .getState()
       .quotes.find((quote) => quote.id === quoteId)?.items;
@@ -120,12 +121,50 @@ const MeteringPumpForm = forwardRef(
       if (!result.result) form.setFieldValue("pumpBracket", true);
     };
 
+    const handleOptionsChange = async (value: string[]) => {
+      const prev = optionsRef.current;
+      const handle = async (
+        checked: boolean,
+        prevChecked: boolean
+      ) => {
+        if (checked && !prevChecked) {
+          const result = await showProductActionModal(
+            addProp(["熔体计量泵", "传动系统"], "options", prev)
+          );
+          if (!result.result) {
+            form.setFieldValue("options", prev);
+            return false;
+          }
+        } else if (!checked && prevChecked) {
+          const result = await showProductActionModal(
+            deleteProp(["熔体计量泵", "传动系统"])
+          );
+          if (!result.result) {
+            form.setFieldValue("options", prev);
+            return false;
+          }
+        }
+        return true;
+      };
+
+      const trans = value.includes("传动系统");
+      const prevTrans = prev.includes("传动系统");
+      if (!(await handle(trans, prevTrans))) return;
+
+      const control = value.includes("控制系统");
+      const prevControl = prev.includes("控制系统");
+      if (!(await handle(control, prevControl))) return;
+
+      optionsRef.current = value;
+    };
+
     const fieldHandlers: Record<string, (value: any) => void | Promise<void>> = {
       type: updateModel,
       isCustomization: updateModel,
       model: syncPumpInfo,
       shearSensitivity: syncPumpInfo,
       pumpBracket: handlePumpBracket,
+      options: handleOptionsChange,
     };
 
     const handleFieldsChange = async (changedFields: any) => {
