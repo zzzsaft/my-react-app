@@ -12,7 +12,6 @@ import useProductActionModal from "../../../hook/showProductActionModal";
 import { useQuoteStore } from "../../../store/useQuoteStore";
 import { useProductStore } from "../../../store/useProductStore";
 import { ModelOption } from "../MeteringPumpForm/ModelOption";
-import { ModelSelection } from "./ModelSelection";
 interface PriceFormRef {
   form: FormInstance; // 明确定义暴露的form实例
 }
@@ -30,20 +29,6 @@ const FeedblockForm = forwardRef(
       // if (changedFields.type) {
 
       // }
-      if (changedFields.型号 || changedFields.shearSensitivity) {
-        const model = form.getFieldValue("型号");
-        const shearSensitivity = form.getFieldValue("shearSensitivity");
-        if (!model || !shearSensitivity) return;
-        const selectedPump = pump.find(
-          (p) =>
-            p.shearSensitivity == shearSensitivity &&
-            p.model == model.replace("-NL", "")
-        );
-        form.setFieldValue("pumpage", selectedPump?.pumpage);
-        form.setFieldValue("heatingPower", selectedPump?.heatingPower);
-        form.setFieldValue("production", selectedPump?.production);
-        form.setFieldValue("rotateSpeed", selectedPump?.rotateSpeed);
-      }
 
       if (changedFields.compositeStructure != null) {
         const structs = changedFields.compositeStructure.split("");
@@ -62,7 +47,7 @@ const FeedblockForm = forwardRef(
           submitter={false}
           onValuesChange={handleFieldsChange}
         >
-          <ModelSelection />
+          {/* <ModelSelection /> */}
           {/* <ModelOption /> */}
           {/* <Form.Item noStyle dependencies={["hasCart"]}>
             {({ getFieldValue }) => {
