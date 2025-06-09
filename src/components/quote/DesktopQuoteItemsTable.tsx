@@ -27,6 +27,19 @@ const linkColors = [
   "#fadb14",
 ];
 
+
+const darkenColor = (color: string, amount = 0.2) => {
+  const [r, g, b] = color
+    .replace("#", "")
+    .match(/.{2}/g)!
+    .map((x) => parseInt(x, 16));
+  const darker = (v: number) => Math.max(0, Math.min(255, Math.floor(v * (1 - amount))));
+  return `#${[darker(r), darker(g), darker(b)]
+    .map((v) => v.toString(16).padStart(2, "0"))
+    .join("")}`;
+};
+
+
 const flattenItems = (items: QuoteItem[]): QuoteItem[] => {
   const result: QuoteItem[] = [];
   items.forEach((item) => {
@@ -110,53 +123,47 @@ const DesktopQuoteItemsTable: React.FC<QuoteItemsTableProps> = ({
   const columns = [
     {
       ...SortableColumn,
-      render: (text: string, record: QuoteItem) => (
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <DragHandle disabled={isLocked} />
-        </div>
-      ),
+      render: (text: string, record: QuoteItem) => {
+        let color: string | undefined;
+        if (linkedTargets.has(record.id)) {
+          const base = linkColorMap.get(record.id);
+          color = base ? darkenColor(base, 0.3) : undefined;
+        } else if (record.linkId) {
+          color = linkColorMap.get(record.linkId);
+        }
+        const background = color
+          ? `linear-gradient(to right, ${color}, #fff)`
+          : undefined;
+        return (
+          <div
+            style={{ display: "flex", alignItems: "center", background }}
+          >
+            <DragHandle disabled={isLocked} />
+          </div>
+        );
+      },
     },
     {
       title: "",
       dataIndex: "isCompleted",
-      width: 10,
+
+      width: 24,
       render: (completed: boolean, record: QuoteItem) => {
-        const bulletColor = completed ? "green" : "red";
-        const isReferenced = linkedTargets.has(record.id);
-        const showLinkIcon = Boolean(record.linkId) || isReferenced;
-        const linkColor = record.linkId
-          ? linkColorMap.get(record.linkId)
-          : isReferenced
-          ? linkColorMap.get(record.id)
-          : undefined;
+        const color = completed ? "green" : "red";
         const linkedName = record.linkId
           ? flatItems.find((i) => i.id === record.linkId)?.productName ?? ""
-          : isReferenced
-          ? flatItems
-              .filter((i) => i.linkId === record.id)
-              .map((i) => i.productName)
-              .join("，")
           : "";
-        return (
-          <span style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <span
-              style={{
-                color: bulletColor,
-                fontSize: 10,
-                width: 10,
-                textAlign: "center",
-                lineHeight: 1,
-              }}
-            >
-              ●
-            </span>
-            {showLinkIcon && (
-              <Tooltip title={linkedName}>
-                <LinkOutlined
-                  style={{ color: linkColor, fontSize: 10, marginLeft: 2 }}
-                />
-              </Tooltip>
-            )}
+        return record.linkId ? (
+          <span style={{ display: "flex", justifyContent: "center" }}>
+            <Tooltip title={linkedName}>
+              <LinkOutlined style={{ fontSize: 10, color }} />
+            </Tooltip>
+          </span>
+        ) : (
+          <span
+            style={{ display: "flex", justifyContent: "center", color, fontSize: 10 }}
+          >
+            ●
           </span>
         );
       },
