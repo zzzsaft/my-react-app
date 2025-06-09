@@ -95,6 +95,18 @@ const DesktopQuoteItemsTable: React.FC<QuoteItemsTableProps> = ({
     return map;
   }, [flatItems]);
 
+
+  const linkedTargets = useMemo(() => {
+    const set = new Set<number>();
+    flatItems.forEach((item) => {
+      if (item.linkId) {
+        set.add(item.linkId);
+      }
+    });
+    return set;
+  }, [flatItems]);
+
+
   const columns = [
     {
       ...SortableColumn,
@@ -109,19 +121,39 @@ const DesktopQuoteItemsTable: React.FC<QuoteItemsTableProps> = ({
       dataIndex: "isCompleted",
       width: 10,
       render: (completed: boolean, record: QuoteItem) => {
-        const color =
-          linkColorMap.get(record.linkId ?? record.id) ??
-          (completed ? "green" : "red");
+        const bulletColor = completed ? "green" : "red";
+        const isReferenced = linkedTargets.has(record.id);
+        const showLinkIcon = Boolean(record.linkId) || isReferenced;
+        const linkColor = record.linkId
+          ? linkColorMap.get(record.linkId)
+          : isReferenced
+          ? linkColorMap.get(record.id)
+          : undefined;
         const linkedName = record.linkId
           ? flatItems.find((i) => i.id === record.linkId)?.productName ?? ""
+          : isReferenced
+          ? flatItems
+              .filter((i) => i.linkId === record.id)
+              .map((i) => i.productName)
+              .join("，")
           : "";
         return (
-          <span style={{ display: "flex", justifyContent: "center" }}>
-            <span style={{ color, fontSize: 10 }}>●</span>
-            {record.linkId && (
+          <span style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <span
+              style={{
+                color: bulletColor,
+                fontSize: 10,
+                width: 10,
+                textAlign: "center",
+                lineHeight: 1,
+              }}
+            >
+              ●
+            </span>
+            {showLinkIcon && (
               <Tooltip title={linkedName}>
                 <LinkOutlined
-                  style={{ color, fontSize: 10, marginLeft: 2 }}
+                  style={{ color: linkColor, fontSize: 10, marginLeft: 2 }}
                 />
               </Tooltip>
             )}
