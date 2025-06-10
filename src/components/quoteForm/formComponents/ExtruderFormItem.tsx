@@ -52,6 +52,7 @@ export const ExtruderFormItem = ({ items }: { items: string[] }) => {
           name="extruderModel"
           label="挤出机型号"
           rules={[{ required: true, message: "请选择挤出机型号" }]}
+          initialValue="单螺杆挤出机"
         >
           <AutoComplete
             options={[

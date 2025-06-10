@@ -118,7 +118,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
       //   tagRender={tagRender}
       options={selectOptions}
       open={open}
-      onDropdownVisibleChange={(visible) => setOpen(visible)}
+      onOpenChange={(visible) => setOpen(visible)}
       disabled={disabled}
       showSearch={showSearch}
       filterOption={(input, option) =>
