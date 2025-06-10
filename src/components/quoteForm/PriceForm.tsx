@@ -1,5 +1,4 @@
 import {
-  Button,
   Col,
   Form,
   FormInstance,
@@ -7,10 +6,10 @@ import {
   InputNumber,
   Row,
   Select,
-  Space,
   Typography,
 } from "antd";
 import { forwardRef, useImperativeHandle } from "react";
+import InputWithButton from "../general/InputWithButton";
 import { formatPrice } from "../../util/valueUtil";
 interface PriceFormRef {
   form: FormInstance; // 明确定义暴露的form实例
@@ -68,17 +67,10 @@ const PriceForm = forwardRef<PriceFormRef, PriceFormProps>(
               label="产品名称"
               rules={[{ required: true, message: "请输入产品名称" }]}
             >
-              <Input
+              <InputWithButton
                 style={{ width: "100%" }}
-                addonAfter={
-                  <Button
-                    type="primary"
-                    onClick={handleGenerateName}
-                    style={{ margin: 0 }}
-                  >
-                    自动生成名称
-                  </Button>
-                }
+                buttonText="自动生成名称"
+                onButtonClick={handleGenerateName}
               />
             </Form.Item>
           </Col>
