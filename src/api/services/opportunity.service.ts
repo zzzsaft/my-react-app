@@ -17,4 +17,8 @@ export const OpportunityService = {
     const products = await apiClient.get("/product/pump/get");
     return products.data;
   },
+  async getProductFilter() {
+    const products = await apiClient.get("/product/filter/get");
+    return products.data;
+  },
 };
