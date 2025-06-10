@@ -22,6 +22,7 @@ import TextArea from "antd/es/input/TextArea";
 import MaterialSelect from "../../general/MaterialSelect";
 import AutoSlashInput from "../../general/AutoSlashInput";
 import RatioInput from "../../general/RatioInput";
+import LevelInputNumber, { LevelValue } from "../../general/LevelInputNumber";
 import ExtruderForm from "../formComponents/ExtruderForm";
 import { PowerInput } from "../formComponents/PowerInput";
 import { HeatingMethodSelect } from "../formComponents/HeatingMethodInput";
@@ -85,6 +86,15 @@ const FeedblockForm = forwardRef(
             list.slice(0, count).concat(next.slice(list.length))
           );
           form.setFieldValue("screwList", next);
+
+          const ratioList = (form.getFieldValue("compositeRatio") || []) as LevelValue[];
+          const ratioNext = Array.from({ length: count }, (_, i) => ({
+            level: base[i],
+          }));
+          form.setFieldValue(
+            "compositeRatio",
+            ratioList.slice(0, count).concat(ratioNext.slice(ratioList.length))
+          );
         }
       }
     };
@@ -231,7 +241,6 @@ const FeedblockForm = forwardRef(
             <Form.Item noStyle dependencies={["extruderNumber"]}>
               {({ getFieldValue }) => {
                 const extruderNumber = getFieldValue("extruderNumber");
-                console.log(countMap[extruderNumber as string]);
                 return (
                   <>
                     <Col xs={24} md={24}>
@@ -242,54 +251,22 @@ const FeedblockForm = forwardRef(
                         max={countMap[extruderNumber as string]}
                         canCreate={false}
                         canDelete={false}
-                        // rules={[
-                        //   {
-                        //     validator: async (_: any, value: any) => {
-                        //       const sum = (value || []).reduce(
-                        //         (t: number, c: any) =>
-                        //           t + Number(c?.ratio || 0),
-                        //         0
-                        //       );
-                        //       if (sum !== 100) {
-                        //         return Promise.reject(
-                        //           new Error("比例和需为100%")
-                        //         );
-                        //       }
-                        //       return Promise.resolve();
-                        //     },
-                        //   },
-                        // ]}
-                        formItems={
-                          <Row gutter={8}>
-                            <Col span={10}>
-                              <ProForm.Item name="layer" label="层">
-                                <AutoComplete
-                                  disabled
-                                  options={"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                                    .split("")
-                                    .map((s) => ({ value: s }))}
-                                />
-                              </ProForm.Item>
-                            </Col>
-                            <Col span={14}>
-                              <ProForm.Item
-                                name="ratio"
-                                label="比例"
-                                rules={[
-                                  { required: true, message: "请输入比例" },
-                                ]}
-                              >
-                                <InputNumber
-                                  min={0}
-                                  max={100}
-                                  style={{ width: "100%" }}
-                                  formatter={(v) => `${v}%`}
-                                  parser={(v) => v?.replace(/%/g, "") as any}
-                                />
-                              </ProForm.Item>
-                            </Col>
-                          </Row>
-                        }
+                        rules={[
+                          {
+                            validator: async (_: any, value: LevelValue[]) => {
+                              const sum = value?.reduce(
+                                (t, c) => t + Number(c?.value || 0),
+                                0
+                              );
+                              if (sum !== 100) {
+                                return Promise.reject(new Error("比例和需为100%"));
+                              }
+                              return Promise.resolve();
+                            },
+                          },
+                        ]}
+                        isHorizontal
+                        formItems={<LevelInputNumber formatter={(v) => `${v}%`} parser={(v) => v?.replace(/%/g, "") as any} style={{ width: 120 }} min={0} max={100} />}
                       />
                     </Col>
                   </>
