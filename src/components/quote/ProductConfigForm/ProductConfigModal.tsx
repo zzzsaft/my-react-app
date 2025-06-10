@@ -23,6 +23,9 @@ const ProductConfigModal: React.FC<ProductConfigModalProps> = ({
   const material = useQuoteStore(
     (state) => state.quotes.find((q) => q.id == quoteId)?.material
   );
+  const finalProduct = useQuoteStore(
+    (state) => state.quotes.find((q) => q.id == quoteId)?.finalProduct
+  );
   const formRef = useRef<{
     priceForm: FormInstance;
     modelForm: FormInstance;
@@ -62,6 +65,7 @@ const ProductConfigModal: React.FC<ProductConfigModalProps> = ({
 
       formRef.current.priceForm?.setFieldsValue(basicValues);
       formRef.current.modelForm?.setFieldsValue(formValues);
+      console.log(formRef.current.modelForm?.getFieldsValue());
       setLoading(false);
     };
 
@@ -70,6 +74,7 @@ const ProductConfigModal: React.FC<ProductConfigModalProps> = ({
     return () => {
       clearTimeout(timer);
       clearTimeout(retryTimer);
+
       setLoading(false);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
