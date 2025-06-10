@@ -7,7 +7,9 @@ import { isEqual } from "lodash-es";
 import { produce } from "immer";
 import zukeeper from "zukeeper";
 import { throttle } from "lodash-es";
+
 import { ProductCategory, Quote, QuoteItem, FilterProduct } from "../types/types";
+
 import { immer } from "zustand/middleware/immer";
 import { QuoteService } from "../api/services/quote.service";
 import { insertAfter } from "../util/valueUtil";
@@ -22,7 +24,7 @@ interface Pump {
   remark: string;
 }
 
-interface QuotesStore {
+interface ProductStore {
   loading: boolean;
   categories: ProductCategory[];
   pump: Pump[];
@@ -34,7 +36,7 @@ interface QuotesStore {
   fetchFilter: () => Promise<void>;
 }
 
-export const useProductStore = create<QuotesStore>()(
+export const useProductStore = create<ProductStore>()(
   immer((set, get) => ({
     quotes: [],
     pump: [],

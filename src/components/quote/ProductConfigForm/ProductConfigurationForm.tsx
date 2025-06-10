@@ -70,7 +70,7 @@ const ProductConfigurationForm = forwardRef(
 
     const setForm = () => {
       const category = quoteItem?.productCategory;
-      if (category?.[0] == "平模")
+      if (category?.includes("平模"))
         return {
           form: (
             <DieForm
@@ -80,11 +80,11 @@ const ProductConfigurationForm = forwardRef(
             />
           ),
         };
-      if (category?.[1] == "智能调节器")
+      if (category?.includes("智能调节器"))
         return {
           form: <SmartRegulator ref={modelFormRef} />,
         };
-      if (category?.[1] == "熔体计量泵")
+      if (category?.includes("熔体计量泵"))
         return {
           form: (
             <MeteringPumpForm
@@ -94,7 +94,7 @@ const ProductConfigurationForm = forwardRef(
             />
           ),
         };
-      if (category?.at(-1) == "共挤复合分配器")
+      if (category?.includes("共挤复合分配器"))
         return {
           form: (
             <FeedblockForm
@@ -104,7 +104,7 @@ const ProductConfigurationForm = forwardRef(
             />
           ),
         };
-      if (category?.[0] == "过滤器")
+      if (category?.includes("过滤器"))
         return {
           form: (
             <FilterForm

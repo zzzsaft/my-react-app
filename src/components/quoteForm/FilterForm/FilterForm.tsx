@@ -1,3 +1,4 @@
+
 import {
   AutoComplete,
   Col,
@@ -6,6 +7,7 @@ import {
   Radio,
   Row,
 } from "antd";
+
 import ProForm from "@ant-design/pro-form";
 import { forwardRef, useEffect, useImperativeHandle } from "react";
 import { IntervalInputFormItem } from "../../general/IntervalInput";
@@ -15,14 +17,19 @@ import { HeatingMethodSelect } from "../formComponents/HeatingMethodInput";
 import { useProductStore } from "../../../store/useProductStore";
 import { useQuoteStore } from "../../../store/useQuoteStore";
 import useProductActionModal from "../../../hook/showProductActionModal";
+
 import FilterSelection from "./FilterSelection";
+
 
 const FilterForm = forwardRef(
   ({ quoteId, quoteItemId }: { quoteId: number; quoteItemId: number }, ref) => {
     const [form] = Form.useForm();
     const filters = useProductStore((state) => state.filter);
     const fetchFilter = useProductStore((state) => state.fetchFilter);
-    const quoteItems = useQuoteStore.getState().quotes.find((q) => q.id === quoteId)?.items;
+
+    const quoteItems = useQuoteStore
+      .getState()
+      .quotes.find((q) => q.id === quoteId)?.items;
     const { showProductActionModal } = useProductActionModal();
 
     useEffect(() => {
@@ -34,7 +41,9 @@ const FilterForm = forwardRef(
       form,
     }));
 
-    const addProp = (category: string[], key: string, value: any) => ({
+
+    const addProp: any = (category: string[], key: string, value: any) => ({
+
       method: "add",
       quoteItems,
       quoteId,
@@ -44,7 +53,9 @@ const FilterForm = forwardRef(
       source: { name: category.at(-1) ?? "", value, key },
     });
 
-    const deleteProp = (category: string[]) => ({
+
+    const deleteProp: any = (category: string[]) => ({
+
       method: "delete",
       linkId: quoteItemId,
       quoteId,
@@ -85,7 +96,11 @@ const FilterForm = forwardRef(
       }
       if (changed.model != null) {
         const name = form.getFieldValue("name");
-        const item = filters.find((f) => f.name === name && f.model === changed.model);
+
+        const item = filters.find(
+          (f) => f.name === name && f.model === changed.model
+        );
+
         if (item) {
           form.setFieldsValue({
             filterBoard: item.filterBoard,
@@ -98,9 +113,11 @@ const FilterForm = forwardRef(
           });
         }
       }
+
       if (changed.safetyShield != null) await handleSafetyShield(changed.safetyShield);
       if (changed.hydraulicStation != null) await handleHydraulicStation(changed.hydraulicStation);
     };
+
 
     return (
       <ProForm
@@ -109,7 +126,9 @@ const FilterForm = forwardRef(
         submitter={false}
         onValuesChange={handleFieldsChange}
       >
+
         <FilterSelection form={form} filters={filters} />
+
         <Row gutter={16}>
           <Col xs={12} md={6}>
             <Form.Item
@@ -142,13 +161,15 @@ const FilterForm = forwardRef(
               <InputNumber
                 style={{ width: "100%" }}
                 formatter={(value) => (value ? `${value}kw` : "")}
-                parser={(value) => value?.replace(/kw/g, "")}
+                parser={(value) => value?.replace(/kw/g, "") as any}
               />
             </Form.Item>
           </Col>
           <Col xs={12} md={6}>
             <Form.Item label="加热方式" name="heatingMethod">
-              <HeatingMethodSelect />
+
+              <HeatingMethodSelect multiple />
+
             </Form.Item>
           </Col>
         </Row>
