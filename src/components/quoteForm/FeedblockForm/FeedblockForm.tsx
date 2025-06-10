@@ -141,7 +141,8 @@ const FeedblockForm = forwardRef(
                   min={0}
                   controls={false}
                   style={{ width: "100%" }}
-                  suffix="kg/h"
+                  formatter={(value) => `${value}kg/h`}
+                  parser={(value) => value?.replace(/kg\/h/g, "") as any}
                 />
               </Form.Item>
             </Col>
@@ -361,7 +362,8 @@ const FeedblockForm = forwardRef(
                   min={0}
                   // precision={2}
                   style={{ width: "100%" }}
-                  suffix="kw"
+                  formatter={(value) => `${value}kw`}
+                  parser={(value) => value?.replace(/kw/g, "") as any}
                 />
               </Form.Item>
             </Col>

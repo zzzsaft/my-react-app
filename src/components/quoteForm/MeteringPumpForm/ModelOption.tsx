@@ -409,7 +409,10 @@ export const ModelOption = () => {
                         ]}
                         initialValue=""
                       >
-                        <InputNumber addonAfter="KW" />
+                        <InputNumber
+                          formatter={(value) => `${value}KW`}
+                          parser={(value) => value?.replace(/KW/g, "") as any}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xs={12} md={8}>
