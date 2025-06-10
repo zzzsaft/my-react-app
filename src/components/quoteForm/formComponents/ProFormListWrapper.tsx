@@ -12,7 +12,10 @@ interface ProFormListWrapperProps {
   copyable?: boolean;
   rules?: any[];
   creatorButtonProps?:
-    | (ButtonProps & { creatorButtonText?: React.ReactNode; position?: "top" | "bottom" })
+    | (ButtonProps & {
+        creatorButtonText?: React.ReactNode;
+        position?: "top" | "bottom";
+      })
     | undefined;
   formItems: React.ReactNode;
 }
@@ -35,8 +38,22 @@ const ProFormListWrapper: React.FC<ProFormListWrapperProps> = ({
       rules={rules}
       min={count}
       max={count}
-      copyIconProps={copyable ? { Icon: CopyOutlined, tooltipText: "\u590d\u5236\u6b64\u9879\u5230\u672b\u5c3e" } : false}
-      deleteIconProps={canDelete ? { Icon: CloseCircleOutlined, tooltipText: "\u4e0d\u9700\u8981\u8fd9\u884c\u4e86" } : false}
+      copyIconProps={
+        copyable
+          ? {
+              Icon: CopyOutlined,
+              tooltipText: "\u590d\u5236\u6b64\u9879\u5230\u672b\u5c3e",
+            }
+          : false
+      }
+      deleteIconProps={
+        canDelete
+          ? {
+              Icon: CloseCircleOutlined,
+              tooltipText: "\u4e0d\u9700\u8981\u8fd9\u884c\u4e86",
+            }
+          : false
+      }
       creatorButtonProps={canCreate ? creatorButtonProps : false}
       alwaysShowItemLabel
       itemRender={({ listDom, action }) => (
@@ -49,9 +66,7 @@ const ProFormListWrapper: React.FC<ProFormListWrapperProps> = ({
             marginBottom: "8px",
           }}
         >
-          <div
-            style={{ position: "absolute", top: 8, right: 8, zIndex: 1 }}
-          >
+          <div style={{ position: "absolute", top: 8, right: 8, zIndex: 1 }}>
             {action}
           </div>
           {listDom}

@@ -159,7 +159,7 @@ const ProductConfigModal: React.FC<ProductConfigModalProps> = ({
           formRef.current?.modelForm?.resetFields();
           formRef.current?.priceForm.resetFields();
         }}
-        // destroyOnClose
+        destroyOnHidden
         forceRender
         // afterOpenChange={handleAfterOpenChange}
         onCancel={() => save()}

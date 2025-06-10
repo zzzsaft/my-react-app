@@ -111,7 +111,7 @@ const QuoteModal: React.FC<QuoteModalProps> = ({
       //       提交
       //     </Button>,
       //   ]}
-      destroyOnClose
+      destroyOnHidden
       maskClosable={false} // 禁止点击遮罩层关闭
       keyboard={false} // 禁止ESC键关闭
     >

@@ -6,6 +6,7 @@ interface StrictUpperSlashInputProps {
   onChange?: (value: string) => void;
   placeholder?: string;
   maxLength?: number;
+  style?: React.CSSProperties;
 }
 
 const AutoSlashInput: React.FC<StrictUpperSlashInputProps> = ({
@@ -13,6 +14,7 @@ const AutoSlashInput: React.FC<StrictUpperSlashInputProps> = ({
   onChange,
   placeholder = "例如: A/B/C",
   maxLength = 20,
+  style,
 }) => {
   // 格式化显示值（添加斜杠）
   const formatDisplayValue = useCallback((rawValue: string): string => {
@@ -66,6 +68,7 @@ const AutoSlashInput: React.FC<StrictUpperSlashInputProps> = ({
       placeholder={placeholder}
       maxLength={maxLength * 2 - 1} // 考虑斜杠占位
       allowClear
+      style={style}
     />
   );
 };

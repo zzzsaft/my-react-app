@@ -80,14 +80,6 @@ const FeedblockForm = forwardRef(
             "extruderModel",
             list.slice(0, count).concat(next.slice(list.length))
           );
-          form.setFieldValue(
-            "compositeStructure",
-            next.map((i) => ({ layer: i.layer }))
-          );
-          form.setFieldValue(
-            "compositeRatio",
-            next.map((i) => ({ layer: i.layer }))
-          );
           form.setFieldValue("screwList", next);
         }
       }
@@ -138,50 +130,23 @@ const FeedblockForm = forwardRef(
                 />
               </Form.Item>
             </Col>
-            <Col xs={24} md={12}>
+            <Col xs={24} md={24}>
               <ProFormListWrapper
                 name="compositeStructure"
                 label="层结构形式"
                 canCreate={true}
                 canDelete={true}
                 formItems={
-                  <Form.Item
+                  <ProForm.Item
                     name="structure"
                     label="结构"
                     rules={[{ required: true, message: "请输入层结构形式" }]}
                   >
-                    <AutoSlashInput />
-                  </Form.Item>
+                    <AutoSlashInput style={{ width: "120px" }} />
+                  </ProForm.Item>
                 }
               />
             </Col>
-            <Form.Item noStyle dependencies={["extruderNumber"]}>
-              {({ getFieldValue }) => {
-                const extruderNumber = getFieldValue("extruderNumber");
-                return (
-                  <Col xs={24} md={12}>
-                    <ProFormListWrapper
-                      name="compositeStructure"
-                      label="层结构形式"
-                      count={countMap[extruderNumber as string]}
-                      canCreate={false}
-                      canDelete={false}
-                      formItems={
-                        <Form.Item
-                          name="structure"
-                          label="结构"
-                          rules={[
-                            { required: true, message: "请输入层结构形式" },
-                          ]}
-                        >
-                          <AutoSlashInput />
-                        </Form.Item>
-                      }
-                    />
-                  </Col>
-                );
-              }}
-            </Form.Item>
             <Form.Item noStyle dependencies={["extruderNumber"]}>
               {({ getFieldValue }) => {
                 const extruderNumber = getFieldValue("extruderNumber");
@@ -212,17 +177,17 @@ const FeedblockForm = forwardRef(
                       formItems={
                         <Row gutter={8}>
                           <Col span={10}>
-                            <Form.Item name="layer" label="层">
+                            <ProForm.Item name="layer" label="层">
                               <AutoComplete
                                 disabled
                                 options={"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                                   .split("")
                                   .map((s) => ({ value: s }))}
                               />
-                            </Form.Item>
+                            </ProForm.Item>
                           </Col>
                           <Col span={14}>
-                            <Form.Item
+                            <ProForm.Item
                               name="ratio"
                               label="比例"
                               rules={[
@@ -236,7 +201,7 @@ const FeedblockForm = forwardRef(
                                 formatter={(v) => `${v}%`}
                                 parser={(v) => v?.replace(/%/g, "") as any}
                               />
-                            </Form.Item>
+                            </ProForm.Item>
                           </Col>
                         </Row>
                       }
