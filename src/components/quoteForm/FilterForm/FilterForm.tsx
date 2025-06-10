@@ -1,4 +1,13 @@
-import { AutoComplete, Col, Form, Input, InputNumber, Radio, Row } from "antd";
+
+import {
+  AutoComplete,
+  Col,
+  Form,
+  InputNumber,
+  Radio,
+  Row,
+} from "antd";
+
 import ProForm from "@ant-design/pro-form";
 import { forwardRef, useEffect, useImperativeHandle } from "react";
 import { IntervalInputFormItem } from "../../general/IntervalInput";
@@ -9,11 +18,15 @@ import { useProductStore } from "../../../store/useProductStore";
 import { useQuoteStore } from "../../../store/useQuoteStore";
 import useProductActionModal from "../../../hook/showProductActionModal";
 
+import FilterSelection from "./FilterSelection";
+
+
 const FilterForm = forwardRef(
   ({ quoteId, quoteItemId }: { quoteId: number; quoteItemId: number }, ref) => {
     const [form] = Form.useForm();
     const filters = useProductStore((state) => state.filter);
     const fetchFilter = useProductStore((state) => state.fetchFilter);
+
     const quoteItems = useQuoteStore
       .getState()
       .quotes.find((q) => q.id === quoteId)?.items;
@@ -28,7 +41,9 @@ const FilterForm = forwardRef(
       form,
     }));
 
+
     const addProp: any = (category: string[], key: string, value: any) => ({
+
       method: "add",
       quoteItems,
       quoteId,
@@ -38,7 +53,9 @@ const FilterForm = forwardRef(
       source: { name: category.at(-1) ?? "", value, key },
     });
 
+
     const deleteProp: any = (category: string[]) => ({
+
       method: "delete",
       linkId: quoteItemId,
       quoteId,
@@ -79,9 +96,11 @@ const FilterForm = forwardRef(
       }
       if (changed.model != null) {
         const name = form.getFieldValue("name");
+
         const item = filters.find(
           (f) => f.name === name && f.model === changed.model
         );
+
         if (item) {
           form.setFieldsValue({
             filterBoard: item.filterBoard,
@@ -94,22 +113,11 @@ const FilterForm = forwardRef(
           });
         }
       }
-      if (changed.safetyShield != null)
-        await handleSafetyShield(changed.safetyShield);
-      if (changed.hydraulicStation != null)
-        await handleHydraulicStation(changed.hydraulicStation);
+
+      if (changed.safetyShield != null) await handleSafetyShield(changed.safetyShield);
+      if (changed.hydraulicStation != null) await handleHydraulicStation(changed.hydraulicStation);
     };
 
-    const nameOptions = Array.from(new Set(filters.map((f) => f.name))).map(
-      (n) => ({
-        label: n,
-        value: n,
-      })
-    );
-    const currentName = form.getFieldValue("name");
-    const modelOptions = filters
-      .filter((f) => f.name === currentName)
-      .map((f) => ({ label: f.model, value: f.model }));
 
     return (
       <ProForm
@@ -118,61 +126,9 @@ const FilterForm = forwardRef(
         submitter={false}
         onValuesChange={handleFieldsChange}
       >
-        <Row gutter={16}>
-          <Col xs={12} md={6}>
-            <Form.Item
-              label="过滤器类型"
-              name="name"
-              rules={[{ required: true, message: "请选择过滤器类型" }]}
-            >
-              <AutoComplete options={nameOptions} allowClear />
-            </Form.Item>
-          </Col>
-          <Col xs={12} md={6}>
-            <Form.Item
-              label="型号"
-              name="model"
-              rules={[{ required: true, message: "请选择型号" }]}
-            >
-              <AutoComplete options={modelOptions} allowClear />
-            </Form.Item>
-          </Col>
-          <Col xs={12} md={6}>
-            <Form.Item label="过滤网板" name="filterBoard">
-              <Input readOnly />
-            </Form.Item>
-          </Col>
-          <Col xs={12} md={6}>
-            <Form.Item label="产能" name="production">
-              <Input readOnly />
-            </Form.Item>
-          </Col>
-          <Col xs={12} md={6}>
-            <Form.Item label="轮廓尺寸" name="dimension">
-              <Input readOnly />
-            </Form.Item>
-          </Col>
-          <Col xs={12} md={6}>
-            <Form.Item label="重量" name="weight">
-              <Input readOnly />
-            </Form.Item>
-          </Col>
-          <Col xs={12} md={6}>
-            <Form.Item label="过滤直径" name="filterDiameter">
-              <Input readOnly />
-            </Form.Item>
-          </Col>
-          <Col xs={12} md={6}>
-            <Form.Item label="有效过滤面积" name="effectiveFilterArea">
-              <Input readOnly />
-            </Form.Item>
-          </Col>
-          <Col xs={12} md={6}>
-            <Form.Item label="承受压力" name="pressure">
-              <Input readOnly />
-            </Form.Item>
-          </Col>
-        </Row>
+
+        <FilterSelection form={form} filters={filters} />
+
         <Row gutter={16}>
           <Col xs={12} md={6}>
             <Form.Item
@@ -211,7 +167,9 @@ const FilterForm = forwardRef(
           </Col>
           <Col xs={12} md={6}>
             <Form.Item label="加热方式" name="heatingMethod">
+
               <HeatingMethodSelect multiple />
+
             </Form.Item>
           </Col>
         </Row>

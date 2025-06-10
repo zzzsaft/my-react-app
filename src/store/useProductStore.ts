@@ -7,12 +7,9 @@ import { isEqual } from "lodash-es";
 import { produce } from "immer";
 import zukeeper from "zukeeper";
 import { throttle } from "lodash-es";
-import {
-  ProductCategory,
-  Quote,
-  QuoteItem,
-  FilterProduct,
-} from "../types/types";
+
+import { ProductCategory, Quote, QuoteItem, FilterProduct } from "../types/types";
+
 import { immer } from "zustand/middleware/immer";
 import { QuoteService } from "../api/services/quote.service";
 import { insertAfter } from "../util/valueUtil";
