@@ -14,6 +14,7 @@ import SmartRegulator from "../../quoteForm/SmartRegulator";
 import { QuoteItem } from "../../../types/types";
 import MeteringPumpForm from "../../quoteForm/MeteringPumpForm/MeteringPumpForm";
 import FeedblockForm from "../../quoteForm/FeedblockForm/FeedblockForm";
+import FilterForm from "../../quoteForm/FilterForm/FilterForm";
 
 interface ProductConfigurationFormProps {
   quoteItem?: QuoteItem;
@@ -97,6 +98,16 @@ const ProductConfigurationForm = forwardRef(
         return {
           form: (
             <FeedblockForm
+              ref={modelFormRef}
+              quoteId={quoteId}
+              quoteItemId={quoteItem?.id ?? 0}
+            />
+          ),
+        };
+      if (category?.[0] == "过滤器")
+        return {
+          form: (
+            <FilterForm
               ref={modelFormRef}
               quoteId={quoteId}
               quoteItemId={quoteItem?.id ?? 0}

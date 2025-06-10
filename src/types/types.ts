@@ -113,3 +113,18 @@ export interface CompanyOption {
   erpid: string;
   label?: string;
 }
+
+export interface FilterProduct {
+  id: number;
+  name: string;
+  model: string;
+  filterBoard: string | null;
+  production: string | null;
+  dimension: string | null;
+  weight: string | null;
+  filterDiameter: string | null;
+  effectiveFilterArea: string | null;
+  power: string | null;
+  pressure: string | null;
+  remark: string | null;
+}

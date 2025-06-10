@@ -6,8 +6,8 @@ import { OpportunityService } from "../api/services/opportunity.service";
 import { isEqual } from "lodash-es";
 import { produce } from "immer";
 import zukeeper from "zukeeper";
-import { throttle, values } from "lodash-es";
-import { ProductCategory, Quote, QuoteItem } from "../types/types";
+import { throttle } from "lodash-es";
+import { ProductCategory, Quote, QuoteItem, FilterProduct } from "../types/types";
 import { immer } from "zustand/middleware/immer";
 import { QuoteService } from "../api/services/quote.service";
 import { insertAfter } from "../util/valueUtil";
@@ -26,16 +26,19 @@ interface QuotesStore {
   loading: boolean;
   categories: ProductCategory[];
   pump: Pump[];
+  filter: FilterProduct[];
   configModalVisible: boolean;
   initialize: () => Promise<void>;
   fetchCategories: () => Promise<void>;
   fetchPump: () => Promise<void>;
+  fetchFilter: () => Promise<void>;
 }
 
 export const useProductStore = create<QuotesStore>()(
   immer((set, get) => ({
     quotes: [],
     pump: [],
+    filter: [],
     categories: [],
     loading: false,
     configModalVisible: false,
@@ -55,6 +58,12 @@ export const useProductStore = create<QuotesStore>()(
       set({ loading: true });
       const pump = await OpportunityService.getProductPump();
       set({ pump, loading: false });
+    }, 1000),
+
+    fetchFilter: throttle(async () => {
+      set({ loading: true });
+      const filter = await OpportunityService.getProductFilter();
+      set({ filter, loading: false });
     }, 1000),
   }))
 );
