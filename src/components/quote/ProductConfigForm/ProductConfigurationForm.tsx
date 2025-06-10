@@ -18,9 +18,14 @@ import FeedblockForm from "../../quoteForm/FeedblockForm/FeedblockForm";
 interface ProductConfigurationFormProps {
   quoteItem?: QuoteItem;
   quoteId: number;
+  material?: string[];
+  finalProduct?: string[];
 }
 const ProductConfigurationForm = forwardRef(
-  ({ quoteItem, quoteId }: ProductConfigurationFormProps, ref) => {
+  (
+    { quoteItem, quoteId, material = [], finalProduct = [] }: ProductConfigurationFormProps,
+    ref
+  ) => {
     const priceFormRef = useRef<{ form: FormInstance }>(null);
     const modelFormRef = useRef<{ form: FormInstance }>(null);
     const dieFormRef = useRef<{ form: FormInstance }>(null);
@@ -29,6 +34,34 @@ const ProductConfigurationForm = forwardRef(
     const meteringPumpFormRef = useRef<{ form: FormInstance }>(null);
     const feedblockFormRef = useRef<{ form: FormInstance }>(null);
     const [activeKey, setActiveKey] = useState("1");
+
+    const generateName = () => {
+      const category = quoteItem?.productCategory;
+      if (!category) return "";
+
+      if (category[0] === "平模") {
+        const mat = material.join("");
+        const final = finalProduct.join("");
+        return `${mat}${final}模头`;
+      }
+
+      if (category.at(-1) === "共挤复合分配器") {
+        const layers = modelFormRef.current?.form.getFieldValue("layers");
+        const extruder = modelFormRef.current?.form.getFieldValue("extruderNumber");
+        if (layers && extruder) {
+          return `${layers}共挤复合分配器（${extruder}）`;
+        }
+      }
+
+      if (category.at(-1) === "熔体计量泵") {
+        const model = modelFormRef.current?.form.getFieldValue("model");
+        if (model) {
+          return `${model}熔体计量泵`;
+        }
+      }
+
+      return "";
+    };
 
     const setForm = () => {
       const category = quoteItem?.productCategory;
@@ -101,7 +134,9 @@ const ProductConfigurationForm = forwardRef(
           {
             label: "价格配置",
             key: "2",
-            children: <PriceForm ref={priceFormRef} />,
+            children: (
+              <PriceForm ref={priceFormRef} onGenerateName={generateName} />
+            ),
             forceRender: true,
           },
         ]}
