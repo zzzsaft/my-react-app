@@ -1,4 +1,13 @@
-import { AutoComplete, Col, Form, Input, InputNumber, Radio, Row } from "antd";
+import {
+  AutoComplete,
+  Col,
+  Form,
+  Input,
+  InputNumber,
+  Radio,
+  Row,
+  Select,
+} from "antd";
 import ProForm from "@ant-design/pro-form";
 import { forwardRef, useEffect, useImperativeHandle } from "react";
 import { IntervalInputFormItem } from "../../general/IntervalInput";
@@ -8,6 +17,7 @@ import { HeatingMethodSelect } from "../formComponents/HeatingMethodInput";
 import { useProductStore } from "../../../store/useProductStore";
 import { useQuoteStore } from "../../../store/useQuoteStore";
 import useProductActionModal from "../../../hook/showProductActionModal";
+import FilterSelection from "./FilterSelection";
 
 const FilterForm = forwardRef(
   ({ quoteId, quoteItemId }: { quoteId: number; quoteItemId: number }, ref) => {
@@ -117,7 +127,7 @@ const FilterForm = forwardRef(
               name="name"
               rules={[{ required: true, message: "请选择过滤器类型" }]}
             >
-              <AutoComplete options={nameOptions} allowClear />
+              <Select options={nameOptions} allowClear />
             </Form.Item>
           </Col>
           <Col xs={12} md={6}>
@@ -126,44 +136,10 @@ const FilterForm = forwardRef(
               name="model"
               rules={[{ required: true, message: "请选择型号" }]}
             >
-              <AutoComplete options={modelOptions} allowClear />
+              <Select options={modelOptions} allowClear />
             </Form.Item>
           </Col>
-          <Col xs={12} md={6}>
-            <Form.Item label="过滤网板" name="filterBoard">
-              <Input readOnly />
-            </Form.Item>
-          </Col>
-          <Col xs={12} md={6}>
-            <Form.Item label="产能" name="production">
-              <Input readOnly />
-            </Form.Item>
-          </Col>
-          <Col xs={12} md={6}>
-            <Form.Item label="轮廓尺寸" name="dimension">
-              <Input readOnly />
-            </Form.Item>
-          </Col>
-          <Col xs={12} md={6}>
-            <Form.Item label="重量" name="weight">
-              <Input readOnly />
-            </Form.Item>
-          </Col>
-          <Col xs={12} md={6}>
-            <Form.Item label="过滤直径" name="filterDiameter">
-              <Input readOnly />
-            </Form.Item>
-          </Col>
-          <Col xs={12} md={6}>
-            <Form.Item label="有效过滤面积" name="effectiveFilterArea">
-              <Input readOnly />
-            </Form.Item>
-          </Col>
-          <Col xs={12} md={6}>
-            <Form.Item label="承受压力" name="pressure">
-              <Input readOnly />
-            </Form.Item>
-          </Col>
+          <FilterSelection />
         </Row>
         <Row gutter={16}>
           <Col xs={12} md={6}>
