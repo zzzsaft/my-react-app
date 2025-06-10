@@ -1,4 +1,4 @@
-import { Modal, Form, Button, Spin, message } from "antd";
+import { Modal, Button, Skeleton } from "antd";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useQuoteStore } from "../../../store/useQuoteStore";
 import { FormInstance } from "antd/lib";
@@ -32,9 +32,11 @@ const ProductConfigModal: React.FC<ProductConfigModalProps> = ({
     switchTab: (key: string) => void;
   }>(null);
   const priceForm = formRef.current?.priceForm;
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!quoteItem || !open) return;
+    setLoading(true);
     const { config, ...otherValue } = quoteItem;
 
     const basicValues = {
@@ -60,10 +62,14 @@ const ProductConfigModal: React.FC<ProductConfigModalProps> = ({
       formRef.current.priceForm?.setFieldsValue(basicValues);
       formRef.current.modelForm?.setFieldsValue(formValues);
       console.log(formRef.current.modelForm?.getFieldsValue());
+      setLoading(false);
     };
     // 添加延迟确保表单已渲染
     const timer = setTimeout(setFormFields, 100);
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      setLoading(false);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, quoteItem]);
 
@@ -118,7 +124,6 @@ const ProductConfigModal: React.FC<ProductConfigModalProps> = ({
         console.error("Validation failed:", error);
       }
     } catch (error: any) {
-      // message.error(error.errorFields.map((e: any) => e.errors).join(","));
       formRef.current?.switchTab("1");
       console.error("Validation failed:", error);
     }
@@ -175,13 +180,17 @@ const ProductConfigModal: React.FC<ProductConfigModalProps> = ({
           </Button>,
         ]}
       >
-        <ProductConfigurationForm
-          quoteId={quoteId}
-          quoteItem={quoteItem}
-          material={material || []}
-          finalProduct={finalProduct || []}
-          ref={formRef}
-        />
+        {loading ? (
+          <div style={{ padding: 24 }}>
+            <Skeleton active paragraph={{ rows: 8 }} />
+          </div>
+        ) : (
+          <ProductConfigurationForm
+            quoteId={quoteId}
+            quoteItem={quoteItem}
+            ref={formRef}
+          />
+        )}
       </Modal>
     </>
   );
