@@ -21,6 +21,7 @@ import RatioInput from "../../general/RatioInput";
 import ExtruderForm from "../formComponents/ExtruderForm";
 import { PowerInput } from "../formComponents/PowerInput";
 import { HeatingMethodSelect } from "../formComponents/HeatingMethodInput";
+import ProFormListWrapper from "../formComponents/ProFormListWrapper";
 
 interface PriceFormRef {
   form: FormInstance;
@@ -48,11 +49,6 @@ const FeedblockForm = forwardRef(
 
 
     const handleFieldsChange = (changedFields: any) => {
-      if (changedFields.compositeStructure != null) {
-        const structs = changedFields.compositeStructure.split("");
-        const list = structs.map((s: any) => ({ layer: s }));
-        form.setFieldValue("screwList", list);
-      }
       if (changedFields.layers != null) {
         const map: Record<string, string[]> = {
           两层: ["两台机"],
@@ -77,6 +73,15 @@ const FeedblockForm = forwardRef(
             "extruderModel",
             list.slice(0, count).concat(next.slice(list.length))
           );
+          form.setFieldValue(
+            "compositeStructure",
+            next.map((i) => ({ layer: i.layer }))
+          );
+          form.setFieldValue(
+            "compositeRatio",
+            next.map((i) => ({ layer: i.layer }))
+          );
+          form.setFieldValue("screwList", next);
         }
       }
     };
@@ -173,40 +178,84 @@ const FeedblockForm = forwardRef(
                   );
                 }}
               </Form.Item>
-              <Col xs={24} md={12}>
-                <Form.Item
-                  name="compositeStructure"
-                  label="层结构形式"
-                  rules={[{ required: true, message: "请输入层结构形式" }]}
-                >
-                  <AutoSlashInput />
-                </Form.Item>
-              </Col>
-              <Col xs={24} md={12}>
-                <ProFormDependency name={["compositeStructure"]}>
-                  {({ compositeStructure }) => (
-                    <Form.Item
+              <Form.Item noStyle dependencies={["extruderNumber"]}>
+                {({ extruderNumber }) => (
+                  <Col xs={24} md={12}>
+                    <ProFormListWrapper
+                      name="compositeStructure"
+                      label="层结构形式"
+                      count={countMap[extruderNumber as string]}
+                      canCreate={false}
+                      canDelete={false}
+                      formItems={
+                        <Form.Item
+                          name="structure"
+                          label="结构"
+                          rules={[{ required: true, message: "请输入层结构形式" }]}
+                        >
+                          <AutoSlashInput />
+                        </Form.Item>
+                      }
+                    />
+                  </Col>
+                )}
+              </Form.Item>
+              <Form.Item noStyle dependencies={["extruderNumber"]}>
+                {({ extruderNumber }) => (
+                  <Col xs={24} md={12}>
+                    <ProFormListWrapper
                       name="compositeRatio"
                       label="每层复合比例"
+                      count={countMap[extruderNumber as string]}
+                      canCreate={false}
+                      canDelete={false}
                       rules={[
-                        { required: true, message: "请输入复合比例" },
                         {
-                          validator: (_, value) => {
-                            const l1 = value?.split(":").length;
-                            const l2 = compositeStructure?.split("").length;
-                            if (l1 !== l2) {
-                              return Promise.reject(new Error("复合比例与层数不匹配"));
+                          validator: async (_, value) => {
+                            const sum = (value || []).reduce(
+                              (t: number, c: any) => t + Number(c?.ratio || 0),
+                              0
+                            );
+                            if (sum !== 100) {
+                              return Promise.reject(new Error("比例和需为100%"));
                             }
                             return Promise.resolve();
                           },
                         },
                       ]}
-                    >
-                      <RatioInput />
-                    </Form.Item>
-                  )}
-                </ProFormDependency>
-              </Col>
+                      formItems={
+                        <Row gutter={8}>
+                          <Col span={10}>
+                            <Form.Item name="layer" label="层">
+                              <AutoComplete
+                                disabled
+                                options={"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                                  .split("")
+                                  .map((s) => ({ value: s }))}
+                              />
+                            </Form.Item>
+                          </Col>
+                          <Col span={14}>
+                            <Form.Item
+                              name="ratio"
+                              label="比例"
+                              rules={[{ required: true, message: "请输入比例" }]}
+                            >
+                              <InputNumber
+                                min={0}
+                                max={100}
+                                style={{ width: "100%" }}
+                                formatter={(v) => `${v}%`}
+                                parser={(v) => v?.replace(/%/g, "") as any}
+                              />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                      }
+                    />
+                  </Col>
+                )}
+              </Form.Item>
               <Col xs={24} md={12}>
                 <Form.Item
                   name="fastener"
