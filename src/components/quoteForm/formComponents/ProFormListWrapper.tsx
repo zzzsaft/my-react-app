@@ -6,7 +6,8 @@ import type { ButtonProps } from "antd";
 interface ProFormListWrapperProps {
   name: string;
   label: React.ReactNode;
-  count?: number;
+  min?: number;
+  max?: number;
   canCreate?: boolean;
   canDelete?: boolean;
   copyable?: boolean;
@@ -18,26 +19,29 @@ interface ProFormListWrapperProps {
       })
     | undefined;
   formItems: React.ReactNode;
+  isHorizontal?: boolean;
 }
 
 const ProFormListWrapper: React.FC<ProFormListWrapperProps> = ({
   name,
   label,
-  count,
+  min,
+  max,
   canCreate = true,
   canDelete = true,
   copyable = false,
   creatorButtonProps,
   rules,
   formItems,
+  isHorizontal = false,
 }) => {
   return (
     <ProFormList
       name={name}
       label={label}
       rules={rules}
-      min={count}
-      max={count}
+      min={min}
+      max={max}
       copyIconProps={
         copyable
           ? {
@@ -50,28 +54,43 @@ const ProFormListWrapper: React.FC<ProFormListWrapperProps> = ({
         canDelete
           ? {
               Icon: CloseCircleOutlined,
-              tooltipText: "\u4e0d\u9700\u8981\u8fd9\u884c\u4e86",
+              tooltipText: "不需要这行了",
             }
           : false
       }
       creatorButtonProps={canCreate ? creatorButtonProps : false}
       alwaysShowItemLabel
-      itemRender={({ listDom, action }) => (
-        <div
-          style={{
-            position: "relative",
-            border: "1px solid #f0f0f0",
-            borderRadius: "4px",
-            padding: "8px",
-            marginBottom: "8px",
-          }}
-        >
-          <div style={{ position: "absolute", top: 8, right: 8, zIndex: 1 }}>
-            {action}
+      itemRender={({ listDom, action }) =>
+        isHorizontal ? (
+          <>
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                marginInlineEnd: 25,
+              }}
+            >
+              {listDom}
+              {action}
+            </div>
+          </>
+        ) : (
+          <div
+            style={{
+              position: "relative",
+              border: "1px solid #f0f0f0",
+              borderRadius: "4px",
+              padding: "8px",
+              marginBottom: "8px",
+            }}
+          >
+            <div style={{ position: "absolute", top: 8, right: 8, zIndex: 1 }}>
+              {action}
+            </div>
+            {listDom}
           </div>
-          {listDom}
-        </div>
-      )}
+        )
+      }
     >
       <ProFormGroup key="group">{formItems}</ProFormGroup>
     </ProFormList>

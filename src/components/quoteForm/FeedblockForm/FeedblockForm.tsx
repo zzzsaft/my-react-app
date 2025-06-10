@@ -12,7 +12,11 @@ import {
 } from "antd";
 
 import { forwardRef, useImperativeHandle } from "react";
-import ProForm, { ProFormDependency } from "@ant-design/pro-form";
+import ProForm, {
+  ProFormDependency,
+  ProFormList,
+  ProFormText,
+} from "@ant-design/pro-form";
 import TextArea from "antd/es/input/TextArea";
 
 import MaterialSelect from "../../general/MaterialSelect";
@@ -94,7 +98,7 @@ const FeedblockForm = forwardRef(
           onValuesChange={handleFieldsChange}
         >
           <Row gutter={16}>
-            <Col xs={24} md={12}>
+            <Col xs={12} md={6}>
               <Form.Item
                 name="material"
                 label="适用塑料原料"
@@ -103,7 +107,7 @@ const FeedblockForm = forwardRef(
                 <MaterialSelect />
               </Form.Item>
             </Col>
-            <Col xs={24} md={12}>
+            <Col xs={12} md={6}>
               <Form.Item
                 name="dieMaterial"
                 label="模体材质"
@@ -116,7 +120,7 @@ const FeedblockForm = forwardRef(
                 />
               </Form.Item>
             </Col>
-            <Col xs={24} md={12}>
+            <Col xs={12} md={6}>
               <Form.Item
                 name="production"
                 label="产量(kg/h)"
@@ -130,16 +134,92 @@ const FeedblockForm = forwardRef(
                 />
               </Form.Item>
             </Col>
+            <Col xs={24} md={16}>
+              <Form.Item
+                name="structure"
+                label="分配器结构"
+                rules={[{ required: true, message: "请选择分配器结构" }]}
+              >
+                <Radio.Group>
+                  <Radio value="镶块式">镶块式</Radio>
+                  <Radio value="摆叶式">摆叶式</Radio>
+                  <Radio value="芯棒式">芯棒式</Radio>
+                  <Radio value="精诚设计">精诚设计</Radio>
+                  <Radio value="特殊定制">特殊定制</Radio>
+                </Radio.Group>
+              </Form.Item>
+            </Col>
+            <Form.Item noStyle dependencies={["structure"]}>
+              {({ getFieldValue }) =>
+                getFieldValue("structure") === "特殊定制" ? (
+                  <Col xs={24} md={8}>
+                    <Form.Item
+                      name="customStructure"
+                      label="特殊定制说明"
+                      rules={[{ required: true, message: "请输入定制内容" }]}
+                    >
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                ) : null
+              }
+            </Form.Item>
+            <Col xs={24} md={12}>
+              <Form.Item
+                name="layers"
+                label="分配器层数"
+                rules={[{ required: true, message: "请选择分配器层数" }]}
+                initialValue={"两层"}
+              >
+                <Segmented<string>
+                  options={["两层", "三层", "五层", "七层", "九层"]}
+                />
+              </Form.Item>
+            </Col>
+            <Form.Item noStyle dependencies={["layers"]}>
+              {({ getFieldValue }) => {
+                const layer = getFieldValue("layers");
+                const map: Record<string, string[]> = {
+                  两层: ["两台机"],
+                  三层: ["两台机", "三台机"],
+                  五层: ["三台机", "四台机", "五台机"],
+                  七层: ["四台机", "五台机", "六台机", "七台机"],
+                  九层: ["五台机", "六台机", "七台机", "八台机", "九台机"],
+                };
+                const opts = map[layer as string] || [];
+                return (
+                  <Col xs={24} md={12}>
+                    <Form.Item
+                      name="extruderNumber"
+                      label="挤出机数量"
+                      rules={[{ required: true, message: "请选择挤出机数量" }]}
+                      initialValue={"两台机"}
+                    >
+                      <Select
+                        options={opts.map((i) => ({ label: i, value: i }))}
+                      />
+                    </Form.Item>
+                  </Col>
+                );
+              }}
+            </Form.Item>
             <Col xs={24} md={24}>
               <ProFormListWrapper
                 name="compositeStructure"
+                rules={[{ required: true, message: "请输入层结构形式" }]}
                 label="层结构形式"
+                min={1}
                 canCreate={true}
                 canDelete={true}
+                isHorizontal
+                creatorButtonProps={{
+                  creatorButtonText: "新建",
+                  type: "link",
+                  style: { width: "unset" },
+                }}
                 formItems={
                   <ProForm.Item
                     name="structure"
-                    label="结构"
                     rules={[{ required: true, message: "请输入层结构形式" }]}
                   >
                     <AutoSlashInput style={{ width: "120px" }} />
@@ -147,79 +227,82 @@ const FeedblockForm = forwardRef(
                 }
               />
             </Col>
+
             <Form.Item noStyle dependencies={["extruderNumber"]}>
               {({ getFieldValue }) => {
                 const extruderNumber = getFieldValue("extruderNumber");
+                console.log(countMap[extruderNumber as string]);
                 return (
-                  <Col xs={24} md={12}>
-                    <ProFormListWrapper
-                      name="compositeRatio"
-                      label="每层复合比例"
-                      count={countMap[extruderNumber as string]}
-                      canCreate={false}
-                      canDelete={false}
-                      rules={[
-                        {
-                          validator: async (_: any, value: any) => {
-                            const sum = (value || []).reduce(
-                              (t: number, c: any) => t + Number(c?.ratio || 0),
-                              0
-                            );
-                            if (sum !== 100) {
-                              return Promise.reject(
-                                new Error("比例和需为100%")
-                              );
-                            }
-                            return Promise.resolve();
-                          },
-                        },
-                      ]}
-                      formItems={
-                        <Row gutter={8}>
-                          <Col span={10}>
-                            <ProForm.Item name="layer" label="层">
-                              <AutoComplete
-                                disabled
-                                options={"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                                  .split("")
-                                  .map((s) => ({ value: s }))}
-                              />
-                            </ProForm.Item>
-                          </Col>
-                          <Col span={14}>
-                            <ProForm.Item
-                              name="ratio"
-                              label="比例"
-                              rules={[
-                                { required: true, message: "请输入比例" },
-                              ]}
-                            >
-                              <InputNumber
-                                min={0}
-                                max={100}
-                                style={{ width: "100%" }}
-                                formatter={(v) => `${v}%`}
-                                parser={(v) => v?.replace(/%/g, "") as any}
-                              />
-                            </ProForm.Item>
-                          </Col>
-                        </Row>
-                      }
-                    />
-                  </Col>
+                  <>
+                    <Col xs={24} md={24}>
+                      <ProFormListWrapper
+                        name="compositeRatio"
+                        label="每层复合比例"
+                        min={countMap[extruderNumber as string]}
+                        max={countMap[extruderNumber as string]}
+                        canCreate={false}
+                        canDelete={false}
+                        // rules={[
+                        //   {
+                        //     validator: async (_: any, value: any) => {
+                        //       const sum = (value || []).reduce(
+                        //         (t: number, c: any) =>
+                        //           t + Number(c?.ratio || 0),
+                        //         0
+                        //       );
+                        //       if (sum !== 100) {
+                        //         return Promise.reject(
+                        //           new Error("比例和需为100%")
+                        //         );
+                        //       }
+                        //       return Promise.resolve();
+                        //     },
+                        //   },
+                        // ]}
+                        formItems={
+                          <Row gutter={8}>
+                            <Col span={10}>
+                              <ProForm.Item name="layer" label="层">
+                                <AutoComplete
+                                  disabled
+                                  options={"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                                    .split("")
+                                    .map((s) => ({ value: s }))}
+                                />
+                              </ProForm.Item>
+                            </Col>
+                            <Col span={14}>
+                              <ProForm.Item
+                                name="ratio"
+                                label="比例"
+                                rules={[
+                                  { required: true, message: "请输入比例" },
+                                ]}
+                              >
+                                <InputNumber
+                                  min={0}
+                                  max={100}
+                                  style={{ width: "100%" }}
+                                  formatter={(v) => `${v}%`}
+                                  parser={(v) => v?.replace(/%/g, "") as any}
+                                />
+                              </ProForm.Item>
+                            </Col>
+                          </Row>
+                        }
+                      />
+                    </Col>
+                  </>
                 );
               }}
             </Form.Item>
             <Col xs={24} md={12}>
               <Form.Item
-                name="fastener"
-                label="紧固件（螺丝）"
-                rules={[{ required: true, message: "请选择螺丝" }]}
-                initialValue="12.9高强度"
+                name="heatingMethod"
+                label="加热方式"
+                rules={[{ required: true, message: "请选择加热方式" }]}
               >
-                <AutoComplete
-                  options={[{ label: "12.9高强度", value: "12.9高强度" }]}
-                />
+                <HeatingMethodSelect multiple />
               </Form.Item>
             </Col>
             <Col xs={24} md={12}>
@@ -231,29 +314,34 @@ const FeedblockForm = forwardRef(
                 <PowerInput />
               </Form.Item>
             </Col>
-            <Col xs={24} md={12}>
+            <Col xs={12} md={6}>
               <Form.Item
                 name="heatingPower"
                 label="加热功率"
                 rules={[{ required: true, message: "请输入加热功率" }]}
               >
                 <InputNumber
+                  controls={false}
                   min={0}
-                  precision={0}
+                  // precision={2}
                   style={{ width: "100%" }}
-                  addonAfter="kw"
+                  suffix="kw"
                 />
               </Form.Item>
             </Col>
-            <Col xs={24} md={12}>
+            <Col xs={12} md={6}>
               <Form.Item
-                name="heatingMethod"
-                label="加热方式"
-                rules={[{ required: true, message: "请选择加热方式" }]}
+                name="fastener"
+                label="紧固件（螺丝）"
+                rules={[{ required: true, message: "请选择螺丝" }]}
+                initialValue="12.9高强度"
               >
-                <HeatingMethodSelect />
+                <AutoComplete
+                  options={[{ label: "12.9高强度", value: "12.9高强度" }]}
+                />
               </Form.Item>
             </Col>
+
             <Form.Item noStyle dependencies={["material", "extruderNumber"]}>
               {({ getFieldValue }) => {
                 const material = getFieldValue("material");
