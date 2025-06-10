@@ -98,7 +98,12 @@ export const DieInstall = () => {
                     label="小车中心高度"
                     rules={[{ required: true, message: "请输入中心高度" }]}
                   >
-                    <InputNumber min={0} step={0.1} addonAfter="m" />
+                    <InputNumber
+                      min={0}
+                      step={0.1}
+                      formatter={(value) => `${value}m`}
+                      parser={(value) => value?.replace(/m/g, "") as any}
+                    />
                   </Form.Item>
                 </Col>
               </>
@@ -130,7 +135,12 @@ export const DieInstall = () => {
             }
             rules={[{ required: true, message: "请输入电源连接线长度" }]}
           >
-            <InputNumber min={0} step={0.5} addonAfter="m" />
+            <InputNumber
+              min={0}
+              step={0.5}
+              formatter={(value) => `${value}m`}
+              parser={(value) => value?.replace(/m/g, "") as any}
+            />
           </Form.Item>
         </Col>
 
@@ -155,7 +165,12 @@ export const DieInstall = () => {
                     { required: true, message: "请输入热膨胀数据连接线长度" },
                   ]}
                 >
-                  <InputNumber min={0} step={0.5} addonAfter="m" />
+                  <InputNumber
+                    min={0}
+                    step={0.5}
+                    formatter={(value) => `${value}m`}
+                    parser={(value) => value?.replace(/m/g, "") as any}
+                  />
                 </Form.Item>
               </Col>
             ) : null;

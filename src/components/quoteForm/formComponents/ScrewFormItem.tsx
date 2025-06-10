@@ -50,7 +50,8 @@ export const ScrewFormItem = ({ items }: { items: string[] }) => {
       <Col xs={12} sm={5}>
         <ProForm.Item name="temperature" label="工艺温度">
           <InputNumber
-            addonAfter="℃"
+            formatter={(value) => `${value}℃`}
+            parser={(value) => value?.replace(/℃/g, "") as any}
             min={0}
             max={999}
             precision={0}
