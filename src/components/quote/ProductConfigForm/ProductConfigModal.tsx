@@ -55,19 +55,26 @@ const ProductConfigModal: React.FC<ProductConfigModalProps> = ({
     if (!formValues.material || formValues.material?.length == 0) {
       formValues["material"] = material;
     }
-    // 修复2：添加表单引用检查
+    // 当表单尚未挂载时，循环等待直到获取到 ref
+    let retryTimer: number;
     const setFormFields = () => {
-      if (!formRef.current) return;
+      if (!formRef.current) {
+        retryTimer = window.setTimeout(setFormFields, 100);
+        return;
+      }
 
       formRef.current.priceForm?.setFieldsValue(basicValues);
       formRef.current.modelForm?.setFieldsValue(formValues);
       console.log(formRef.current.modelForm?.getFieldsValue());
       setLoading(false);
     };
+
     // 添加延迟确保表单已渲染
     const timer = setTimeout(setFormFields, 100);
     return () => {
       clearTimeout(timer);
+      clearTimeout(retryTimer);
+
       setLoading(false);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -180,17 +187,17 @@ const ProductConfigModal: React.FC<ProductConfigModalProps> = ({
           </Button>,
         ]}
       >
-        {loading ? (
+        {loading && (
           <div style={{ padding: 24 }}>
             <Skeleton active paragraph={{ rows: 8 }} />
           </div>
-        ) : (
-          <ProductConfigurationForm
-            quoteId={quoteId}
-            quoteItem={quoteItem}
-            ref={formRef}
-          />
         )}
+        <ProductConfigurationForm
+          quoteId={quoteId}
+          quoteItem={quoteItem}
+          ref={formRef}
+          style={{ display: loading ? "none" : "block" }}
+        />
       </Modal>
     </>
   );
