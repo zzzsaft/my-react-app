@@ -20,19 +20,22 @@ interface ProductConfigurationFormProps {
   quoteId: number;
   material?: string[];
   finalProduct?: string[];
+  style?: any;
 }
 const ProductConfigurationForm = forwardRef(
   (
-    { quoteItem, quoteId, material = [], finalProduct = [] }: ProductConfigurationFormProps,
+    {
+      quoteItem,
+      quoteId,
+      material = [],
+      finalProduct = [],
+      style,
+    }: ProductConfigurationFormProps,
     ref
   ) => {
     const priceFormRef = useRef<{ form: FormInstance }>(null);
     const modelFormRef = useRef<{ form: FormInstance }>(null);
-    const dieFormRef = useRef<{ form: FormInstance }>(null);
-    const smartRegulatorFormRef = useRef<{ form: FormInstance }>(null);
-    const remarkFormRef = useRef<{ form: FormInstance }>(null);
-    const meteringPumpFormRef = useRef<{ form: FormInstance }>(null);
-    const feedblockFormRef = useRef<{ form: FormInstance }>(null);
+
     const [activeKey, setActiveKey] = useState("1");
 
     const generateName = () => {
@@ -47,7 +50,8 @@ const ProductConfigurationForm = forwardRef(
 
       if (category.at(-1) === "共挤复合分配器") {
         const layers = modelFormRef.current?.form.getFieldValue("layers");
-        const extruder = modelFormRef.current?.form.getFieldValue("extruderNumber");
+        const extruder =
+          modelFormRef.current?.form.getFieldValue("extruderNumber");
         if (layers && extruder) {
           return `${layers}共挤复合分配器（${extruder}）`;
         }
@@ -74,12 +78,10 @@ const ProductConfigurationForm = forwardRef(
               ref={modelFormRef}
             />
           ),
-          ref: dieFormRef.current?.form,
         };
       if (category?.[1] == "智能调节器")
         return {
           form: <SmartRegulator ref={modelFormRef} />,
-          ref: smartRegulatorFormRef.current?.form,
         };
       if (category?.[1] == "熔体计量泵")
         return {
@@ -90,7 +92,6 @@ const ProductConfigurationForm = forwardRef(
               quoteItemId={quoteItem?.id ?? 0}
             />
           ),
-          ref: meteringPumpFormRef.current?.form,
         };
       if (category?.at(-1) == "共挤复合分配器")
         return {
@@ -101,12 +102,10 @@ const ProductConfigurationForm = forwardRef(
               quoteItemId={quoteItem?.id ?? 0}
             />
           ),
-          ref: feedblockFormRef.current?.form,
         };
 
       return {
         form: <OtherForm ref={modelFormRef} />,
-        ref: remarkFormRef.current?.form,
       };
     };
     // 暴露priceForm给祖父组件
@@ -123,6 +122,7 @@ const ProductConfigurationForm = forwardRef(
         activeKey={activeKey}
         onChange={setActiveKey}
         defaultActiveKey="1"
+        style={{ ...style }}
         // destroyInactiveTabPane={false}
         items={[
           {

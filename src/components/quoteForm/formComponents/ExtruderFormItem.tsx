@@ -32,6 +32,7 @@ export const ExtruderFormItem = ({ items }: { items: string[] }) => {
           name={"material"}
           label="原料"
           rules={[{ required: true, message: "请选择原料" }]}
+          initialValue={items?.[0]}
         >
           <Select
             options={items.map((item) => ({

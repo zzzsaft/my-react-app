@@ -197,6 +197,8 @@ const ProductConfigModal: React.FC<ProductConfigModalProps> = ({
           quoteItem={quoteItem}
           ref={formRef}
           style={{ display: loading ? "none" : "block" }}
+          material={material}
+          finalProduct={finalProduct}
         />
       </Modal>
     </>
