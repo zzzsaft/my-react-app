@@ -87,7 +87,8 @@ const FeedblockForm = forwardRef(
           );
           form.setFieldValue("screwList", next);
 
-          const ratioList = (form.getFieldValue("compositeRatio") || []) as LevelValue[];
+          const ratioList = (form.getFieldValue("compositeRatio") ||
+            []) as LevelValue[];
           const ratioNext = Array.from({ length: count }, (_, i) => ({
             level: base[i],
           }));
@@ -138,9 +139,9 @@ const FeedblockForm = forwardRef(
               >
                 <InputNumber
                   min={0}
-                  precision={0}
+                  controls={false}
                   style={{ width: "100%" }}
-                  addonAfter="kg/h"
+                  suffix="kg/h"
                 />
               </Form.Item>
             </Col>
@@ -238,17 +239,15 @@ const FeedblockForm = forwardRef(
               />
             </Col>
 
-            <Form.Item noStyle dependencies={["extruderNumber"]}>
+            {/* <Form.Item noStyle dependencies={["extruderNumber"]}>
               {({ getFieldValue }) => {
-                const extruderNumber = getFieldValue("extruderNumber");
+                // const extruderNumber = getFieldValue("extruderNumber");
                 return (
                   <>
                     <Col xs={24} md={24}>
                       <ProFormListWrapper
                         name="compositeRatio"
                         label="每层复合比例"
-                        min={countMap[extruderNumber as string]}
-                        max={countMap[extruderNumber as string]}
                         canCreate={false}
                         canDelete={false}
                         rules={[
@@ -259,20 +258,80 @@ const FeedblockForm = forwardRef(
                                 0
                               );
                               if (sum !== 100) {
-                                return Promise.reject(new Error("比例和需为100%"));
+                                return Promise.reject(
+                                  new Error("比例和需为100%")
+                                );
                               }
                               return Promise.resolve();
                             },
                           },
                         ]}
                         isHorizontal
-                        formItems={<LevelInputNumber formatter={(v) => `${v}%`} parser={(v) => v?.replace(/%/g, "") as any} style={{ width: 120 }} min={0} max={100} />}
+                        formItems={
+                          <ProForm.Item>
+                            <LevelInputNumber
+                              formatter={(v) => `${v}%`}
+                              parser={(v) => v?.replace(/%/g, "") as any}
+                              style={{ width: 120 }}
+                              min={0}
+                              max={100}
+                            />
+                          </ProForm.Item>
+                        }
                       />
                     </Col>
                   </>
                 );
               }}
-            </Form.Item>
+            </Form.Item> */}
+            <Col xs={24} md={24}>
+              <ProFormListWrapper
+                initialValue={[{ level: "A" }, { level: "B" }]}
+                name="compositeRatio"
+                label="每层复合比例"
+                canCreate={false}
+                canDelete={false}
+                rules={[
+                  {
+                    required: true,
+                    validator: async (_: any, value: LevelValue[]) => {
+                      const sum = value?.reduce(
+                        (t, c) => t + Number(c?.value || 0),
+                        0
+                      );
+                      if (sum !== 100) {
+                        return Promise.reject(new Error("比例和需为100%"));
+                      }
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
+                isHorizontal
+                formItems={
+                  <ProForm.Item
+                    name={[]}
+                    rules={[
+                      {
+                        validator: async (_: any, value: LevelValue) => {
+                          if (!value.value || value.value == 0) {
+                            return Promise.reject(new Error("比例不得为0"));
+                          }
+                          return Promise.resolve();
+                        },
+                      },
+                    ]}
+                  >
+                    <LevelInputNumber
+                      formatter={(v) => `${v}%`}
+                      parser={(v) => v?.replace(/%/g, "") as any}
+                      style={{ width: 120 }}
+                      min={0}
+                      max={100}
+                    />
+                  </ProForm.Item>
+                }
+              />
+            </Col>
             <Col xs={24} md={12}>
               <Form.Item
                 name="heatingMethod"

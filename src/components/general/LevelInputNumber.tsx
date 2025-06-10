@@ -20,13 +20,16 @@ const LevelInputNumber: React.FC<LevelInputNumberProps> = ({
   const num = value?.value;
   const handleChange = (val: string | number | null) => {
     const numeric =
-      typeof val === "string" ? parseFloat(val) : val === null ? undefined : val;
+      typeof val === "string"
+        ? parseFloat(val)
+        : val === null
+        ? undefined
+        : val;
     onChange?.({ level: level ?? "", value: numeric });
   };
-  const { addonBefore, ...others } = rest;
   return (
     <InputNumber
-      {...others}
+      {...rest}
       addonBefore={level}
       value={num as any}
       onChange={handleChange}

@@ -1,25 +1,23 @@
 import React from "react";
-import { ProFormList, ProFormGroup } from "@ant-design/pro-components";
+import {
+  ProFormList,
+  ProFormGroup,
+  ProFormListProps,
+} from "@ant-design/pro-components";
 import { CloseCircleOutlined, CopyOutlined } from "@ant-design/icons";
 import type { ButtonProps } from "antd";
+import { ProFromListCommonProps } from "@ant-design/pro-form/es/components/List/ListItem";
 
-interface ProFormListWrapperProps {
+interface ProFormListWrapperProps extends ProFromListCommonProps {
   name: string;
   label: React.ReactNode;
-  min?: number;
-  max?: number;
   canCreate?: boolean;
   canDelete?: boolean;
   copyable?: boolean;
   rules?: any[];
-  creatorButtonProps?:
-    | (ButtonProps & {
-        creatorButtonText?: React.ReactNode;
-        position?: "top" | "bottom";
-      })
-    | undefined;
   formItems: React.ReactNode;
   isHorizontal?: boolean;
+  initialValue?: any;
 }
 
 const ProFormListWrapper: React.FC<ProFormListWrapperProps> = ({
@@ -34,9 +32,11 @@ const ProFormListWrapper: React.FC<ProFormListWrapperProps> = ({
   rules,
   formItems,
   isHorizontal = false,
+  initialValue,
 }) => {
   return (
     <ProFormList
+      initialValue={initialValue}
       name={name}
       label={label}
       rules={rules}
