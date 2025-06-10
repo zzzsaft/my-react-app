@@ -12,9 +12,13 @@ interface ProFormListWrapperProps {
   copyable?: boolean;
   rules?: any[];
   creatorButtonProps?:
-    | (ButtonProps & { creatorButtonText?: React.ReactNode; position?: "top" | "bottom" })
+    | (ButtonProps & {
+        creatorButtonText?: React.ReactNode;
+        position?: "top" | "bottom";
+      })
     | undefined;
   formItems: React.ReactNode;
+  isHorizontal?: boolean;
 }
 
 const ProFormListWrapper: React.FC<ProFormListWrapperProps> = ({
@@ -27,6 +31,7 @@ const ProFormListWrapper: React.FC<ProFormListWrapperProps> = ({
   creatorButtonProps,
   rules,
   formItems,
+  isHorizontal = false,
 }) => {
   return (
     <ProFormList
@@ -39,24 +44,29 @@ const ProFormListWrapper: React.FC<ProFormListWrapperProps> = ({
       deleteIconProps={canDelete ? { Icon: CloseCircleOutlined, tooltipText: "\u4e0d\u9700\u8981\u8fd9\u884c\u4e86" } : false}
       creatorButtonProps={canCreate ? creatorButtonProps : false}
       alwaysShowItemLabel
-      itemRender={({ listDom, action }) => (
-        <div
-          style={{
-            position: "relative",
-            border: "1px solid #f0f0f0",
-            borderRadius: "4px",
-            padding: "8px",
-            marginBottom: "8px",
-          }}
-        >
-          <div
-            style={{ position: "absolute", top: 8, right: 8, zIndex: 1 }}
-          >
+      itemRender={({ listDom, action }) =>
+        isHorizontal ? (
+          <div style={{ display: "inline-flex", marginInlineEnd: 25 }}>
+            {listDom}
             {action}
           </div>
-          {listDom}
-        </div>
-      )}
+        ) : (
+          <div
+            style={{
+              position: "relative",
+              border: "1px solid #f0f0f0",
+              borderRadius: "4px",
+              padding: "8px",
+              marginBottom: "8px",
+            }}
+          >
+            <div style={{ position: "absolute", top: 8, right: 8, zIndex: 1 }}>
+              {action}
+            </div>
+            {listDom}
+          </div>
+        )
+      }
     >
       <ProFormGroup key="group">{formItems}</ProFormGroup>
     </ProFormList>
