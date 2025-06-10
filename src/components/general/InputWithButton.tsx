@@ -1,0 +1,41 @@
+import React from "react";
+import { Input, Button, Space } from "antd";
+import type { InputProps, ButtonProps } from "antd";
+
+export interface InputWithButtonProps
+  extends Omit<InputProps, "value" | "onChange"> {
+  /** Controlled value for the input */
+  value?: string;
+  /** Change handler for the input */
+  onChange?: (value: string) => void;
+  /** Text inside the button */
+  buttonText?: React.ReactNode;
+  /** Props passed to Button component */
+  buttonProps?: ButtonProps;
+  /** Click handler for the button */
+  onButtonClick?: () => void;
+}
+
+const InputWithButton: React.FC<InputWithButtonProps> = ({
+  value,
+  onChange,
+  buttonText = "Submit",
+  buttonProps,
+  onButtonClick,
+  ...inputProps
+}) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange?.(e.target.value);
+  };
+
+  return (
+    <Space.Compact style={{ width: "100%" }}>
+      <Input value={value} onChange={handleChange} {...inputProps} />
+      <Button type="primary" onClick={onButtonClick} {...buttonProps}>
+        {buttonText}
+      </Button>
+    </Space.Compact>
+  );
+};
+
+export default InputWithButton;
