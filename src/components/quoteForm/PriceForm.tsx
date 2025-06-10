@@ -1,4 +1,5 @@
 import {
+  Button,
   Col,
   Form,
   FormInstance,
@@ -9,10 +10,14 @@ import {
   Space,
   Typography,
 } from "antd";
-import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
+import { forwardRef, useImperativeHandle } from "react";
 import { formatPrice } from "../../util/valueUtil";
 interface PriceFormRef {
   form: FormInstance; // 明确定义暴露的form实例
+}
+
+interface PriceFormProps {
+  onGenerateName?: () => string | undefined;
 }
 interface PriceFormValues {
   quantity: number;
@@ -27,12 +32,19 @@ const brandOption = [
   { value: "古迪", label: "古迪" },
 ];
 
-const PriceForm = forwardRef<PriceFormRef>((props, ref) => {
-  const [form] = Form.useForm<PriceFormValues>();
+const PriceForm = forwardRef<PriceFormRef, PriceFormProps>(
+  ({ onGenerateName }, ref) => {
+    const [form] = Form.useForm<PriceFormValues>();
   // 暴露form实例给父组件
   useImperativeHandle(ref, () => ({
     form,
   }));
+
+  const handleGenerateName = () => {
+    if (!onGenerateName) return;
+    const name = onGenerateName();
+    if (name) form.setFieldValue("productName", name);
+  };
   // 计算小计
 
   const handleValuesChange = (changedValues: any, allValues: any) => {
@@ -62,7 +74,10 @@ const PriceForm = forwardRef<PriceFormRef>((props, ref) => {
             label="产品名称"
             rules={[{ required: true, message: "请输入产品名称" }]}
           >
-            <Input style={{ width: "100%" }} />
+            <Space.Compact style={{ width: "100%" }}>
+              <Input style={{ width: "100%" }} />
+              <Button onClick={handleGenerateName}>生成</Button>
+            </Space.Compact>
           </Form.Item>
         </Col>
 
