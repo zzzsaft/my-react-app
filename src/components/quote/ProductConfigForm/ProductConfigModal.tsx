@@ -23,6 +23,9 @@ const ProductConfigModal: React.FC<ProductConfigModalProps> = ({
   const material = useQuoteStore(
     (state) => state.quotes.find((q) => q.id == quoteId)?.material
   );
+  const finalProduct = useQuoteStore(
+    (state) => state.quotes.find((q) => q.id == quoteId)?.finalProduct
+  );
   const formRef = useRef<{
     priceForm: FormInstance;
     modelForm: FormInstance;
@@ -175,6 +178,8 @@ const ProductConfigModal: React.FC<ProductConfigModalProps> = ({
         <ProductConfigurationForm
           quoteId={quoteId}
           quoteItem={quoteItem}
+          material={material || []}
+          finalProduct={finalProduct || []}
           ref={formRef}
         />
       </Modal>
