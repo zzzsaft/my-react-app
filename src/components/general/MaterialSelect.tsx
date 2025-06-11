@@ -43,6 +43,13 @@ const MaterialSelect: React.FC<MaterialSelectProps> = ({
       e.preventDefault();
     }
   };
+
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const { key } = e;
+    if (key.length === 1 && !/[A-Za-z0-9+-]/.test(key)) {
+      e.preventDefault();
+    }
+  };
   return (
     <Select
       id={id}
