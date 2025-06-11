@@ -71,53 +71,38 @@ const IntervalInput: React.FC<IntervalInputProps> = forwardRef(
     };
 
     const formatDisplayValue = (val: string) => {
-      if (!isFocused && val.endsWith("-")) {
-        return val.slice(0, -1);
+      let display = val;
+      if (!isFocused && display.endsWith("-")) {
+        display = display.slice(0, -1);
       }
-      return val;
-    };
-    const createPrecisionRegex = (decimalPlaces: number = 2) => {
-      // 构建小数部分正则，例如 {0,2} 表示最多2位小数
-      const decimalPart =
-        decimalPlaces > 0 ? `(?:\\.\\d{0,${decimalPlaces}})?` : "";
-
-      return new RegExp(
-        `^(?!-)(\\d+${decimalPart})(?:-(\\d+${decimalPart})?)?$`
-      );
+      if (!isFocused && unit) {
+        display += unit;
+      }
+      return display;
     };
 
     const validateInput = (input: string): boolean => {
       if (input === "") return true;
 
-      // 允许的格式：
-      // 1. 单个数字(可带小数)：123 或 12.34
-      // 2. 数字区间(可带小数)：123-456 或 12.34-56.78
-      // 3. 输入中带未完成的横杠：123-
-      const regex = createPrecisionRegex(decimalPlace);
+      if (input.startsWith("-")) return false;
+      if ((input.match(/-/g) || []).length > 1) return false;
 
-      // 验证基本格式
-      if (!regex.test(input)) return false;
-
-      // 提取数字部分验证具体数值
-      const parts = input.split("-").filter((part) => part !== "");
-
-      // 验证每个数字部分 >= 0
-      return parts.every((part) => {
-        const num = parseFloat(part);
-        return !isNaN(num) && num >= 0;
-      });
+      return /^\d*(?:-\d*)?$/.test(input);
     };
 
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const input = e.target.value;
-      // console.log(e);
-      if (input.length - internalValue.length > 1) {
-        const cleaned = input.replace(/[^0-9.-]/g, "");
-        if (validateInput(cleaned)) {
-          setInternalValue(cleaned);
-          customOnChange?.(cleaned);
-        }
-        return;
+      let input = e.target.value.replace(/[^0-9-]/g, "");
+
+      if (input.startsWith("-")) {
+        input = input.slice(1);
+      }
+
+      const dashIndex = input.indexOf("-");
+      if (dashIndex !== -1) {
+        input =
+          input.slice(0, dashIndex + 1) +
+          input.slice(dashIndex + 1).replace(/-/g, "");
       }
 
       if (validateInput(input)) {
@@ -198,7 +183,6 @@ const IntervalInput: React.FC<IntervalInputProps> = forwardRef(
         disabled={disabled}
         addonAfter={addonAfter}
         readOnly={readOnly}
-        suffix={unit}
       />
     );
   }
