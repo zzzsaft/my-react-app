@@ -27,11 +27,21 @@ const MaterialSelect: React.FC<MaterialSelectProps> = ({
 }) => {
   const handleChange = (newValue: string[]) => {
     if (onChange) {
-      // Convert all values to uppercase
-      const upperCaseValue = newValue.map((item) =>
-        item.replace(" ", "").toUpperCase()
+      const validValue = newValue.filter((item) =>
+        /^[A-Za-z0-9+-]+$/.test(item.replace(/\s/g, ""))
+      );
+
+      const upperCaseValue = validValue.map((item) =>
+        item.replace(/\s/g, "").toUpperCase()
       );
       onChange(upperCaseValue);
+    }
+  };
+
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const { key } = e;
+    if (key.length === 1 && !/[A-Za-z0-9+-]/.test(key)) {
+      e.preventDefault();
     }
   };
   return (
@@ -40,6 +50,7 @@ const MaterialSelect: React.FC<MaterialSelectProps> = ({
       placeholder={placeholder}
       disabled={disabled}
       mode="tags"
+      onInputKeyDown={handleInputKeyDown}
       options={selectOptions(MATERIAL)}
       value={value}
       onChange={handleChange}
