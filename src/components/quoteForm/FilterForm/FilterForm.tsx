@@ -1,12 +1,4 @@
-
-import {
-  AutoComplete,
-  Col,
-  Form,
-  InputNumber,
-  Radio,
-  Row,
-} from "antd";
+import { AutoComplete, Col, Form, InputNumber, Radio, Row } from "antd";
 
 import ProForm from "@ant-design/pro-form";
 import { forwardRef, useEffect, useImperativeHandle } from "react";
@@ -19,7 +11,7 @@ import { useQuoteStore } from "../../../store/useQuoteStore";
 import useProductActionModal from "../../../hook/showProductActionModal";
 
 import FilterSelection from "./FilterSelection";
-
+import TextArea from "antd/es/input/TextArea";
 
 const FilterForm = forwardRef(
   ({ quoteId, quoteItemId }: { quoteId: number; quoteItemId: number }, ref) => {
@@ -41,9 +33,7 @@ const FilterForm = forwardRef(
       form,
     }));
 
-
     const addProp: any = (category: string[], key: string, value: any) => ({
-
       method: "add",
       quoteItems,
       quoteId,
@@ -53,9 +43,7 @@ const FilterForm = forwardRef(
       source: { name: category.at(-1) ?? "", value, key },
     });
 
-
     const deleteProp: any = (category: string[]) => ({
-
       method: "delete",
       linkId: quoteItemId,
       quoteId,
@@ -64,18 +52,18 @@ const FilterForm = forwardRef(
       items: [{ name: category.at(-1) ?? "" }],
     });
 
-    const handleSafetyShield = async (v: boolean) => {
+    const handleFilterHolder = async (v: boolean) => {
       if (v) {
         const r = await showProductActionModal(
-          addProp(["过滤器", "过滤器安全护罩"], "safetyShield", false)
+          addProp(["过滤器", "过滤器支架"], "filterHolder", false)
         );
-        if (!r.result) form.setFieldValue("safetyShield", false);
+        if (!r.result) form.setFieldValue("filterHolder", false);
         return;
       }
       const r = await showProductActionModal(
-        deleteProp(["过滤器", "过滤器安全护罩"])
+        deleteProp(["过滤器", "过滤器支架"])
       );
-      if (!r.result) form.setFieldValue("safetyShield", true);
+      if (!r.result) form.setFieldValue("filterHolder", true);
     };
 
     const handleHydraulicStation = async (v: boolean) => {
@@ -114,10 +102,11 @@ const FilterForm = forwardRef(
         }
       }
 
-      if (changed.safetyShield != null) await handleSafetyShield(changed.safetyShield);
-      if (changed.hydraulicStation != null) await handleHydraulicStation(changed.hydraulicStation);
+      if (changed.filterHolder != null)
+        await handleFilterHolder(changed.filterHolder);
+      if (changed.hydraulicStation != null)
+        await handleHydraulicStation(changed.hydraulicStation);
     };
-
 
     return (
       <ProForm
@@ -126,7 +115,6 @@ const FilterForm = forwardRef(
         submitter={false}
         onValuesChange={handleFieldsChange}
       >
-
         <FilterSelection form={form} filters={filters} />
 
         <Row gutter={16}>
@@ -147,7 +135,7 @@ const FilterForm = forwardRef(
               unit="℃"
             />
           </Col>
-          <Col xs={12} md={6}>
+          <Col xs={24} md={12}>
             <Form.Item
               label="电压"
               name="voltage"
@@ -165,15 +153,26 @@ const FilterForm = forwardRef(
               />
             </Form.Item>
           </Col>
-          <Col xs={12} md={6}>
+          <Col xs={12} md={12}>
             <Form.Item label="加热方式" name="heatingMethod">
-
               <HeatingMethodSelect multiple />
-
             </Form.Item>
           </Col>
         </Row>
         <Row gutter={16}>
+          <Col xs={12} md={6}>
+            <Form.Item
+              label="是否选配过滤器支架"
+              name="filterHolder"
+              rules={[{ required: true, message: "是否选配过滤器支架" }]}
+              initialValue={false}
+            >
+              <Radio.Group>
+                <Radio value={true}>是</Radio>
+                <Radio value={false}>否</Radio>
+              </Radio.Group>
+            </Form.Item>
+          </Col>
           <Col xs={12} md={6}>
             <Form.Item
               label="过滤器安全护罩"
@@ -205,7 +204,7 @@ const FilterForm = forwardRef(
           </Form.Item>
           <Col xs={12} md={6}>
             <Form.Item
-              label="液压站"
+              label="是否配置液压站"
               name="hydraulicStation"
               rules={[{ required: true, message: "是否配置液压站" }]}
               initialValue={false}
@@ -216,8 +215,6 @@ const FilterForm = forwardRef(
               </Radio.Group>
             </Form.Item>
           </Col>
-        </Row>
-        <Row gutter={16}>
           <Col xs={12} md={6}>
             <Form.Item
               label="压力传感器孔"
@@ -264,6 +261,9 @@ const FilterForm = forwardRef(
             }
           </Form.Item>
         </Row>
+        <Form.Item name="remark" label="备注">
+          <TextArea />
+        </Form.Item>
       </ProForm>
     );
   }

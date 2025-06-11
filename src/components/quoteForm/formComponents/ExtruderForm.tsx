@@ -22,7 +22,8 @@ const ExtruderForm = ({
     <ProFormListWrapper
       name="extruderModel"
       label="挤出机型号"
-      count={count}
+      min={count}
+      max={count}
       canCreate={!count}
       canDelete={!count}
       formItems={<ExtruderFormItem items={items} />}

@@ -54,6 +54,7 @@ export const Product = () => {
               // rules={[{ required: true, message: "请输入有效厚度范围" }]}
               placeholder={"制品宽度"}
               addonAfter="mm"
+              // unit="mm"
             />
           </Col>
           <Col xs={12} md={6}>
@@ -116,7 +117,9 @@ export const Product = () => {
                     <Form.Item
                       name="runnerNumber"
                       label="模内共挤层数"
-                      rules={[{ required: true, message: "请输入模内共挤层数" }]}
+                      rules={[
+                        { required: true, message: "请输入模内共挤层数" },
+                      ]}
                     >
                       <InputNumber min={2} max={6} style={{ width: "100%" }} />
                     </Form.Item>
@@ -187,9 +190,11 @@ export const Product = () => {
               headerBordered
             >
               <ScrewForm
-                items={Array.isArray(getFieldValue("material"))
-                  ? getFieldValue("material")
-                  : [getFieldValue("material")]}
+                items={
+                  Array.isArray(getFieldValue("material"))
+                    ? getFieldValue("material")
+                    : [getFieldValue("material")]
+                }
               />
             </ProCard>
           ) : null

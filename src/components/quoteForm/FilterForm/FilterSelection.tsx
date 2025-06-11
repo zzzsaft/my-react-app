@@ -7,10 +7,12 @@ interface Props {
   filters: FilterProduct[];
 }
 const FilterSelection = ({ form, filters }: Props) => {
-  const nameOptions = Array.from(new Set(filters.map((f) => f.name))).map((n) => ({
-    label: n,
-    value: n,
-  }));
+  const nameOptions = Array.from(new Set(filters.map((f) => f.name))).map(
+    (n) => ({
+      label: n,
+      value: n,
+    })
+  );
 
   return (
     <ProCard
@@ -21,7 +23,7 @@ const FilterSelection = ({ form, filters }: Props) => {
       headerBordered
     >
       <Row gutter={16}>
-        <Col xs={12} md={6}>
+        <Col xs={12} md={12}>
           <Form.Item
             label="过滤器类型"
             name="name"
@@ -37,7 +39,7 @@ const FilterSelection = ({ form, filters }: Props) => {
               .map((f) => ({ label: f.model, value: f.model }));
 
             return (
-              <Col xs={12} md={6}>
+              <Col xs={12} md={12}>
                 <Form.Item
                   label="型号"
                   name="model"
@@ -59,7 +61,7 @@ const FilterSelection = ({ form, filters }: Props) => {
             <Input readOnly />
           </Form.Item>
         </Col>
-        <Col xs={12} md={6}>
+        <Col xs={12} md={12}>
           <Form.Item label="轮廓尺寸" name="dimension">
             <Input readOnly />
           </Form.Item>

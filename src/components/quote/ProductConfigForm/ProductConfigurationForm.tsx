@@ -64,7 +64,13 @@ const ProductConfigurationForm = forwardRef(
           return `${model}熔体计量泵`;
         }
       }
-
+      if (category.at(-1) === "过滤器") {
+        const model = modelFormRef.current?.form.getFieldValue("model");
+        const name = modelFormRef.current?.form.getFieldValue("name");
+        if (model) {
+          return `${model}${name}`;
+        }
+      }
       return "";
     };
 
@@ -84,7 +90,7 @@ const ProductConfigurationForm = forwardRef(
         return {
           form: <SmartRegulator ref={modelFormRef} />,
         };
-      if (category?.includes("熔体计量泵"))
+      if (category?.at(1) == "熔体计量泵")
         return {
           form: (
             <MeteringPumpForm
@@ -94,7 +100,7 @@ const ProductConfigurationForm = forwardRef(
             />
           ),
         };
-      if (category?.includes("共挤复合分配器"))
+      if (category?.at(1) == "共挤复合分配器")
         return {
           form: (
             <FeedblockForm
@@ -104,7 +110,7 @@ const ProductConfigurationForm = forwardRef(
             />
           ),
         };
-      if (category?.includes("过滤器"))
+      if (category?.at(1) == "过滤器")
         return {
           form: (
             <FilterForm

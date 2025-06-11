@@ -25,12 +25,12 @@ const MaterialSelect: React.FC<MaterialSelectProps> = ({
   placeholder = "输入材料，按回车确认",
   style,
 }) => {
-  const VALID_TAG = /^[\u4e00-\u9fa5\d%()（）]+$/;
+  const VALID_TAG = /^[\u4e00-\u9fa5a-zA-Z\d%()（）+-]+$/;
 
   const handleChange = (newValue: string[]) => {
     if (onChange) {
       const cleaned = newValue
-        .map((item) => item.replace(/\s/g, ""))
+        .map((item) => item.replace(/\s/g, "").toUpperCase())
         .filter((item) => VALID_TAG.test(item));
 
       onChange(cleaned);
@@ -39,17 +39,11 @@ const MaterialSelect: React.FC<MaterialSelectProps> = ({
 
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const { key } = e;
-    if (key.length === 1 && !/[\u4e00-\u9fa5\d%()（）]/.test(key)) {
+    if (key.length === 1 && !VALID_TAG.test(key)) {
       e.preventDefault();
     }
   };
 
-  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    const { key } = e;
-    if (key.length === 1 && !/[A-Za-z0-9+-]/.test(key)) {
-      e.preventDefault();
-    }
-  };
   return (
     <Select
       id={id}
