@@ -25,16 +25,22 @@ const MaterialSelect: React.FC<MaterialSelectProps> = ({
   placeholder = "输入材料，按回车确认",
   style,
 }) => {
+  const VALID_TAG = /^[\u4e00-\u9fa5\d%()（）]+$/;
+
   const handleChange = (newValue: string[]) => {
     if (onChange) {
-      const validValue = newValue.filter((item) =>
-        /^[A-Za-z0-9+-]+$/.test(item.replace(/\s/g, ""))
-      );
+      const cleaned = newValue
+        .map((item) => item.replace(/\s/g, ""))
+        .filter((item) => VALID_TAG.test(item));
 
-      const upperCaseValue = validValue.map((item) =>
-        item.replace(/\s/g, "").toUpperCase()
-      );
-      onChange(upperCaseValue);
+      onChange(cleaned);
+    }
+  };
+
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const { key } = e;
+    if (key.length === 1 && !/[\u4e00-\u9fa5\d%()（）]/.test(key)) {
+      e.preventDefault();
     }
   };
 
