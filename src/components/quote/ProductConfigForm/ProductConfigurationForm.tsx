@@ -15,6 +15,7 @@ import { QuoteItem } from "../../../types/types";
 import MeteringPumpForm from "../../quoteForm/MeteringPumpForm/MeteringPumpForm";
 import FeedblockForm from "../../quoteForm/FeedblockForm/FeedblockForm";
 import FilterForm from "../../quoteForm/FilterForm/FilterForm";
+import ThicknessGaugeForm from "../../quoteForm/ThicknessGaugeForm/ThicknessGaugeForm";
 
 interface ProductConfigurationFormProps {
   quoteItem?: QuoteItem;
@@ -71,6 +72,12 @@ const ProductConfigurationForm = forwardRef(
           return `${model}${name}`;
         }
       }
+      if (category.at(-1) === "测厚仪") {
+        const model = modelFormRef.current?.form.getFieldValue("model");
+        if (model) {
+          return `${model}测厚仪`;
+        }
+      }
       return "";
     };
 
@@ -88,7 +95,13 @@ const ProductConfigurationForm = forwardRef(
         };
       if (category?.includes("智能调节器"))
         return {
-          form: <SmartRegulator ref={modelFormRef} />,
+          form: (
+            <SmartRegulator
+              ref={modelFormRef}
+              quoteId={quoteId}
+              quoteItemId={quoteItem?.id ?? 0}
+            />
+          ),
         };
       if (category?.at(1) == "熔体计量泵")
         return {
@@ -114,6 +127,16 @@ const ProductConfigurationForm = forwardRef(
         return {
           form: (
             <FilterForm
+              ref={modelFormRef}
+              quoteId={quoteId}
+              quoteItemId={quoteItem?.id ?? 0}
+            />
+          ),
+        };
+      if (category?.at(1) == "测厚仪")
+        return {
+          form: (
+            <ThicknessGaugeForm
               ref={modelFormRef}
               quoteId={quoteId}
               quoteItemId={quoteItem?.id ?? 0}

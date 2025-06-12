@@ -120,6 +120,19 @@ const DieForm = forwardRef(
       if (!result.result) form.setFieldValue("haveThermalInsulation", true);
     };
 
+    const handleThicknessGauge = async (value: boolean) => {
+      if (value) {
+        const result = await showProductActionModal(
+          addProp(["测厚仪"], "thicknessGauge", false)
+        );
+        if (!result.result) form.setFieldValue("thicknessGauge", false);
+        return;
+      }
+
+      const result = await showProductActionModal(deleteProp(["测厚仪"]));
+      if (!result.result) form.setFieldValue("thicknessGauge", true);
+    };
+
     const fieldHandlers: Record<string, (value: any) => void | Promise<void>> =
       {
         dieWidth: handleDieWidth,
@@ -128,6 +141,7 @@ const DieForm = forwardRef(
         hasCart: handleHasCart,
         smartRegulator: handleSmartRegulator,
         haveThermalInsulation: handleThermalInsulation,
+        thicknessGauge: handleThicknessGauge,
       };
 
     const handleFieldsChange = async (changedFields: any) => {
