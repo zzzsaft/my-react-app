@@ -25,11 +25,31 @@ const TermsTable: React.FC<TermsTableProps> = ({ value, onChange }) => {
   };
 
   const handleDragEnd = (list: Clause[]) => {
-    triggerChange(list);
+    // Use id as the order so update ids after drag
+    const newData = list.map((item, idx) => ({
+      ...item,
+      id: idx + 1,
+    }));
+    if (editingId !== null) {
+      const i = list.findIndex((item) => item.id === editingId);
+      if (i !== -1) {
+        setEditingId(i + 1);
+      }
+    }
+    triggerChange(newData);
   };
 
   const handleDelete = (id: number) => {
-    triggerChange(data.filter((d) => d.id !== id));
+    const filtered = data.filter((d) => d.id !== id);
+    const newData = filtered.map((item, idx) => ({ ...item, id: idx + 1 }));
+    if (editingId !== null) {
+      if (editingId === id) {
+        setEditingId(null);
+      } else if (editingId > id) {
+        setEditingId(editingId - 1);
+      }
+    }
+    triggerChange(newData);
   };
 
   const handleEdit = (record: Clause) => {
