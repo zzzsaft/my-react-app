@@ -59,7 +59,7 @@ const DieForm = forwardRef(
     });
 
     const handleDieWidth = (value: string) => {
-      const width = Number(value?.split("-")[0]);
+      const width = Number(value?.split("～")[0]);
       const zone = nearestOdd(width);
       form.setFieldValue("heatingZones", zone);
       form.setFieldValue("powerCableLength", width <= 1500 ? 3 : 5);

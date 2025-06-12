@@ -8,10 +8,13 @@ import React, {
 import { Form, Input } from "antd";
 import type { FormItemProps } from "antd";
 import { intervalInputRules } from "../../util/rules";
+import type { IntervalValue } from "../../types/types";
+
+const DELIMITER = "～";
 
 export interface IntervalInputProps {
-  value?: string;
-  onChange?: (value: string) => void;
+  value?: IntervalValue;
+  onChange?: (value: IntervalValue) => void;
   placeholder?: string;
   addonAfter?: string | null;
   addonBefore?: string | null;
@@ -28,7 +31,7 @@ export interface IntervalInputProps {
 const IntervalInput: React.FC<IntervalInputProps> = forwardRef(
   (
     {
-      value = "",
+      value,
       onChange = () => {},
       placeholder = "请输入数值",
       disabled = false,
@@ -42,7 +45,7 @@ const IntervalInput: React.FC<IntervalInputProps> = forwardRef(
     },
     ref
   ) => {
-    const [internalValue, setInternalValue] = useState(value);
+    const [internalValue, setInternalValue] = useState(value?.value ?? "");
     const [isFocused, setIsFocused] = useState(false);
     const inputRef = useRef<any>(null);
     const lastCursorPos = useRef(0);
@@ -58,21 +61,32 @@ const IntervalInput: React.FC<IntervalInputProps> = forwardRef(
     // );
 
     useEffect(() => {
-      setInternalValue(value);
+      setInternalValue(value?.value ?? "");
     }, [value]);
 
+    const constructValue = (val: string): IntervalValue => {
+      const [frontStr, rearStr] = val.split(DELIMITER);
+      return {
+        front: frontStr ? parseFloat(frontStr) : NaN,
+        rear: rearStr ? parseFloat(rearStr) : NaN,
+        value: val,
+        unit: unit ?? "",
+      };
+    };
+
     const customOnChange = (newValue: string) => {
+      const v = constructValue(newValue);
       if (extra) {
-        const e = { target: { value: newValue } };
+        const e = { target: { value: v } };
         onChange?.(e as any);
       } else {
-        onChange?.(newValue);
+        onChange?.(v);
       }
     };
 
     const formatDisplayValue = (val: string) => {
       let display = val;
-      if (!isFocused && display.endsWith("-")) {
+      if (!isFocused && display.endsWith(DELIMITER)) {
         display = display.slice(0, -1);
       }
       if (!isFocused && unit) {
@@ -84,26 +98,27 @@ const IntervalInput: React.FC<IntervalInputProps> = forwardRef(
     const validateInput = (input: string): boolean => {
       if (input === "") return true;
 
-      if (input.startsWith("-")) return false;
-      if ((input.match(/-/g) || []).length > 1) return false;
-
-      return /^\d*(?:-\d*)?$/.test(input);
+      return /^-?\d*(?:～-?\d*)?$/.test(input);
     };
 
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      let input = e.target.value.replace(/[^0-9-]/g, "");
+      let input = e.target.value.replace(/[^0-9-～]/g, "");
 
-      if (input.startsWith("-")) {
-        input = input.slice(1);
-      }
-
-      const dashIndex = input.indexOf("-");
-      if (dashIndex !== -1) {
+      const delimiterIndex = input.indexOf(DELIMITER);
+      if (delimiterIndex !== -1) {
         input =
-          input.slice(0, dashIndex + 1) +
-          input.slice(dashIndex + 1).replace(/-/g, "");
+          input.slice(0, delimiterIndex + 1) +
+          input.slice(delimiterIndex + 1).replace(new RegExp(DELIMITER, "g"), "");
       }
+
+      const parts = input.split(DELIMITER);
+      parts[0] = parts[0].replace(/(?!^)-/g, "");
+      if (parts[1] !== undefined) {
+        parts[1] = parts[1].replace(/(?!^)-/g, "");
+      }
+
+      input = parts.join(DELIMITER);
 
       if (validateInput(input)) {
         setInternalValue(input);
@@ -113,15 +128,15 @@ const IntervalInput: React.FC<IntervalInputProps> = forwardRef(
 
     const handleFocus = () => {
       setIsFocused(true);
-      if (!internalValue.includes("-")) {
+      if (!internalValue.includes(DELIMITER)) {
         const newValue = `${internalValue}`;
         setInternalValue(newValue);
 
         customOnChange?.(newValue);
         setTimeout(() => {
           inputRef.current?.setSelectionRange(
-            newValue.length - 1,
-            newValue.length - 1
+            newValue.length,
+            newValue.length
           );
         }, 0);
       }
@@ -129,9 +144,9 @@ const IntervalInput: React.FC<IntervalInputProps> = forwardRef(
 
     const handleBlur = () => {
       setIsFocused(false);
-      // console.log(internalValue.split("-")[1]);
-      if (internalValue.includes("-") && internalValue.split("-")[1] === "") {
-        const newValue = internalValue.replace("-", "");
+      // console.log(internalValue.split(DELIMITER)[1]);
+      if (internalValue.includes(DELIMITER) && internalValue.split(DELIMITER)[1] === "") {
+        const newValue = internalValue.replace(DELIMITER, "");
         setInternalValue(newValue);
         customOnChange?.(newValue);
       }
@@ -141,29 +156,43 @@ const IntervalInput: React.FC<IntervalInputProps> = forwardRef(
       const { key } = e;
       const currentPos = inputRef.current?.selectionStart || 0;
 
-      if (key === "-") {
-        e.preventDefault();
-        if (internalValue.includes("-")) {
-          const dashPos = internalValue.indexOf("-");
-          if (currentPos <= dashPos) {
-            inputRef.current?.setSelectionRange(dashPos + 1, dashPos + 1);
-          }
-        } else {
-          const newValue = `${internalValue.slice(
-            0,
-            currentPos
-          )}-${internalValue.slice(currentPos)}`;
-          if (validateInput(newValue)) {
-            setInternalValue(newValue);
-            onChange?.(newValue);
-            setTimeout(() => {
-              inputRef.current?.setSelectionRange(
-                currentPos + 1,
-                currentPos + 1
-              );
-            }, 0);
-          }
+      const allowedKeys = [
+        "Backspace",
+        "Delete",
+        "ArrowLeft",
+        "ArrowRight",
+        "Tab",
+      ];
+
+      if (/^[0-9-]$/.test(key) || allowedKeys.includes(key)) {
+        lastCursorPos.current = currentPos;
+        return;
+      }
+
+      e.preventDefault();
+
+      if (!/\d/.test(internalValue.slice(0, currentPos))) {
+        return;
+      }
+
+      if (internalValue.includes(DELIMITER)) {
+        const dashPos = internalValue.indexOf(DELIMITER);
+        if (currentPos <= dashPos) {
+          inputRef.current?.setSelectionRange(dashPos + 1, dashPos + 1);
         }
+        return;
+      }
+
+      const newValue = `${internalValue.slice(0, currentPos)}${DELIMITER}${internalValue.slice(
+        currentPos
+      )}`;
+
+      if (validateInput(newValue)) {
+        setInternalValue(newValue);
+        customOnChange?.(newValue);
+        setTimeout(() => {
+          inputRef.current?.setSelectionRange(currentPos + 1, currentPos + 1);
+        }, 0);
       }
 
       lastCursorPos.current = currentPos;
@@ -178,7 +207,7 @@ const IntervalInput: React.FC<IntervalInputProps> = forwardRef(
         onChange={handleChange}
         onFocus={handleFocus}
         onBlur={handleBlur}
-        // onKeyDown={handleKeyDown}
+        onKeyDown={handleKeyDown}
         placeholder={placeholder}
         disabled={disabled}
         addonAfter={addonAfter}

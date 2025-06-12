@@ -36,8 +36,8 @@ export const DieWidthInput: React.FC<CombinedWidthInputProps> = ({
     onChange?.({ ...value, widthType: type });
   };
 
-  const handleIntervalChange = (val: string) => {
-    onChange?.({ ...value, length: val });
+  const handleIntervalChange = (val: IntervalInputProps["value"]) => {
+    onChange?.({ ...value, length: val?.value });
   };
 
   return (

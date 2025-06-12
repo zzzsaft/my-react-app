@@ -62,7 +62,7 @@ export const HeatingMethodSelect: React.FC<HeatingMethodSelectProps> = ({
   };
 
   const isCastAluminumDisabled = temperature
-    ?.split("-")
+    ?.split("～")
     .some((temp) => Number(temp) >= 330);
 
   useEffect(() => {

@@ -1,5 +1,7 @@
 import { Rule } from "antd/es/form";
 
+const DELIMITER = "～";
+
 // 表单验证规则
 export const powerInputRules: Rule[] = [
   {
@@ -61,8 +63,8 @@ export const DieWidthInputRule: Rule[] = [
       }
 
       // 检查是否是范围格式
-      if (value.length.includes("-")) {
-        const parts = value.length.split("-").map((part: any) => part.trim());
+      if (value.length.includes(DELIMITER)) {
+        const parts = value.length.split(DELIMITER).map((part: any) => part.trim());
 
         // 验证两部分都是有效数字
         if (parts.some((part: any) => !/^\d+$/.test(part))) {
@@ -82,11 +84,12 @@ export const DieWidthInputRule: Rule[] = [
 ];
 export const intervalInputRules: Rule[] = [
   {
-    validator: (_: any, value) => {
-      if (!value || !value.includes("-")) {
+    validator: (_: any, value: { value?: string }) => {
+      const val = value?.value;
+      if (!val || !val.includes(DELIMITER)) {
         return Promise.resolve();
       }
-      const [first, second] = value.split("-").map(parseFloat);
+      const [first, second] = val.split(DELIMITER).map(parseFloat);
 
       if (!isNaN(first) && !isNaN(second) && first >= second) {
         return Promise.reject(new Error("第一个数字必须小于第二个数字"));
@@ -97,11 +100,12 @@ export const intervalInputRules: Rule[] = [
   },
   {
     // required: true,
-    validator: (_: any, value) => {
-      if (!value || !value.includes("-")) {
+    validator: (_: any, value: { value?: string }) => {
+      const val = value?.value;
+      if (!val || !val.includes(DELIMITER)) {
         return Promise.resolve();
       }
-      const [first, second] = value.split("-").map(parseFloat);
+      const [first, second] = val.split(DELIMITER).map(parseFloat);
 
       if (!isNaN(first) && !isNaN(second) && first <= second) {
         return Promise.reject(
@@ -116,12 +120,12 @@ export const intervalInputRules: Rule[] = [
 export const autoCompleteIntervalInputRules: Rule[] = [
   {
     // required: true,
-    validator: (_: any, value1) => {
-      const value = value1?.value;
-      if (!value || !value.includes("-")) {
+    validator: (_: any, value1: { value?: { value?: string } }) => {
+      const val = value1?.value?.value;
+      if (!val || !val.includes(DELIMITER)) {
         return Promise.resolve();
       }
-      const [first, second] = value.split("-").map(parseFloat);
+      const [first, second] = val.split(DELIMITER).map(parseFloat);
 
       if (!isNaN(first) && !isNaN(second) && first >= second) {
         return Promise.reject(new Error("第一个数字必须小于第二个数字"));

@@ -292,21 +292,6 @@ const FeedblockForm = forwardRef(
                 label="每层复合比例"
                 canCreate={false}
                 canDelete={false}
-                rules={[
-                  {
-                    required: true,
-                    validator: async (_: any, value: LevelValue[]) => {
-                      const sum = value?.reduce(
-                        (t, c) => t + Number(c?.value || 0),
-                        0
-                      );
-                      if (sum !== 100) {
-                        return Promise.reject(new Error("比例和需为100%"));
-                      }
-                      return Promise.resolve();
-                    },
-                  },
-                ]}
                 isHorizontal
                 formItems={
                   <ProForm.Item
@@ -314,7 +299,8 @@ const FeedblockForm = forwardRef(
                     rules={[
                       {
                         validator: async (_: any, value: LevelValue) => {
-                          if (!value.value || value.value == 0) {
+                          const num = parseFloat(value?.value?.value || "0");
+                          if (isNaN(num) || num === 0) {
                             return Promise.reject(new Error("比例不得为0"));
                           }
                           return Promise.resolve();
