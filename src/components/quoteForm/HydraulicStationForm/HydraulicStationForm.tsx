@@ -60,12 +60,22 @@ const HydraulicStationForm = forwardRef(({ quoteId, quoteItemId }: HydraulicStat
       <Row gutter={16}>
         <Col xs={12} md={6}>
           <Form.Item label="油管长度" name="pipeLength" rules={[{ required: true, message: '请输入油管长度' }]}> 
-            <InputNumber style={{ width: '100%' }} addonAfter="米" min={0} />
+            <InputNumber
+              style={{ width: '100%' }}
+              min={0}
+              formatter={v => (v ? `${v}米` : '')}
+              parser={v => v?.replace(/米/g, '') as any}
+            />
           </Form.Item>
         </Col>
         <Col xs={12} md={6}>
           <Form.Item label="油管数量" name="pipeQuantity" rules={[{ required: true, message: '请输入油管数量' }]}> 
-            <InputNumber style={{ width: '100%' }} addonAfter="条" min={0} />
+            <InputNumber
+              style={{ width: '100%' }}
+              min={0}
+              formatter={v => (v ? `${v}条` : '')}
+              parser={v => v?.replace(/条/g, '') as any}
+            />
           </Form.Item>
         </Col>
       </Row>
