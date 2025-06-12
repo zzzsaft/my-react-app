@@ -308,13 +308,7 @@ const FeedblockForm = forwardRef(
                       },
                     ]}
                   >
-                    <LevelInputNumber
-                      formatter={(v) => `${v}%`}
-                      parser={(v) => v?.replace(/%/g, "") as any}
-                      style={{ width: 120 }}
-                      min={0}
-                      max={100}
-                    />
+                    <LevelInputNumber style={{ width: 120 }} />
                   </ProForm.Item>
                 }
               />
