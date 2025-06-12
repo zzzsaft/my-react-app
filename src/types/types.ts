@@ -128,3 +128,10 @@ export interface FilterProduct {
   pressure: string | null;
   remark: string | null;
 }
+
+export interface IntervalValue {
+  front: number;
+  rear: number;
+  value: string;
+  unit: string;
+}
