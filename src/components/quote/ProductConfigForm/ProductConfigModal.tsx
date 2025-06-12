@@ -110,6 +110,18 @@ const ProductConfigModal: React.FC<ProductConfigModalProps> = ({
       errors?.every((err) => err.errors.length == 0) &&
       priceErrors?.every((err) => err.errors.length == 0);
     const values = form?.getFieldsValue();
+    if (values?.gifts && Array.isArray(values.gifts)) {
+      values.gifts = values.gifts.map((g: any) => {
+        const q = Number(g?.quantity) || 0;
+        const p = Number(g?.unitPrice) || 0;
+        const subtotal = q && p ? q * p : 0;
+        return { ...g, subtotal };
+      });
+      values.giftsTotal = values.gifts.reduce(
+        (sum: number, g: any) => sum + (g.subtotal || 0),
+        0
+      );
+    }
     const price = priceForm?.getFieldsValue();
     const config = { ...values };
     if (quoteItem?.id) {
