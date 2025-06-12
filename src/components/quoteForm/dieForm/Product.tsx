@@ -11,6 +11,7 @@ const RUNNER_NUMBER_OPTIONS = {
   流道形式: ["单腔流道", "模内共挤", "分配器共挤", "分配器+模内共挤"],
 };
 export const Product = () => {
+  const form = Form.useFormInstance();
   return (
     <>
       <ProCard
@@ -72,8 +73,43 @@ export const Product = () => {
             <IntervalInputFormItem
               name="thickness"
               label="制品厚度(mm)"
-              rules={[{ required: true, message: "请输入有效厚度范围" }]}
+              dependencies={["lipOpening"]}
+              rules={[
+                {
+                  validator: (_, value) => {
+                    const other = form.getFieldValue("lipOpening");
+                    if (!value?.value && !other?.value) {
+                      return Promise.reject(
+                        new Error("制品厚度和模唇开口至少要填一个")
+                      );
+                    }
+                    return Promise.resolve();
+                  },
+                },
+              ]}
               placeholder={"有效厚度"}
+              unit="mm"
+            />
+          </Col>
+          <Col xs={12} md={6}>
+            <IntervalInputFormItem
+              name="lipOpening"
+              label="模唇开口(mm)"
+              dependencies={["thickness"]}
+              rules={[
+                {
+                  validator: (_, value) => {
+                    const other = form.getFieldValue("thickness");
+                    if (!value?.value && !other?.value) {
+                      return Promise.reject(
+                        new Error("制品厚度和模唇开口至少要填一个")
+                      );
+                    }
+                    return Promise.resolve();
+                  },
+                },
+              ]}
+              placeholder={"模唇开口"}
               unit="mm"
             />
           </Col>

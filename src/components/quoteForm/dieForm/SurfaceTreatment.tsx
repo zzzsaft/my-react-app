@@ -42,6 +42,26 @@ const OUTER_THICKNESS = [
   { label: "B: 0.03~0.04", value: "0.03~0.04", level: "B" },
 ];
 
+const toInterval = (val: string) => {
+  const [front, rear] = val.split("~");
+  return {
+    front: front ? parseFloat(front) : NaN,
+    rear: rear ? parseFloat(rear) : NaN,
+    value: val,
+    unit: "mm",
+  } as const;
+};
+
+const defaultChannelThickness = {
+  value: toInterval(CHANNEL_THICKNESS[0].value),
+  level: CHANNEL_THICKNESS[0].level,
+};
+
+const defaultOuterThickness = {
+  value: toInterval(OUTER_THICKNESS[0].value),
+  level: OUTER_THICKNESS[0].level,
+};
+
 const PLATING_REQUIREMENT = [
   { label: "镀铬", value: "镀铬" },
   { label: "镀镍磷合金", value: "镀镍磷合金" },
@@ -180,7 +200,7 @@ export const SurfaceTreatment = ({
                         { required: true, message: "请选择流道表面镀层厚度" },
                         ...autoCompleteIntervalInputRules,
                       ]}
-                      initialValue={CHANNEL_THICKNESS[0]}
+                      initialValue={defaultChannelThickness}
                     >
                       <AutoCompleteIntervalInput
                         options={CHANNEL_THICKNESS}
@@ -213,7 +233,7 @@ export const SurfaceTreatment = ({
                         { required: true, message: "请选择外表面镀层厚度" },
                         ...autoCompleteIntervalInputRules,
                       ]}
-                      initialValue={OUTER_THICKNESS[0]}
+                      initialValue={defaultOuterThickness}
                     >
                       <AutoCompleteIntervalInput
                         options={OUTER_THICKNESS}

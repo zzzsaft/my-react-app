@@ -133,7 +133,7 @@ const QuoteConfigTab: React.FC<QuoteConfigTabProps> = ({
           </Col>
           <Col xs={12} md={8}>
             <Form.Item name="applicationField" label="应用领域">
-              <CustomSelect mode="multiple" initialGroups={INDUSTRY} dropdown={false} />
+              <CustomSelect initialGroups={INDUSTRY} dropdown={false} />
             </Form.Item>
           </Col>
           <Col span={24}>

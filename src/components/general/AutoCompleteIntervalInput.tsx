@@ -91,9 +91,8 @@ export const AutoCompleteIntervalInput: React.FC<AutoCompleteInputProps> = ({
       <AutoComplete
         options={options}
         value={value?.value?.value ?? undefined}
-        onSelect={(e) => {
-          // console.log(e);
-          handleChange(e as any);
+        onSelect={(val) => {
+          handleChange(val as any);
         }}
         style={style}
         disabled={disabled}
