@@ -53,7 +53,7 @@ export interface Quote {
   opportunityName?: string; // opportunityName
   material: string[]; // 适用原料
   finalProduct: string; // 最终产品
-  applicationField: string[]; // 应用领域
+  applicationField: string; // 应用领域
   currencyType: string; // 货币类型
   customerName: string; // 客户名称
   customerId: string; // 客户id

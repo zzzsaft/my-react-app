@@ -1,5 +1,5 @@
 // components/quote/QuoteForm.tsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Form, Button, Tabs, App, Row, Col } from "antd";
 import { Quote, Clause } from "../../types/types";
 import QuoteConfigTab from "./QuoteConfigTab";
@@ -146,7 +146,7 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
   isModal = false,
 }) => {
   const { message } = App.useApp();
-  const { updateQuote, saveQuote } = useQuoteStore();
+  const { updateQuote, saveQuote, isQuoteDirty } = useQuoteStore();
   const [saveLoading, setSaveLoading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [contacts, setContacts] = useState<any[]>([]);
@@ -163,6 +163,16 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
   const [contractTerms, setContractTerms] = useState<Clause[]>(
     DEFAULT_CONTRACT_TERMS
   );
+  const autoSaveTimer = useRef<NodeJS.Timeout | null>(null);
+
+  const scheduleAutoSave = () => {
+    if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
+    autoSaveTimer.current = setTimeout(() => {
+      if (quote?.id && isQuoteDirty(quote.id)) {
+        save();
+      }
+    }, 60000);
+  };
   const handleQuoteTermsChange = (terms: Clause[]) => {
     setQuoteTerms(terms);
     if (quote?.id) updateQuote(quote.id, { quoteTerms: terms });
@@ -276,6 +286,7 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
         ...changedValues,
       });
     }
+    scheduleAutoSave();
   }, 100);
 
   return (

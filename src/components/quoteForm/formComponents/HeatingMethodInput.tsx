@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { App, Select, Tooltip } from "antd";
 import type { SelectProps } from "antd";
 
@@ -34,6 +34,7 @@ export const HeatingMethodSelect: React.FC<HeatingMethodSelectProps> = ({
   status,
 }) => {
   const { message } = App.useApp();
+  const selectRef = useRef<any>(null);
   const handleChange = (selected: HeatingMethod | HeatingMethod[]) => {
     const selectedMethods = multiple
       ? Array.isArray(selected)
@@ -59,6 +60,9 @@ export const HeatingMethodSelect: React.FC<HeatingMethodSelectProps> = ({
     }
 
     onChange?.(multiple ? selectedMethods : selectedMethods[0]);
+    if (multiple && selectedMethods.length >= 2) {
+      selectRef.current?.blur();
+    }
   };
 
   const isCastAluminumDisabled = temperature
@@ -115,7 +119,7 @@ export const HeatingMethodSelect: React.FC<HeatingMethodSelectProps> = ({
         </label>
       )}
 
-      <Select {...selectProps}>
+      <Select ref={selectRef} {...selectProps}>
         {methodOptions.map((option) => (
           <Option
             key={option.value}

@@ -28,6 +28,7 @@ const AutoSlashInput: React.FC<StrictUpperSlashInputProps> = ({
   // 内部状态管理
   const [displayValue, setDisplayValue] = useState(formatDisplayValue(value));
   const [cursorPos, setCursorPos] = useState(0);
+  const [isComposing, setIsComposing] = useState(false);
 
   // 同步外部value变化
   useEffect(() => {
@@ -35,6 +36,7 @@ const AutoSlashInput: React.FC<StrictUpperSlashInputProps> = ({
   }, [value, formatDisplayValue]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (isComposing) return;
     const inputVal = e.target.value;
     const selectionStart = e.target.selectionStart || 0;
 
@@ -55,6 +57,15 @@ const AutoSlashInput: React.FC<StrictUpperSlashInputProps> = ({
     setCursorPos(Math.min(newCursorPos, cleanValue.length * 2 - 1));
   };
 
+  const handleCompositionStart = () => {
+    setIsComposing(true);
+  };
+
+  const handleCompositionEnd = (e: React.CompositionEvent<HTMLInputElement>) => {
+    setIsComposing(false);
+    handleChange(e as any);
+  };
+
   // 控制光标位置
   const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
     e.target.setSelectionRange(cursorPos, cursorPos);
@@ -65,6 +76,8 @@ const AutoSlashInput: React.FC<StrictUpperSlashInputProps> = ({
       value={displayValue}
       onChange={handleChange}
       onFocus={handleFocus}
+      onCompositionStart={handleCompositionStart}
+      onCompositionEnd={handleCompositionEnd}
       placeholder={placeholder}
       maxLength={maxLength * 2 - 1} // 考虑斜杠占位
       allowClear
