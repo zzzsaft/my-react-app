@@ -36,6 +36,12 @@ export type Position = {
   longitude: number;
 };
 
+export interface Clause {
+  id: number;
+  title: string;
+  content: string;
+}
+
 export interface Quote {
   id: number;
   quoteId?: string;
@@ -70,6 +76,8 @@ export interface Quote {
   currentApprovalNode: string; // 当前审批节点
   currentApprover: string; // 当前审批人
   quoteTime: Date | null; // 报价时间
+  quoteTerms: Clause[];
+  contractTerms: Clause[];
   items: QuoteItem[];
   status: "draft" | "completed" | "locked";
 }
