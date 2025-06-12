@@ -12,6 +12,7 @@ import useProductActionModal from "../../../hook/showProductActionModal";
 
 import FilterSelection from "./FilterSelection";
 import TextArea from "antd/es/input/TextArea";
+import MeshBeltControlCard from "./MeshBeltControlCard";
 
 const FilterForm = forwardRef(
   ({ quoteId, quoteItemId }: { quoteId: number; quoteItemId: number }, ref) => {
@@ -261,6 +262,7 @@ const FilterForm = forwardRef(
             }
           </Form.Item>
         </Row>
+        <MeshBeltControlCard />
         <Form.Item name="remark" label="备注">
           <TextArea />
         </Form.Item>
