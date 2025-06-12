@@ -1,81 +1,108 @@
 // components/quote/QuoteForm.tsx
 import React, { useState, useEffect } from "react";
-import {
-  Form,
-  Input,
-  InputNumber,
-  DatePicker,
-  Select,
-  Row,
-  Col,
-  Button,
-  App,
-  AutoComplete,
-} from "antd";
-import type { DatePickerProps } from "antd";
-import CompanySearchSelect from "../general/CompanySearchSelect";
-import MemberSelect from "../general/MemberSelect";
-import { Quote } from "../../types/types";
-import dayjs from "dayjs";
-import { ProCard } from "@ant-design/pro-components";
-import { MoneyInput } from "../general/MoneyInput";
-import AddressInput from "../general/AddressInput";
-import { CustomSelect } from "../general/CustomSelect";
-import { selectOptions } from "../../util/valueUtil";
-import QuoteItemsTable from "./QuoteItemsTable";
+import { Form, Button, Tabs, App, Row, Col } from "antd";
+import { Quote, Clause } from "../../types/types";
+import QuoteConfigTab from "./QuoteConfigTab";
+import QuoteTermsTab from "./QuoteTermsTab";
+import ContractTab from "./ContractTab";
 import { debounce, throttle } from "lodash-es";
 import { useQuoteStore } from "../../store/useQuoteStore";
-import MaterialSelect from "../general/MaterialSelect";
 import { CustomerService } from "../../api/services/customer.service";
 
-const { Option } = Select;
-const { TextArea } = Input;
+const getDefaultQuoteTerms = (days: number): Clause[] => [
+  { id: 1, title: "交货期", content: `订单确认后模内手动模头（${days}）天交货` },
+  {
+    id: 2,
+    title: "保障",
+    content: "按合同技术参数及配置情况为准。符合实际使用要求，正常生产质量三包壹年.",
+  },
+  {
+    id: 3,
+    title: "违约责任",
+    content: "换免费易损件时，运费需方负责。双方协商解决，协商不成按民法典执行.",
+  },
+  {
+    id: 4,
+    title: "付款方式",
+    content: "合同签署后交付合同总金额的30%定金，其它70%在收到货款后发货.",
+  },
+  {
+    id: 5,
+    title: "解决合同纠纷的方式",
+    content:
+      "本合同在履行过程中发生争议，由当事人双方协商解决，协商不成，当事人双方同意由供方所在地人民法院管辖处理.",
+  },
+  {
+    id: 6,
+    title: "售后服务工作",
+    content:
+      "负责模头调试工作。旅差费用由供方负责；三包期内使用过程需更换免费易损件时，运费需方负责.",
+  },
+];
 
-const INDUSTRY = {
-  新能源及储能: ["动力电池（锂电、氢燃料、钠电）", "光伏新能源"],
-  半导体及电子元器件: ["半导体（泛半导体）", "先进封装", "高端显示"],
-  消费电子: ["消费电子"],
-  医疗及环保: ["医疗卫生", "环保行业"],
-  工业制造及材料: ["新型建材", "包装行业"],
-};
-const FINALPRODUCT = {
-  功能片材: [
-    "高阻隔片材",
-    "高阻隔包边片材",
-    "阻燃片材",
-    "降解片材",
-    "微发泡片材",
-    "交联发泡片材",
-    "弹性体片材",
-    "橡胶片材",
-  ],
-  结构片材: ["载带片材", "钢管包覆片材", "魔术贴片材", "彩条片材"],
-  工艺片材: ["浸纤片材", "浸润片材"],
-  其他片材: ["片材"],
-  功能薄膜: [
-    "太阳能膜",
-    "电池隔离膜",
-    "车衣膜",
-    "卫材底膜",
-    "护卡膜",
-    "保鲜膜",
-    "牧草膜",
-    "土工膜",
-  ],
-  工艺薄膜: [
-    "流延膜",
-    "拉丝膜",
-    "缠绕膜",
-    "淋膜",
-    "复合淋膜",
-    "压纹膜",
-    "压纹膜、磨砂膜",
-    "气泡垫延膜",
-  ],
-  材质薄膜: ["铝箔膜", "铝塑膜", "玻璃夹胶膜", "透气膜"],
-  其他薄膜: ["薄膜"],
-};
-const FINALPRODUCT_OPTIONS = selectOptions(FINALPRODUCT);
+const DEFAULT_CONTRACT_TERMS: Clause[] = [
+  {
+    id: 1,
+    title: "随机备品，配件工具数量及供应方法<免费提供部分>",
+    content: "精诚标准。",
+  },
+  {
+    id: 2,
+    title: "需方选配备品，配件工具数量及供应方法<收费提供部分>",
+    content: "无。",
+  },
+  {
+    id: 3,
+    title: "供方对质量负责的条件和期限",
+    content:
+      "按合同技术参数及配置情况为准。供方提供的产品出料稳定，并在正常使用条件下实行质量三包，为期一年<因工作环境、其它设备原因、操作不当，使用原料及其它意外事故除外>；供方配合产品在国内现场的安装调试及维护；三包期满后供方收取合理成本价费用。",
+  },
+  {
+    id: 4,
+    title: "交(提)货地点、方式",
+    content: "供方负责发运至需方公司，<在需方公司装卸及其它意外责任由需方负责>。",
+  },
+  {
+    id: 5,
+    title: "运输方式及到达站港和费用负担",
+    content: "汽车运输，到达需方公司费用由供方负责。",
+  },
+  { id: 6, title: "包装标准、包装物的供应与验收", content: "木箱包装，不计价。" },
+  {
+    id: 7,
+    title: "验收标准，方法及提出异议期限",
+    content:
+      "双方合同约定技术标准验收。需方收到供方货物后，请及时安排验收，如有异议，60天内书面告知供方，如未提出任何异议将视为默认验收合格。",
+  },
+  {
+    id: 8,
+    title: "结算方式及期限",
+    content: "签订合同先付30％预付款，合同生效，余款发货前一次性付清。",
+  },
+  {
+    id: 9,
+    title: "如需提供担保，另立合同担保书，作为本合同附件",
+    content: "不需提供。",
+  },
+  {
+    id: 10,
+    title: "违约责任",
+    content: "双方协商解决，协商不成按《中华人民国共和国民法典》执行.",
+  },
+  {
+    id: 11,
+    title: "解决合同纠纷的方式",
+    content:
+      "本合同在履行过程中发生争议，由当事人双方协商解决，协商不成，当事人双方同意由供方所在地人民法院管辖处理.",
+  },
+  {
+    id: 12,
+    title: "其它违约事项",
+    content:
+      "针对采购精诚的所有产品及配套件，一律不得自行或转交第三方进行测绘或仿制。一经查实，将处以100万元的罚款并追究司法责任。自供方通知需方付款提货日起一个月内需方未履行付款提货，供方将在一个月后（即：由第二个月开始）每日向需方收取本合同总价3‰的仓库管理费。自供方通知需方付款提货日起一年内需方未履行付款提货，供方有权做任何处置，造成的损失由需方自行承担；如供方逾期交货，供方需从最迟交货日的次日起，每日向需方支付延迟交货对应货款3‰的违约金。",
+  },
+];
+
 
 interface QuoteFormProps {
   form: any;
@@ -97,6 +124,22 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
   const [contacts, setContacts] = useState<any[]>([]);
   const [nameOptions, setNameOptions] = useState<{ value: string; label: string }[]>([]);
   const [phoneOptions, setPhoneOptions] = useState<{ value: string; label: string }[]>([]);
+  const deliveryDays = Form.useWatch("deliveryDays", form);
+  const [quoteTerms, setQuoteTerms] = useState<Clause[]>(
+    getDefaultQuoteTerms(deliveryDays ?? 0)
+  );
+  const [contractTerms, setContractTerms] = useState<Clause[]>(
+    DEFAULT_CONTRACT_TERMS
+  );
+  const handleQuoteTermsChange = (terms: Clause[]) => {
+    setQuoteTerms(terms);
+    if (quote?.id) updateQuote(quote.id, { quoteTerms: terms });
+  };
+
+  const handleContractTermsChange = (terms: Clause[]) => {
+    setContractTerms(terms);
+    if (quote?.id) updateQuote(quote.id, { contractTerms: terms });
+  };
   const fetchContacts = throttle(async (id: string) => {
     try {
       const data = await CustomerService.getContacts(id);
@@ -126,13 +169,30 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
   const loading = useQuoteStore((state) => state.loading.saveQuote);
 
   useEffect(() => {
+    if (quote?.quoteTerms) {
+      setQuoteTerms(quote.quoteTerms);
+    }
+    if (quote?.contractTerms) {
+      setContractTerms(quote.contractTerms);
+    }
+  }, [quote?.quoteTerms, quote?.contractTerms]);
+
+  useEffect(() => {
     if (quote?.customerId) {
       fetchContacts(quote.customerId);
     }
   }, [quote?.customerId]);
-  const onDateChange: any = (date: any, dateString: string) => {
-    form.setFieldsValue({ quoteTime: date?.toDate() });
-  };
+
+  useEffect(() => {
+    const days = deliveryDays ?? 0;
+    const updated = quoteTerms.map((c) =>
+      c.title === "交货期"
+        ? { ...c, content: c.content.replace(/（\d+）/, `（${days}）`) }
+        : c
+    );
+    setQuoteTerms(updated);
+    if (quote?.id) updateQuote(quote.id, { quoteTerms: updated });
+  }, [deliveryDays]);
   const onFinish = async () => {
     setSubmitLoading(true);
     if (quote?.id) updateQuote(quote.id, { status: "completed" });
@@ -194,282 +254,39 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
       onValuesChange={updateStore}
       preserve={true}
     >
-      <Row gutter={16}></Row>
-      <ProCard
-        title="基础信息"
-        collapsible
-        defaultCollapsed={false}
-        style={{ marginBottom: 16 }}
-        headerBordered
-      >
-        <Row gutter={16}>
-          {quote?.type != "history" && (
-            <Col xs={8} md={4}>
-              <Form.Item
-                name="quoteNumber"
-                label="报价单编号"
-                rules={[{ required: true, message: "请输入报价单编号" }]}
-              >
-                <Input
-                  style={{ width: "100%" }}
-                  readOnly={quote?.type != "history"}
-                />
-              </Form.Item>
-            </Col>
-          )}
-          <Col xs={8} md={4}>
-            <Form.Item
-              name="orderId"
-              label="订单编号"
-              rules={[{ required: true, message: "订单编号" }]}
-            >
-              <Input
-                style={{ width: "100%" }}
-                readOnly={quote?.type != "history"}
+      <Tabs
+        defaultActiveKey="1"
+        items={[
+          {
+            label: "配置表",
+            key: "1",
+            children: (
+              <QuoteConfigTab
+                form={form}
+                quote={quote}
+                nameOptions={nameOptions}
+                phoneOptions={phoneOptions}
+                handleNameSelect={handleNameSelect}
               />
-            </Form.Item>
-          </Col>
-          {quote?.type != "history" && (
-            <Col xs={8} md={8}>
-              <Form.Item name="opportunityName" label="商机名称">
-                <Input readOnly />
-              </Form.Item>
-            </Col>
-          )}
-
-          <Col xs={12} md={8}>
-            <Form.Item
-              name="quoteName"
-              label="报价单名称"
-              rules={[{ required: true, message: "请输入报价单名称" }]}
-            >
-              <Input />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row gutter={16}>
-          <Col xs={12} md={8}>
-            <Form.Item
-              name="material"
-              label="适用原料"
-              rules={[{ required: true, message: "请填写适用原料" }]}
-            >
-              <MaterialSelect />
-            </Form.Item>
-          </Col>
-          <Col xs={12} md={8}>
-            <Form.Item name="finalProduct" label="最终产品">
-              <AutoComplete options={FINALPRODUCT_OPTIONS} />
-            </Form.Item>
-          </Col>
-          <Col xs={12} md={8}>
-            <Form.Item name="applicationField" label="应用领域">
-              <CustomSelect
-                mode="multiple"
-                initialGroups={INDUSTRY}
-                dropdown={false}
-              />
-            </Form.Item>
-          </Col>
-          <Col span={24}>
-            <Form.Item
-              name="产品明细"
-              rules={[
-                {
-                  required: true,
-                  validator: () => {
-                    if (!quote?.items) {
-                      return Promise.reject("请输入至少一条产品");
-                    }
-                    if (quote?.items.length == 0) {
-                      return Promise.reject("请输入至少一条产品");
-                    }
-                    return Promise.resolve();
-                  },
-                },
-                {
-                  required: true,
-                  validator: () => {
-                    const index = quote?.items.findIndex(
-                      (item) => !item.isCompleted
-                    );
-                    if (index != -1) {
-                      return Promise.reject(
-                        `第${index ?? 0 + 1}个产品产品配置未完成`
-                      );
-                    }
-                    return Promise.resolve();
-                  },
-                },
-              ]}
-            >
-              <QuoteItemsTable quoteId={quote?.id ?? 0} />
-            </Form.Item>
-          </Col>
-        </Row>
-      </ProCard>
-      <ProCard
-        title="报价单价格"
-        collapsible
-        defaultCollapsed={false}
-        style={{ marginBottom: 16 }}
-        headerBordered
-      >
-        <Row gutter={16}>
-          <Col xs={12} md={6}>
-            <Form.Item label="产品价格合计">
-              <MoneyInput
-                quoteId={quote?.id ?? 0}
-                value={quote?.totalProductPrice ?? 0}
-                readOnly
-              />
-            </Form.Item>
-          </Col>
-          <Col xs={12} md={6}>
-            <Form.Item
-              name="discountAmount"
-              label="优惠金额"
-              normalize={(value) => parseFloat(value)}
-            >
-              <MoneyInput quoteId={quote?.id ?? 0} />
-            </Form.Item>
-          </Col>
-          <Col xs={12} md={6}>
-            <Form.Item label="报价单金额">
-              <MoneyInput
-                quoteId={quote?.id ?? 0}
-                value={quote?.quoteAmount ?? 0}
-                readOnly
-              />
-            </Form.Item>
-          </Col>
-          <Col xs={12} md={6}>
-            <Form.Item
-              name="deliveryDays"
-              label="交期天数"
-              rules={[{ required: true, message: "请输入交期天数" }]}
-            >
-              <InputNumber
-                style={{ width: "100%" }}
-                min={0}
-                max={365}
-                formatter={(value) => `${value}天`}
-                controls={false}
-                parser={(value) => {
-                  const num = Number(value?.replace("天", "") || 0);
-                  return Math.min(Math.max(num, 0), 365) as any;
-                }}
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-      </ProCard>
-      <ProCard
-        title="联系信息"
-        collapsible
-        defaultCollapsed={false}
-        style={{ marginBottom: 16 }}
-        headerBordered
-      >
-        <Row gutter={16}>
-          <Col xs={12} md={8}>
-            <Form.Item
-              name="customerName"
-              label="客户选择"
-              rules={[{ required: true, message: "请选择客户" }]}
-            >
-              <CompanySearchSelect placeholder="请选择客户" />
-            </Form.Item>
-          </Col>
-          <Col xs={12} md={8}>
-            <Form.Item
-              name="contactName"
-              label="联系人姓名"
-              rules={[{ required: true, message: "请输入联系人姓名" }]}
-            >
-              <AutoComplete options={nameOptions} onSelect={handleNameSelect} />
-            </Form.Item>
-          </Col>
-
-          <Col xs={12} md={8}>
-            <Form.Item
-              name="contactPhone"
-              label="联系人手机号"
-              rules={[{ required: true, message: "请输入联系人手机号" }]}
-            >
-              <AutoComplete options={phoneOptions} />
-            </Form.Item>
-          </Col>
-
-          <Col xs={12} md={8}>
-            <Form.Item name="telephone" label="电话">
-              <Input />
-            </Form.Item>
-          </Col>
-
-          <Col xs={12} md={8}>
-            <Form.Item name="faxNumber" label="传真号">
-              <Input />
-            </Form.Item>
-          </Col>
-          <Col xs={24} md={24}>
-            <Form.Item name="address" label="地址">
-              <AddressInput />
-            </Form.Item>
-          </Col>
-        </Row>
-      </ProCard>
-      <ProCard
-        title="负责人信息"
-        collapsible
-        defaultCollapsed={false}
-        style={{ marginBottom: 16 }}
-        headerBordered
-      >
-        <Row gutter={16}>
-          <Col xs={12} md={6}>
-            <Form.Item
-              name="creatorId"
-              label="创建人"
-              rules={[{ required: true, message: "请选择创建人" }]}
-            >
-              <MemberSelect placeholder="选择创建人" disabled />
-            </Form.Item>
-          </Col>
-          <Col xs={12} md={6}>
-            <Form.Item
-              name="chargerId"
-              label="负责人"
-              rules={[{ required: true, message: "请选择负责人" }]}
-            >
-              <MemberSelect placeholder="选择负责人" />
-            </Form.Item>
-          </Col>
-          <Col xs={12} md={6}>
-            <Form.Item name="projectManagerId" label="项目管理">
-              <MemberSelect placeholder="选择项目管理" />
-            </Form.Item>
-          </Col>
-          <Col xs={12} md={6}>
-            <Form.Item name="salesSupportId" label="销售支持">
-              <MemberSelect placeholder="选择销售支持" />
-            </Form.Item>
-          </Col>
-          <Col xs={12} md={6}>
-            <Form.Item
-              name="quoteTime"
-              label="报价时间"
-              rules={[{ required: true, message: "请选择报价时间" }]}
-            >
-              <DatePicker
-                style={{ width: "100%" }}
-                onChange={onDateChange}
-                maxDate={dayjs("2025/5/1")}
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-      </ProCard>
+            ),
+            forceRender: true,
+          },
+          {
+            label: "报价条约",
+            key: "2",
+            children: (
+              <QuoteTermsTab value={quoteTerms} onChange={handleQuoteTermsChange} />
+            ),
+          },
+          {
+            label: "合同",
+            key: "3",
+            children: (
+              <ContractTab value={contractTerms} onChange={handleContractTermsChange} />
+            ),
+          },
+        ]}
+      />
 
       <Row>
         <Col span={24} style={{ textAlign: "right" }}>
