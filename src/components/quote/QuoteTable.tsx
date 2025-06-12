@@ -1,83 +1,87 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import {
-  Table,
-  Tag,
-  Space,
-  Modal,
-  Form,
-  Input,
-  DatePicker,
-  message,
-  Button,
-} from "antd";
-import type { ColumnsType } from "antd/es/table";
-import { useNavigate } from "react-router-dom";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Table, Tag, Form, Input } from "antd";
+import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
+import MemberAvatar from "../general/MemberAvatar";
+import QuoteModal from "./QuoteModal";
 import { useQuoteStore } from "../../store/useQuoteStore";
-import { DebounceSelect } from "../../components/general/DebounceSelect";
-import { CustomerService } from "../../api/services/customer.service";
-import { SearchOutlined } from "@ant-design/icons";
-import CompanySearchSelect from "../../components/general/CompanySearchSelect";
-import MemberAvatar from "../../components/general/MemberAvatar";
-import MemberSelect from "../../components/general/MemberSelect";
-import { AddHistoryModal } from "../../components/quote/AddHistoryModal";
-import QuoteModal from "../../components/quote/QuoteModal";
-import { Quote } from "../../types/types";
-import { throttle } from "lodash-es";
+
+interface QuoteTableProps {
+  type: string; // 'history' | 'oa'
+}
 
 interface QuoteTableItem {
   key: number;
   quoteId: string;
   customerName: string;
   quoteTime: Date;
-  type: string;
   status: string;
   flowState: string;
   chargerId: string;
   salesSupportId: string;
   quoteName: string;
+  projectManagerId: string;
 }
 
-const QuoteTablePage: React.FC = () => {
-  const { quotes, loading, fetchQuotes, fetchQuote } = useQuoteStore(); // Assuming your store has loading state
+const QuoteTable: React.FC<QuoteTableProps> = ({ type }) => {
+  const { quotes, total, loading, fetchQuotes, fetchQuote } = useQuoteStore();
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedQuote, setSelectedQuote] = useState<Quote | undefined>(
-    undefined
-  );
-  const navigate = useNavigate();
+  const [selectedQuote, setSelectedQuote] = useState<any>();
+  const [searchForm] = Form.useForm();
+  const [pagination, setPagination] = useState<TablePaginationConfig>({
+    current: 1,
+    pageSize: 10,
+  });
+  const lastClickTime = useRef(0);
 
   useEffect(() => {
-    fetchQuotes();
-  }, [fetchQuotes]);
+    setPagination((p) => ({ ...p, total }));
+  }, [total]);
 
-  const lastClickTime = useRef(0);
+  useEffect(() => {
+    fetchQuotes({
+      page: pagination.current,
+      pageSize: pagination.pageSize,
+      type,
+    });
+  }, [fetchQuotes, pagination.current, pagination.pageSize, type]);
+
+  const handleSearch = () => {
+    const values = searchForm.getFieldsValue();
+    setPagination((p) => ({ ...p, current: 1 }));
+    fetchQuotes({
+      page: 1,
+      pageSize: pagination.pageSize,
+      type,
+      quoteName: values.quoteName,
+      customerName: values.customerName,
+    });
+  };
+
+  const handleTableChange = (p: TablePaginationConfig) => {
+    setPagination(p);
+    const values = searchForm.getFieldsValue();
+    fetchQuotes({
+      page: p.current,
+      pageSize: p.pageSize,
+      type,
+      quoteName: values.quoteName,
+      customerName: values.customerName,
+    });
+  };
 
   const handleRowClick = useCallback(
     async (record: QuoteTableItem) => {
       const now = Date.now();
-      if (now - lastClickTime.current < 1000) return; // 1秒内禁止重复点击
+      if (now - lastClickTime.current < 1000) return;
       lastClickTime.current = now;
 
+      setSelectedQuote(undefined);
+      setModalVisible(true);
       const quoteData = await fetchQuote(record.key);
       setSelectedQuote(quoteData);
-      setModalVisible(true);
     },
     [fetchQuote]
   );
-
-  // Transform quotes data for table
-  const tableData: QuoteTableItem[] = quotes.map((quote) => ({
-    key: quote.id,
-    quoteId: (quote.quoteId || quote.orderId) ?? "",
-    customerName: quote.customerName,
-    quoteTime: quote.quoteTime as any,
-    type: quote.type || "OA", // Default to OA if empty
-    status: quote.status,
-    flowState: quote.flowState,
-    chargerId: quote.chargerId,
-    salesSupportId: quote.salesSupportId,
-    quoteName: quote.quoteName,
-    projectManagerId: quote.projectManagerId,
-  }));
 
   const columns: ColumnsType<QuoteTableItem> = [
     {
@@ -100,12 +104,6 @@ const QuoteTablePage: React.FC = () => {
       key: "customerName",
       width: 150,
       sorter: (a, b) => a.customerName.localeCompare(b.customerName),
-      filters: [...new Set(quotes.map((q) => q.customerName))].map((name) => ({
-        text: name,
-        value: name,
-      })),
-      onFilter: (value, record) =>
-        record.customerName.includes(value as string),
     },
     {
       title: "报价日期",
@@ -117,32 +115,10 @@ const QuoteTablePage: React.FC = () => {
       render: (date: Date) => new Date(date).toLocaleDateString(),
     },
     {
-      title: "报价类型",
-      dataIndex: "type",
-      key: "type",
-      width: 100,
-      filters: [
-        { text: "OA", value: "OA" },
-        { text: "历史", value: "history" },
-      ],
-      onFilter: (value, record) => record.type === value,
-      render: (type: string) => (
-        <Tag color={type === "history" ? "blue" : "green"}>
-          {type === "history" ? "历史" : "OA"}
-        </Tag>
-      ),
-    },
-    {
       title: "当前状态",
       dataIndex: "status",
       key: "status",
       width: 100,
-      filters: [
-        { text: "草稿", value: "draft" },
-        { text: "已完成", value: "completed" },
-        { text: "已锁定", value: "locked" },
-      ],
-      onFilter: (value, record) => record.status === value,
       render: (status: string) => {
         let color = "";
         switch (status) {
@@ -169,20 +145,21 @@ const QuoteTablePage: React.FC = () => {
         );
       },
     },
-    {
-      title: "审批状态",
-      dataIndex: "flowState",
-      key: "flowState",
-      width: 120,
-      render: (flowState: string, record: QuoteTableItem) =>
-        record.type === "history" ? (
-          "-"
-        ) : (
-          <Tag color={flowState ? "cyan" : "default"}>
-            {flowState || "未审批"}
-          </Tag>
-        ),
-    },
+    ...(type === "history"
+      ? []
+      : [
+          {
+            title: "审批状态",
+            dataIndex: "flowState",
+            key: "flowState",
+            width: 120,
+            render: (flowState: string) => (
+              <Tag color={flowState ? "cyan" : "default"}>
+                {flowState || "未审批"}
+              </Tag>
+            ),
+          },
+        ]),
     {
       title: "销售负责人",
       dataIndex: "chargerId",
@@ -209,9 +186,41 @@ const QuoteTablePage: React.FC = () => {
     },
   ];
 
+  const tableData = useMemo(
+    () =>
+      quotes.map((quote) => ({
+        key: quote.id,
+        quoteId: (quote.quoteId || quote.orderId) ?? "",
+        customerName: quote.customerName,
+        quoteTime: quote.quoteTime as any,
+        status: quote.status,
+        flowState: quote.flowState,
+        chargerId: quote.chargerId,
+        salesSupportId: quote.salesSupportId,
+        quoteName: quote.quoteName,
+        projectManagerId: quote.projectManagerId,
+      })),
+    [quotes]
+  );
+
   return (
     <>
-      <AddHistoryModal />
+      <Form
+        form={searchForm}
+        layout="inline"
+        style={{ marginBottom: 16 }}
+        onFinish={handleSearch}
+      >
+        <Form.Item name="quoteName" label="报价名称">
+          <Input placeholder="请输入报价名称" allowClear />
+        </Form.Item>
+        <Form.Item name="customerName" label="客户名称">
+          <Input placeholder="请输入客户名称" allowClear />
+        </Form.Item>
+        <Form.Item>
+          <Input type="submit" value="查询" style={{ width: 80 }} />
+        </Form.Item>
+      </Form>
       <Table<QuoteTableItem>
         columns={columns}
         dataSource={tableData}
@@ -219,26 +228,21 @@ const QuoteTablePage: React.FC = () => {
         size="middle"
         scroll={{ x: "max-content", y: "calc(100vh - 250px)" }}
         pagination={{
+          ...pagination,
           pageSizeOptions: ["10", "20", "50", "100"],
           showSizeChanger: true,
           showQuickJumper: true,
         }}
         loading={loading.getQuotes}
+        onChange={handleTableChange}
         sticky
         onRow={(record) => ({
           onClick: () => handleRowClick(record),
-          // async () => {
-          //   const quoteData = await fetchQuote(record.key);
-          //   setSelectedQuote(quoteData);
-          //   setModalVisible(true);
-          //   // navigate(`/quote/${record.key}`);
-          // },
         })}
       />
       <QuoteModal
         visible={modalVisible}
         onCancel={() => setModalVisible(false)}
-        // onOk={handleModalOk}
         initialValues={selectedQuote}
         loading={loading.getQuote}
         onSubmit={() => setModalVisible(false)}
@@ -247,4 +251,4 @@ const QuoteTablePage: React.FC = () => {
   );
 };
 
-export default QuoteTablePage;
+export default QuoteTable;

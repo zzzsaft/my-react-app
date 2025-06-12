@@ -17,7 +17,8 @@ import TestComponent from "./components/test";
 import AuthCallback from "./page/AuthCallback";
 import MainLayout from "./components/MainLayout";
 import JdyRedirect from "./page/JdyRedirect";
-import QuotesPage from "./page/quote/QuoteTablePage";
+import HistoryQuoteTablePage from "./page/quote/HistoryQuoteTablePage";
+import OAQuoteTablePage from "./page/quote/OAQuoteTablePage";
 import QuoteFormPage from "./page/quote/QuoteFormPage";
 import { NoPermissionPage } from "./page/NoPermissionPage";
 
@@ -34,8 +35,12 @@ const App: React.FC = () => {
                 path="external_contact"
                 element={<ExternalContactBindingPage />}
               />
-              <Route path="quote" element={<QuotesPage />} />
-              <Route path="quote/:id" element={<QuoteFormPage />} />
+              <Route path="quote" element={<Outlet />}> 
+                <Route index element={<HistoryQuoteTablePage />} />
+                <Route path="history" element={<HistoryQuoteTablePage />} />
+                <Route path="oa" element={<OAQuoteTablePage />} />
+                <Route path=":id" element={<QuoteFormPage />} />
+              </Route>
             </Route>
             <Route path="/jdy_redirect" element={<JdyRedirect />} />
           </Route>
