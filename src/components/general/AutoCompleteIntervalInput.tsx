@@ -4,7 +4,7 @@ import { IntervalInput } from "./IntervalInput";
 import { useEffect, useState } from "react";
 import type { IntervalValue } from "../../types/types";
 
-const DELIMITER = "～";
+const DELIMITER = "~";
 
 interface OptionTypeWithLevel extends DefaultOptionType {
   level?: string;
@@ -13,7 +13,10 @@ interface OptionTypeWithLevel extends DefaultOptionType {
 interface AutoCompleteInputProps {
   id?: string;
   value?: { value: IntervalValue | null; level: string | null };
-  onChange?: (value: { value: IntervalValue | null; level: string | null }) => void;
+  onChange?: (value: {
+    value: IntervalValue | null;
+    level: string | null;
+  }) => void;
   disabled?: boolean;
   options?: OptionTypeWithLevel[];
   addonAfter?: string | null;

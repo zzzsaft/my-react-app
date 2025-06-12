@@ -61,7 +61,7 @@ export const DieWidthInput: React.FC<CombinedWidthInputProps> = ({
       {/* 区间输入 */}
       <div style={{ flex: 1 }}>
         <IntervalInput
-          value={length}
+          // value={length}
           onChange={handleIntervalChange}
           disabled={disabled}
           // placeholder={["最小值", "最大值"]}

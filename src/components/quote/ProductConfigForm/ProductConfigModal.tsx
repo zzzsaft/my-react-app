@@ -80,46 +80,6 @@ const ProductConfigModal: React.FC<ProductConfigModalProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, quoteItem]);
 
-  // const getFormInstance = () => {
-  //   if (!quoteItem) return null;
-  //   if (!formRef.current) return null;
-  //   if (quoteItem.productCategory?.[0] === "平模") {
-  //     return formRef?.current.dieForm;
-  //   }
-  //   if (quoteItem.productCategory?.[1] === "智能调节器") {
-  //     return formRef.current.smartRegulatorFormRef;
-  //   }
-  //   if (quoteItem.productCategory?.[1] === "熔体计量泵") {
-  //     return formRef.current.meteringPumpFormRef;
-  //   }
-  //   return formRef.current.infoForm;
-  // };
-
-  // useLayoutEffect(() => {
-  //   // setBasicValues({
-  //   //   productName: quoteItem?.productName,
-  //   //   quantity: quoteItem?.quantity,
-  //   //   unitPrice: quoteItem?.unitPrice,
-  //   //   discountRate: quoteItem?.discountRate,
-  //   //   subtotal: quoteItem?.subtotal,
-  //   // });
-  //   // const formv = {
-  //   //   ...(quoteItem?.config ?? {}),
-  //   // };
-  //   // setFormValues(formv);
-
-  //   if (formRef.current?.priceForm) {
-  //     formRef.current?.priceForm.setFieldsValue(basicValues);
-  //   }
-  //   if (formRef.current?.dieForm && quoteItem?.productCategory?.[0] == "平模") {
-  //     formRef.current?.dieForm.setFieldsValue(formValues);
-  //   } else if (formRef.current?.smartRegulatorFormRef) {
-  //     formRef.current?.smartRegulatorFormRef.setFieldsValue(formValues);
-  //   } else if (formRef.current?.infoForm) {
-  //     formRef.current?.infoForm.setFieldsValue(formValues);
-  //   }
-  // }, [basicValues, formValues, quoteItem?.productCategory]);
-
   const handleOk = async () => {
     try {
       const form = await formRef.current?.modelForm?.validateFields();

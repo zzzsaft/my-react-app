@@ -58,8 +58,8 @@ const DieForm = forwardRef(
       ],
     });
 
-    const handleDieWidth = (value: string) => {
-      const width = Number(value?.split("～")[0]);
+    const handleDieWidth = (value: any) => {
+      const width = Number(value.front);
       const zone = nearestOdd(width);
       form.setFieldValue("heatingZones", zone);
       form.setFieldValue("powerCableLength", width <= 1500 ? 3 : 5);
@@ -120,14 +120,15 @@ const DieForm = forwardRef(
       if (!result.result) form.setFieldValue("haveThermalInsulation", true);
     };
 
-    const fieldHandlers: Record<string, (value: any) => void | Promise<void>> = {
-      dieWidth: handleDieWidth,
-      heatingZones: handleHeatingZones,
-      compositeStructure: handleCompositeStructure,
-      hasCart: handleHasCart,
-      smartRegulator: handleSmartRegulator,
-      haveThermalInsulation: handleThermalInsulation,
-    };
+    const fieldHandlers: Record<string, (value: any) => void | Promise<void>> =
+      {
+        dieWidth: handleDieWidth,
+        heatingZones: handleHeatingZones,
+        compositeStructure: handleCompositeStructure,
+        hasCart: handleHasCart,
+        smartRegulator: handleSmartRegulator,
+        haveThermalInsulation: handleThermalInsulation,
+      };
 
     const handleFieldsChange = async (changedFields: any) => {
       for (const [key, value] of Object.entries(changedFields)) {

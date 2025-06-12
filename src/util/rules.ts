@@ -1,6 +1,6 @@
 import { Rule } from "antd/es/form";
 
-const DELIMITER = "～";
+const DELIMITER = "~";
 
 // 表单验证规则
 export const powerInputRules: Rule[] = [
@@ -64,7 +64,9 @@ export const DieWidthInputRule: Rule[] = [
 
       // 检查是否是范围格式
       if (value.length.includes(DELIMITER)) {
-        const parts = value.length.split(DELIMITER).map((part: any) => part.trim());
+        const parts = value.length
+          .split(DELIMITER)
+          .map((part: any) => part.trim());
 
         // 验证两部分都是有效数字
         if (parts.some((part: any) => !/^\d+$/.test(part))) {

@@ -53,7 +53,7 @@ export const Product = () => {
               label="制品宽度(mm)"
               // rules={[{ required: true, message: "请输入有效厚度范围" }]}
               placeholder={"制品宽度"}
-              addonAfter="mm"
+              unit="mm"
               // unit="mm"
             />
           </Col>
@@ -63,7 +63,8 @@ export const Product = () => {
               label="口模有效宽度(mm)"
               rules={[{ required: true, message: "请输入有效宽度范围" }]}
               placeholder={"有效宽度"}
-              addonAfter="mm"
+              unit="mm"
+              // addonAfter="mm"
               isSecondNumberGreater={false}
             />
           </Col>
@@ -73,7 +74,7 @@ export const Product = () => {
               label="制品厚度(mm)"
               rules={[{ required: true, message: "请输入有效厚度范围" }]}
               placeholder={"有效厚度"}
-              addonAfter="mm"
+              unit="mm"
             />
           </Col>
           <Col xs={12} md={6}>
@@ -82,7 +83,7 @@ export const Product = () => {
               label="适用产量(kg/h)"
               rules={[{ required: true, message: "请输入适用产量范围" }]}
               placeholder={"产量"}
-              addonAfter="kg/h"
+              unit="kg/h"
             />
           </Col>
 
