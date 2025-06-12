@@ -19,6 +19,7 @@ export const AddHistoryModal = () => {
       await createQuote({
         ...values,
         orderId: values.orderId,
+        quoteId: values.quoteId,
         customerId: values.customer.erpId,
         customerName: values.customer.name,
         date: new Date(values.quoteTime),
@@ -28,7 +29,13 @@ export const AddHistoryModal = () => {
       });
       message.success("历史报价单添加成功");
       form.resetFields();
-    } catch (error) {
+    } catch (error: any) {
+      if (
+        error?.response?.data?.message &&
+        /订单.*重复/.test(error.response.data.message)
+      ) {
+        form.setFields([{ name: "orderId", errors: ["订单编号已存在"] }]);
+      }
       console.error("添加历史报价单失败:", error);
       message.error("添加历史报价单失败");
     }
@@ -49,7 +56,7 @@ export const AddHistoryModal = () => {
       >
         <Form form={form} layout="vertical">
           <Row gutter={16}>
-            {/* <Col xs={12} md={12}>
+            <Col xs={12} md={12}>
               <Form.Item
                 name="quoteId"
                 label="报价编号"
@@ -57,7 +64,7 @@ export const AddHistoryModal = () => {
               >
                 <Input placeholder="请输入报价编号" />
               </Form.Item>
-            </Col> */}
+            </Col>
             <Col xs={12} md={12}>
               <Form.Item
                 name="orderId"
