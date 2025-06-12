@@ -45,7 +45,7 @@ export const TemperatureControl = () => {
                 >
                   <HeatingMethodSelect
                     multiple={true}
-                    temperature={temperature}
+                    temperature={temperature?.value}
                   />
                 </Form.Item>
               </Col>
@@ -185,7 +185,7 @@ export const TemperatureControl = () => {
                 >
                   <HeatingMethodSelect
                     multiple={true}
-                    temperature={temperature}
+                    temperature={temperature?.value}
                   />
                 </Form.Item>
               </Col>

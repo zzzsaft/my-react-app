@@ -4,11 +4,14 @@ import type { IntervalValue } from "../../types/types";
 
 export interface LevelValue {
   level: string;
-  value?: IntervalValue | null;
+  value?: IntervalValue | undefined;
 }
 
 export interface LevelInputNumberProps
-  extends Omit<IntervalInputProps, "value" | "onChange" | "addonBefore" | "unit"> {
+  extends Omit<
+    IntervalInputProps,
+    "value" | "onChange" | "addonBefore" | "unit"
+  > {
   value?: LevelValue;
   onChange?: (val: LevelValue) => void;
 }

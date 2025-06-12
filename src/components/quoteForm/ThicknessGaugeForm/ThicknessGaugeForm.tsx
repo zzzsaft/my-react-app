@@ -1,3 +1,4 @@
+
 import { Col, Form, Radio, Row, Segmented, Select } from "antd";
 import ProForm from "@ant-design/pro-form";
 import { forwardRef, useImperativeHandle } from "react";
@@ -81,6 +82,7 @@ const ThicknessGaugeForm = forwardRef<any, { quoteId: number; quoteItemId: numbe
                     rules={[{ required: true, message: "请选择适用宽度" }]}
                   >
                     <Select options={opts} />
+
                   </Form.Item>
                 </Col>
               );
