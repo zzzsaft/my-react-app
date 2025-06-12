@@ -94,7 +94,7 @@ export function SortableTable<
   T extends {
     id: UniqueIdentifier;
     index?: number;
-    parentId: number | undefined;
+    parentId?: number | undefined;
   }
 >({
   dataSource = [],
