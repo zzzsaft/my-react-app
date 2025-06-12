@@ -1,5 +1,5 @@
 // components/quote/QuoteForm.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Form,
   Input,
@@ -10,6 +10,7 @@ import {
   Col,
   Button,
   App,
+  AutoComplete,
 } from "antd";
 import type { DatePickerProps } from "antd";
 import CompanySearchSelect from "../general/CompanySearchSelect";
@@ -20,10 +21,12 @@ import { ProCard } from "@ant-design/pro-components";
 import { MoneyInput } from "../general/MoneyInput";
 import AddressInput from "../general/AddressInput";
 import { CustomSelect } from "../general/CustomSelect";
+import { selectOptions } from "../../util/valueUtil";
 import QuoteItemsTable from "./QuoteItemsTable";
 import { debounce, throttle } from "lodash-es";
 import { useQuoteStore } from "../../store/useQuoteStore";
 import MaterialSelect from "../general/MaterialSelect";
+import { CustomerService } from "../../api/services/customer.service";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -72,6 +75,7 @@ const FINALPRODUCT = {
   材质薄膜: ["铝箔膜", "铝塑膜", "玻璃夹胶膜", "透气膜"],
   其他薄膜: ["薄膜"],
 };
+const FINALPRODUCT_OPTIONS = selectOptions(FINALPRODUCT);
 
 interface QuoteFormProps {
   form: any;
@@ -90,10 +94,42 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
   const { updateQuote, saveQuote } = useQuoteStore();
   const [saveLoading, setSaveLoading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
+  const [contacts, setContacts] = useState<any[]>([]);
+  const [nameOptions, setNameOptions] = useState<{ value: string; label: string }[]>([]);
+  const [phoneOptions, setPhoneOptions] = useState<{ value: string; label: string }[]>([]);
+  const fetchContacts = throttle(async (id: string) => {
+    try {
+      const data = await CustomerService.getContacts(id);
+      const list = data?.contacts || [];
+      setContacts(list);
+      setNameOptions(list.map((c: any) => ({ value: c.name, label: c.name })));
+      setPhoneOptions(list.map((c: any) => ({ value: c.phone, label: c.phone })));
+      if (data.address) {
+        form.setFieldsValue({ address: data.address });
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }, 1000);
+
+  const handleNameSelect = (value: string) => {
+    const matched = contacts.filter((c) => c.name === value);
+    const phones = matched.map((c) => c.phone);
+    setPhoneOptions(phones.map((p) => ({ value: p, label: p })));
+    if (phones.length === 1) {
+      form.setFieldsValue({ contactPhone: phones[0] });
+    }
+  };
   const quote = useQuoteStore((state) =>
     state.quotes.find((q) => q.id == quoteId)
   );
   const loading = useQuoteStore((state) => state.loading.saveQuote);
+
+  useEffect(() => {
+    if (quote?.customerId) {
+      fetchContacts(quote.customerId);
+    }
+  }, [quote?.customerId]);
   const onDateChange: any = (date: any, dateString: string) => {
     form.setFieldsValue({ quoteTime: date?.toDate() });
   };
@@ -138,6 +174,9 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
         customerId: customer?.erpId,
         customerName: customer?.name,
       });
+      if (customer?.erpId) {
+        fetchContacts(customer.erpId);
+      }
     } else {
       updateQuote(quote.id, {
         ...changedValues,
@@ -220,11 +259,7 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
           </Col>
           <Col xs={12} md={8}>
             <Form.Item name="finalProduct" label="最终产品">
-              <CustomSelect
-                mode={undefined}
-                initialGroups={FINALPRODUCT}
-                dropdown={true}
-              />
+              <AutoComplete options={FINALPRODUCT_OPTIONS} />
             </Form.Item>
           </Col>
           <Col xs={12} md={8}>
@@ -352,7 +387,7 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
               label="联系人姓名"
               rules={[{ required: true, message: "请输入联系人姓名" }]}
             >
-              <Input />
+              <AutoComplete options={nameOptions} onSelect={handleNameSelect} />
             </Form.Item>
           </Col>
 
@@ -362,6 +397,18 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
               label="联系人手机号"
               rules={[{ required: true, message: "请输入联系人手机号" }]}
             >
+              <AutoComplete options={phoneOptions} />
+            </Form.Item>
+          </Col>
+
+          <Col xs={12} md={8}>
+            <Form.Item name="telephone" label="电话">
+              <Input />
+            </Form.Item>
+          </Col>
+
+          <Col xs={12} md={8}>
+            <Form.Item name="faxNumber" label="传真号">
               <Input />
             </Form.Item>
           </Col>

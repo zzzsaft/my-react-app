@@ -46,7 +46,7 @@ export interface Quote {
   opportunityId?: string;
   opportunityName?: string; // opportunityName
   material: string[]; // 适用原料
-  finalProduct: string[]; // 最终产品
+  finalProduct: string; // 最终产品
   applicationField: string[]; // 应用领域
   currencyType: string; // 货币类型
   customerName: string; // 客户名称
@@ -62,6 +62,8 @@ export interface Quote {
   address: any; // 地址
   contactName: string; // 联系人姓名
   contactPhone: string; // 联系人手机号
+  telephone?: string; // 电话
+  faxNumber?: string; // 传真号
   technicalLevel: string; // 技术等级
   projectLevel: string; // 项目等级
   flowState: string; // 报价状态

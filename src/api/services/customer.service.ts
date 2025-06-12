@@ -26,6 +26,12 @@ export const CustomerService = {
     });
     return res.data;
   },
+  async getContacts(id: string) {
+    const res = await apiClient.get("/customer/contact/get", {
+      params: { id },
+    });
+    return res.data as { contacts: any[]; address: any };
+  },
   async matchCustomer(payload: {
     externalUserId: string;
     corpName: string;
