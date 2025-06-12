@@ -22,7 +22,7 @@ interface ProductConfigurationFormProps {
   quoteItem?: QuoteItem;
   quoteId: number;
   material?: string[];
-  finalProduct?: string[];
+  finalProduct?: string;
   style?: any;
 }
 const ProductConfigurationForm = forwardRef(
@@ -31,7 +31,7 @@ const ProductConfigurationForm = forwardRef(
       quoteItem,
       quoteId,
       material = [],
-      finalProduct = [],
+      finalProduct = "",
       style,
     }: ProductConfigurationFormProps,
     ref
@@ -47,7 +47,7 @@ const ProductConfigurationForm = forwardRef(
 
       if (category[0] === "平模") {
         const mat = material.join("");
-        const final = finalProduct.join("");
+        const final = finalProduct;
         return `${mat}${final}模头`;
       }
 
