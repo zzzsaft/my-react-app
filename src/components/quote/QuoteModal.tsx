@@ -4,6 +4,7 @@ import { Modal, Button, Form, App } from "antd";
 import { FullscreenOutlined, FullscreenExitOutlined } from "@ant-design/icons";
 import QuoteForm from "./QuoteForm";
 import type { Quote } from "../../types/types";
+import { useQuoteStore } from "../../store/useQuoteStore";
 import dayjs from "dayjs";
 import { Skeleton } from "antd";
 interface QuoteModalProps {
@@ -22,6 +23,7 @@ const QuoteModal: React.FC<QuoteModalProps> = ({
   onSubmit,
 }) => {
   const { message } = App.useApp();
+  const { isQuoteDirty, saveQuote } = useQuoteStore();
   const [form] = Form.useForm();
   const [isFullscreen, setIsFullscreen] = useState(false);
 
@@ -36,6 +38,26 @@ const QuoteModal: React.FC<QuoteModalProps> = ({
 
   const toggleFullscreen = () => {
     setIsFullscreen(!isFullscreen);
+  };
+
+  const handleCancel = () => {
+    const id = initialValues?.id;
+    if (id && isQuoteDirty(id)) {
+      Modal.confirm({
+        title: "存在未保存的更改，是否暂存？",
+        okText: "暂存",
+        cancelText: "不保存",
+        onOk: async () => {
+          await saveQuote(id);
+          onCancel();
+        },
+        onCancel: () => {
+          onCancel();
+        },
+      });
+    } else {
+      onCancel();
+    }
   };
 
   useEffect(() => {
@@ -95,7 +117,7 @@ const QuoteModal: React.FC<QuoteModalProps> = ({
       }
       open={visible}
       //   onOk={handleOk}
-      onCancel={onCancel}
+      onCancel={handleCancel}
       confirmLoading={loading}
       footer={null}
       //   footer={[

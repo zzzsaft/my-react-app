@@ -106,6 +106,8 @@ interface QuotesStore {
     itemId: number | null
   ) => { parent: QuoteItem | undefined; index: number } | undefined;
   calculateItemPrice: (item: QuoteItem) => void;
+  dirtyQuotes: Record<number, boolean>;
+  isQuoteDirty: (quoteId: number) => boolean;
   // calculateQuoteTotal: (quoteId: number) => void;
 }
 
@@ -114,6 +116,7 @@ export const useQuoteStore = create<QuotesStore>()(
     quotes: [],
     total: 0,
     categories: [],
+    dirtyQuotes: {},
     loading: {
       add: false,
       delete: false,
@@ -125,6 +128,10 @@ export const useQuoteStore = create<QuotesStore>()(
 
     setConfigModalVisible: (bool) => {
       set({ configModalVisible: bool });
+    },
+
+    isQuoteDirty: (quoteId) => {
+      return !!get().dirtyQuotes[quoteId];
     },
 
     initialize: async () => {
@@ -154,6 +161,7 @@ export const useQuoteStore = create<QuotesStore>()(
             state.quotes.push(newQuote);
           }
           state.loading.getQuote = false;
+          state.dirtyQuotes[newQuote.id] = false;
         });
         console.log(newQuote);
         return newQuote;
@@ -181,6 +189,7 @@ export const useQuoteStore = create<QuotesStore>()(
           if (updateData.discountAmount != null) {
             calculateQuoteTotal(quote);
           }
+          state.dirtyQuotes[quoteId] = true;
         }
       });
     },
@@ -206,9 +215,9 @@ export const useQuoteStore = create<QuotesStore>()(
         );
 
         // 3. 使用 Immer 更新状态
-        set((state) => {
-          const quote = state.quotes.find((q) => q.id === quoteId);
-          if (!quote) return state;
+      set((state) => {
+        const quote = state.quotes.find((q) => q.id === quoteId);
+        if (!quote) return state;
 
           // 查找目标位置（假设用 linkId 匹配）
           const targetIndex = quote.items.findIndex(
@@ -233,6 +242,7 @@ export const useQuoteStore = create<QuotesStore>()(
           }
 
           state.loading.add = false;
+          state.dirtyQuotes[quoteId] = true;
         });
 
         return quoteItem.id;
@@ -262,6 +272,7 @@ export const useQuoteStore = create<QuotesStore>()(
             }
             parentItem.children.push(quoteItem);
           }
+          state.dirtyQuotes[quoteId] = true;
         }
       });
       return quoteItem.id;
@@ -286,6 +297,7 @@ export const useQuoteStore = create<QuotesStore>()(
             parentInfo.parent.children.splice(parentInfo.index, 1);
             calculateQuoteTotal(quote);
           }
+          state.dirtyQuotes[quoteId] = true;
         }
       });
     },
@@ -300,6 +312,7 @@ export const useQuoteStore = create<QuotesStore>()(
             get().calculateItemPrice(item);
             calculateQuoteTotal(quote);
           }
+          state.dirtyQuotes[quoteId] = true;
         }
       });
     },
@@ -311,6 +324,7 @@ export const useQuoteStore = create<QuotesStore>()(
           if (item) {
             item.config = { ...(item.config ?? []), ...updateData };
           }
+          state.dirtyQuotes[quoteId] = true;
         }
       });
     },
@@ -319,6 +333,7 @@ export const useQuoteStore = create<QuotesStore>()(
         const quote = state.quotes.find((q) => q.id === quoteId);
         if (quote?.items) {
           quote.items = items;
+          state.dirtyQuotes[quoteId] = true;
         }
       });
     },
@@ -358,6 +373,9 @@ export const useQuoteStore = create<QuotesStore>()(
       const quote = get().quotes.find((quote) => quoteId == quote.id);
       if (quote) {
         await QuoteService.updateQuoteItem(quote);
+        set((state) => {
+          state.dirtyQuotes[quoteId] = false;
+        });
       }
       set({ loading: { ...get().loading, saveQuote: false } });
     },
