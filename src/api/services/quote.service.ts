@@ -45,9 +45,17 @@ export const QuoteService = {
     });
     return result.data;
   },
-  async getQuotes() {
-    const quote = await apiClient.get("/quote/get");
-    return quote.data as Quote[];
+  async getQuotes(params?: {
+    page?: number;
+    pageSize?: number;
+    type?: string;
+    quoteName?: string;
+    customerName?: string;
+  }) {
+    const quote = await apiClient.get("/quote/get", {
+      params,
+    });
+    return quote.data as { list: Quote[]; total: number };
   },
   async getQuote(quoteId: number) {
     const quote = await apiClient.get("/quote/detail/get", {
