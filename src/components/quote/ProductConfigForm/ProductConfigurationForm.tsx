@@ -15,7 +15,6 @@ import { QuoteItem } from "../../../types/types";
 import MeteringPumpForm from "../../quoteForm/MeteringPumpForm/MeteringPumpForm";
 import FeedblockForm from "../../quoteForm/FeedblockForm/FeedblockForm";
 import FilterForm from "../../quoteForm/FilterForm/FilterForm";
-import ThicknessGaugeForm from "../../quoteForm/ThicknessGaugeForm/ThicknessGaugeForm";
 import HydraulicStationForm from "../../quoteForm/HydraulicStationForm/HydraulicStationForm";
 
 interface ProductConfigurationFormProps {
@@ -73,12 +72,6 @@ const ProductConfigurationForm = forwardRef(
           return `${model}${name}`;
         }
       }
-      if (category.at(-1) === "测厚仪") {
-        const model = modelFormRef.current?.form.getFieldValue("model");
-        if (model) {
-          return `${model}测厚仪`;
-        }
-      }
       return "";
     };
 
@@ -128,18 +121,6 @@ const ProductConfigurationForm = forwardRef(
             />
           ),
         };
-
-      if (category?.at(1) == "测厚仪")
-        return {
-          form: (
-            <ThicknessGaugeForm
-              ref={modelFormRef}
-              quoteId={quoteId}
-              quoteItemId={quoteItem?.id ?? 0}
-            />
-          ),
-        };
-
       if (category?.includes("液压站"))
         return {
           form: (
