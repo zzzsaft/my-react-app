@@ -88,6 +88,7 @@ const TermsTable: React.FC<TermsTableProps> = ({ value, onChange }) => {
       title: "顺序",
       dataIndex: "id",
       width: 60,
+      render: (_: any, record: Clause, index: number) => record.id ?? index + 1,
     },
     {
       title: "条约标题",
