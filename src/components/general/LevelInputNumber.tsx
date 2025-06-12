@@ -1,4 +1,5 @@
-import { InputNumber, InputNumberProps } from "antd";
+import type { IntervalInputProps } from "./IntervalInput";
+import { IntervalInput } from "./IntervalInput";
 import type { IntervalValue } from "../../types/types";
 
 export interface LevelValue {
@@ -7,7 +8,7 @@ export interface LevelValue {
 }
 
 export interface LevelInputNumberProps
-  extends Omit<InputNumberProps, "value" | "onChange" | "addonBefore"> {
+  extends Omit<IntervalInputProps, "value" | "onChange" | "addonBefore" | "unit"> {
   value?: LevelValue;
   onChange?: (val: LevelValue) => void;
 }
@@ -18,26 +19,15 @@ const LevelInputNumber: React.FC<LevelInputNumberProps> = ({
   ...rest
 }) => {
   const level = value?.level;
-  const num = value?.value ? parseFloat(value.value.value) : undefined;
-  const handleChange = (val: string | number | null) => {
-    if (val === null) {
-      onChange?.({ level: level ?? "", value: undefined });
-      return;
-    }
-    const numeric = typeof val === "string" ? parseFloat(val) : val;
-    const newVal: IntervalValue = {
-      front: numeric ?? NaN,
-      rear: NaN,
-      value: String(val ?? ""),
-      unit: rest.addonAfter ? String(rest.addonAfter) : "",
-    };
-    onChange?.({ level: level ?? "", value: newVal });
+  const handleChange = (val: IntervalValue) => {
+    onChange?.({ level: level ?? "", value: val });
   };
   return (
-    <InputNumber
+    <IntervalInput
       {...rest}
       addonBefore={level}
-      value={num as any}
+      unit="%"
+      value={value?.value}
       onChange={handleChange}
     />
   );
