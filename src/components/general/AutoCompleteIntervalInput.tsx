@@ -2,6 +2,9 @@ import { AutoComplete, Input } from "antd";
 import { DefaultOptionType } from "antd/es/select";
 import { IntervalInput } from "./IntervalInput";
 import { useEffect, useState } from "react";
+import type { IntervalValue } from "../../types/types";
+
+const DELIMITER = "～";
 
 interface OptionTypeWithLevel extends DefaultOptionType {
   level?: string;
@@ -9,8 +12,8 @@ interface OptionTypeWithLevel extends DefaultOptionType {
 
 interface AutoCompleteInputProps {
   id?: string;
-  value?: { value: string | null; level: string | null };
-  onChange?: (value: { value: string | null; level: string | null }) => void;
+  value?: { value: IntervalValue | null; level: string | null };
+  onChange?: (value: { value: IntervalValue | null; level: string | null }) => void;
   disabled?: boolean;
   options?: OptionTypeWithLevel[];
   addonAfter?: string | null;
@@ -49,11 +52,33 @@ export const AutoCompleteIntervalInput: React.FC<AutoCompleteInputProps> = ({
   useEffect(() => {
     setLevelPrefix(value?.level ?? "定制");
   }, [value]);
-  const handleChange = (inputValue: string | number | null) => {
-    const selectedOption = options.find((opt) => opt.value === inputValue);
+  const toIntervalValue = (val: string | number): IntervalValue => {
+    const str = String(val);
+    const [frontStr, rearStr] = str.split(DELIMITER);
+    return {
+      front: frontStr ? parseFloat(frontStr) : NaN,
+      rear: rearStr ? parseFloat(rearStr) : NaN,
+      value: str,
+      unit: addonAfter ?? "",
+    };
+  };
+
+  const handleChange = (inputValue: IntervalValue | string | number | null) => {
+    const valueStr =
+      typeof inputValue === "object" && inputValue !== null
+        ? inputValue.value
+        : (inputValue as string | number | null);
+    const selectedOption = options.find((opt) => opt.value === valueStr);
+
+    const valObj =
+      typeof inputValue === "object" && inputValue !== null
+        ? (inputValue as IntervalValue)
+        : inputValue !== null
+        ? toIntervalValue(inputValue)
+        : null;
 
     onChange?.({
-      value: inputValue as any,
+      value: valObj,
       level: selectedOption?.level ?? null,
     });
     // } else onChange?.(inputValue);
@@ -62,7 +87,7 @@ export const AutoCompleteIntervalInput: React.FC<AutoCompleteInputProps> = ({
     <span id={id}>
       <AutoComplete
         options={options}
-        value={value ?? undefined}
+        value={value?.value?.value ?? undefined}
         onSelect={(e) => {
           // console.log(e);
           handleChange(e as any);
@@ -73,7 +98,7 @@ export const AutoCompleteIntervalInput: React.FC<AutoCompleteInputProps> = ({
       >
         <IntervalInput
           addonAfter={addonAfter}
-          value={value?.toString() ?? ""}
+          value={value?.value ?? undefined}
           onChange={(e: any) => handleChange(e.target.value)}
           disabled={disabled}
           placeholder={placeholder}

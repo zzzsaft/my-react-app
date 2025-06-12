@@ -1,8 +1,9 @@
 import { InputNumber, InputNumberProps } from "antd";
+import type { IntervalValue } from "../../types/types";
 
 export interface LevelValue {
   level: string;
-  value?: number | null;
+  value?: IntervalValue | null;
 }
 
 export interface LevelInputNumberProps
@@ -17,15 +18,20 @@ const LevelInputNumber: React.FC<LevelInputNumberProps> = ({
   ...rest
 }) => {
   const level = value?.level;
-  const num = value?.value;
+  const num = value?.value ? parseFloat(value.value.value) : undefined;
   const handleChange = (val: string | number | null) => {
-    const numeric =
-      typeof val === "string"
-        ? parseFloat(val)
-        : val === null
-        ? undefined
-        : val;
-    onChange?.({ level: level ?? "", value: numeric });
+    if (val === null) {
+      onChange?.({ level: level ?? "", value: undefined });
+      return;
+    }
+    const numeric = typeof val === "string" ? parseFloat(val) : val;
+    const newVal: IntervalValue = {
+      front: numeric ?? NaN,
+      rear: NaN,
+      value: String(val ?? ""),
+      unit: rest.addonAfter ? String(rest.addonAfter) : "",
+    };
+    onChange?.({ level: level ?? "", value: newVal });
   };
   return (
     <InputNumber
