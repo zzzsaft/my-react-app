@@ -18,7 +18,6 @@ import FilterForm from "../../quoteForm/FilterForm/FilterForm";
 import ThicknessGaugeForm from "../../quoteForm/ThicknessGaugeForm/ThicknessGaugeForm";
 import HydraulicStationForm from "../../quoteForm/HydraulicStationForm/HydraulicStationForm";
 
-
 interface ProductConfigurationFormProps {
   quoteItem?: QuoteItem;
   quoteId: number;
@@ -84,8 +83,9 @@ const ProductConfigurationForm = forwardRef(
 
       if (category.at(-1) === "测厚仪") {
         const model = modelFormRef.current?.form.getFieldValue("model");
+        const width = modelFormRef.current?.form.getFieldValue("width");
         if (model) {
-          return `${model}测厚仪`;
+          return `${model}-${width}测厚仪`;
         }
       }
       return "";

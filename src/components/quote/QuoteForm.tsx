@@ -35,6 +35,43 @@ const INDUSTRY = {
   医疗及环保: ["医疗卫生", "环保行业"],
   工业制造及材料: ["新型建材", "包装行业"],
 };
+const FINALPRODUCT = {
+  功能片材: [
+    "高阻隔片材",
+    "高阻隔包边片材",
+    "阻燃片材",
+    "降解片材",
+    "微发泡片材",
+    "交联发泡片材",
+    "弹性体片材",
+    "橡胶片材",
+  ],
+  结构片材: ["载带片材", "钢管包覆片材", "魔术贴片材", "彩条片材"],
+  工艺片材: ["浸纤片材", "浸润片材"],
+  其他片材: ["片材"],
+  功能薄膜: [
+    "太阳能膜",
+    "电池隔离膜",
+    "车衣膜",
+    "卫材底膜",
+    "护卡膜",
+    "保鲜膜",
+    "牧草膜",
+    "土工膜",
+  ],
+  工艺薄膜: [
+    "流延膜",
+    "拉丝膜",
+    "缠绕膜",
+    "淋膜",
+    "复合淋膜",
+    "压纹膜",
+    "压纹膜、磨砂膜",
+    "气泡垫延膜",
+  ],
+  材质薄膜: ["铝箔膜", "铝塑膜", "玻璃夹胶膜", "透气膜"],
+  其他薄膜: ["薄膜"],
+};
 
 interface QuoteFormProps {
   form: any;
@@ -183,11 +220,11 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
           </Col>
           <Col xs={12} md={8}>
             <Form.Item name="finalProduct" label="最终产品">
-              <Select mode="tags" placeholder="请选择最终产品">
-                <Option value="furniture">家具</Option>
-                <Option value="electronics">电子产品</Option>
-                <Option value="packaging">包装</Option>
-              </Select>
+              <CustomSelect
+                mode={undefined}
+                initialGroups={FINALPRODUCT}
+                dropdown={true}
+              />
             </Form.Item>
           </Col>
           <Col xs={12} md={8}>
