@@ -19,27 +19,27 @@ const precisionLevelOptions = [
 
 const precisionOptions = {
   lipSurface: [
-    { label: "S: 0.015-0.025", value: "0.015-0.025", level: "S" },
-    { label: "A: 0.02-0.03", value: "0.02-0.03", level: "A" },
-    { label: "B: 0.04-0.05", value: "0.04-0.05", level: "B" },
+    { label: "S: 0.015~0.025", value: "0.015~0.025", level: "S" },
+    { label: "A: 0.02~0.03", value: "0.02~0.03", level: "A" },
+    { label: "B: 0.04~0.05", value: "0.04~0.05", level: "B" },
   ],
   otherSurface: [
-    { label: "S: 0.02-0.03", value: "0.02-0.03", level: "S" },
-    { label: "A: 0.03-0.04", value: "0.03-0.04", level: "A" },
-    { label: "B: 0.04-0.06", value: "0.04-0.06", level: "B" },
+    { label: "S: 0.02~0.03", value: "0.02~0.03", level: "S" },
+    { label: "A: 0.03~0.04", value: "0.03~0.04", level: "A" },
+    { label: "B: 0.04~0.06", value: "0.04~0.06", level: "B" },
   ],
-  shape: [{ label: "A: 0.06-0.08", value: "0.06-0.08", level: "A" }],
+  shape: [{ label: "A: 0.06~0.08", value: "0.06~0.08", level: "A" }],
 };
 const CHANNEL_THICKNESS = [
-  { label: "S: 0.02-0.03", value: "0.02-0.03", level: "S" },
-  { label: "A: 0.025-0.05", value: "0.025-0.05", level: "A" },
-  { label: "B: 0.04-0.05", value: "0.04-0.05", level: "B" },
+  { label: "S: 0.02~0.03", value: "0.02~0.03", level: "S" },
+  { label: "A: 0.025~0.05", value: "0.025~0.05", level: "A" },
+  { label: "B: 0.04~0.05", value: "0.04~0.05", level: "B" },
 ];
 
 const OUTER_THICKNESS = [
-  { label: "S: 0.01-0.02", value: "0.01-0.02", level: "S" },
-  { label: "A: 0.02-0.03", value: "0.02-0.03", level: "A" },
-  { label: "B: 0.03-0.04", value: "0.03-0.04", level: "B" },
+  { label: "S: 0.01~0.02", value: "0.01~0.02", level: "S" },
+  { label: "A: 0.02~0.03", value: "0.02~0.03", level: "A" },
+  { label: "B: 0.03~0.04", value: "0.03~0.04", level: "B" },
 ];
 
 const PLATING_REQUIREMENT = [

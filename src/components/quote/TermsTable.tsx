@@ -26,30 +26,30 @@ const TermsTable: React.FC<TermsTableProps> = ({ value, onChange }) => {
 
   const handleDragEnd = (list: Clause[]) => {
     // Use id as the order so update ids after drag
-    const newData = list.map((item, idx) => ({
-      ...item,
-      id: idx + 1,
-    }));
-    if (editingId !== null) {
-      const i = list.findIndex((item) => item.id === editingId);
-      if (i !== -1) {
-        setEditingId(i + 1);
-      }
-    }
-    triggerChange(newData);
+    // const newData = list.map((item, idx) => ({
+    //   ...item,
+    //   id: idx + 1,
+    // }));
+    // if (editingId !== null) {
+    //   const i = list.findIndex((item) => item.id === editingId);
+    //   if (i !== -1) {
+    //     setEditingId(i + 1);
+    //   }
+    // }
+    triggerChange(list);
   };
 
   const handleDelete = (id: number) => {
-    const filtered = data.filter((d) => d.id !== id);
-    const newData = filtered.map((item, idx) => ({ ...item, id: idx + 1 }));
-    if (editingId !== null) {
-      if (editingId === id) {
-        setEditingId(null);
-      } else if (editingId > id) {
-        setEditingId(editingId - 1);
-      }
-    }
-    triggerChange(newData);
+    // const filtered = data.filter((d) => d.id !== id);
+    // const newData = filtered.map((item, idx) => ({ ...item, id: idx + 1 }));
+    // if (editingId !== null) {
+    //   if (editingId === id) {
+    //     setEditingId(null);
+    //   } else if (editingId > id) {
+    //     setEditingId(editingId - 1);
+    //   }
+    // }
+    triggerChange(data.filter((d) => d.id !== id));
   };
 
   const handleEdit = (record: Clause) => {
@@ -71,7 +71,7 @@ const TermsTable: React.FC<TermsTableProps> = ({ value, onChange }) => {
 
   const handleAdd = () => {
     const newId = data.length > 0 ? Math.max(...data.map((d) => d.id)) + 1 : 1;
-    const newClause: Clause = { id: newId, title: "", content: "" };
+    const newClause: Clause = { id: newId, title: "", content: "", index: 0 };
     const newData = [...data, newClause];
     triggerChange(newData);
     setEditingId(newId);
@@ -86,9 +86,10 @@ const TermsTable: React.FC<TermsTableProps> = ({ value, onChange }) => {
     },
     {
       title: "顺序",
-      dataIndex: "id",
+      dataIndex: "index",
       width: 60,
-      render: (_: any, record: Clause, index: number) => record.id ?? index + 1,
+      render: (_: any, record: Clause, index: number) =>
+        record.index ?? index + 1,
     },
     {
       title: "条约标题",
