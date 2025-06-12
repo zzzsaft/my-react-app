@@ -44,6 +44,7 @@ export interface Product {
 
 interface QuotesStore {
   quotes: Quote[];
+  total: number;
   loading: {
     add: boolean;
     delete: boolean;
@@ -55,7 +56,13 @@ interface QuotesStore {
   configModalVisible: boolean;
   setConfigModalVisible: (bool: boolean) => void;
   initialize: () => Promise<void>;
-  fetchQuotes: () => Promise<void>;
+  fetchQuotes: (params: {
+    page?: number;
+    pageSize?: number;
+    type?: string;
+    quoteName?: string;
+    customerName?: string;
+  }) => Promise<void>;
   fetchQuote: (quoteId: number) => Promise<Quote>;
   createQuote: (params: {
     customerName: string;
@@ -105,6 +112,7 @@ interface QuotesStore {
 export const useQuoteStore = create<QuotesStore>()(
   immer((set, get) => ({
     quotes: [],
+    total: 0,
     categories: [],
     loading: {
       add: false,
@@ -124,10 +132,10 @@ export const useQuoteStore = create<QuotesStore>()(
       set({ categories });
     },
 
-    fetchQuotes: async () => {
+    fetchQuotes: async (params) => {
       set({ loading: { ...get().loading, getQuotes: true } });
-      const quotes = await QuoteService.getQuotes();
-      set({ quotes });
+      const { list, total } = await QuoteService.getQuotes(params);
+      set({ quotes: list, total });
       set({ loading: { ...get().loading, getQuotes: false } });
     },
 

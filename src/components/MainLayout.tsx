@@ -54,6 +54,14 @@ const MainLayout: React.FC = () => {
       icon: <HomeOutlined />,
       label: "首页",
     },
+    {
+      key: "/quote/history",
+      label: "历史报价单",
+    },
+    {
+      key: "/quote/oa",
+      label: "OA报价单",
+    },
     // {
     //   key: "/dashboard",
     //   icon: <SettingOutlined />,
