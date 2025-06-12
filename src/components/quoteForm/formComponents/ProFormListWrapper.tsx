@@ -18,6 +18,7 @@ interface ProFormListWrapperProps extends ProFromListCommonProps {
   formItems: React.ReactNode;
   isHorizontal?: boolean;
   initialValue?: any;
+  creatorRecord?: any;
 }
 
 const ProFormListWrapper: React.FC<ProFormListWrapperProps> = ({
@@ -33,10 +34,12 @@ const ProFormListWrapper: React.FC<ProFormListWrapperProps> = ({
   formItems,
   isHorizontal = false,
   initialValue,
+  creatorRecord,
 }) => {
   return (
     <ProFormList
       initialValue={initialValue}
+      creatorRecord={creatorRecord}
       name={name}
       label={label}
       rules={rules}
