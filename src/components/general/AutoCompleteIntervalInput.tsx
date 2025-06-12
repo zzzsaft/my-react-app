@@ -1,10 +1,9 @@
-import { AutoComplete, Input } from "antd";
 import { DefaultOptionType } from "antd/es/select";
 import { IntervalInput } from "./IntervalInput";
 import { useEffect, useState } from "react";
 import type { IntervalValue } from "../../types/types";
-
-const DELIMITER = "~";
+import { AutoComplete } from "antd";
+import { IntervalInput1 } from "./IntervalInput1";
 
 interface OptionTypeWithLevel extends DefaultOptionType {
   level?: string;
@@ -12,11 +11,8 @@ interface OptionTypeWithLevel extends DefaultOptionType {
 
 interface AutoCompleteInputProps {
   id?: string;
-  value?: { value: IntervalValue | null; level: string | null };
-  onChange?: (value: {
-    value: IntervalValue | null;
-    level: string | null;
-  }) => void;
+  value?: { value: string | null; level: string | null };
+  onChange?: (value: { value: string | null; level: string | null }) => void;
   disabled?: boolean;
   options?: OptionTypeWithLevel[];
   addonAfter?: string | null;
@@ -25,7 +21,6 @@ interface AutoCompleteInputProps {
   level?: string;
   addonBefore?: string | null;
 }
-
 export const AutoCompleteIntervalInput: React.FC<AutoCompleteInputProps> = ({
   value,
   id,
@@ -55,64 +50,38 @@ export const AutoCompleteIntervalInput: React.FC<AutoCompleteInputProps> = ({
   useEffect(() => {
     setLevelPrefix(value?.level ?? "定制");
   }, [value]);
-  const toIntervalValue = (val: string | number): IntervalValue => {
-    const str = String(val);
-    const [frontStr, rearStr] = str.split(DELIMITER);
-    return {
-      front: frontStr ? parseFloat(frontStr) : NaN,
-      rear: rearStr ? parseFloat(rearStr) : NaN,
-      value: str,
-      unit: addonAfter ?? "",
-    };
-  };
-
-  const handleChange = (inputValue: IntervalValue | string | number | null) => {
-    try {
-      const valueStr =
-        typeof inputValue === "object" && inputValue !== null
-          ? inputValue.value
-          : (inputValue as string | number | null);
-      const selectedOption = options.find((opt) => opt.value === valueStr);
-
-      const valObj =
-        typeof inputValue === "object" && inputValue !== null
-          ? (inputValue as IntervalValue)
-          : inputValue !== null
-          ? toIntervalValue(inputValue)
-          : null;
-
-      onChange?.({
-        value: valObj,
-        level: selectedOption?.level ?? null,
-      });
-    } catch (e) {
-      console.log(e);
-    }
-
+  const handleChange = (inputValue: string | number | null) => {
+    const selectedOption = options.find((opt) => opt.value === inputValue);
+    onChange?.({
+      value: inputValue as any,
+      level: selectedOption?.level ?? null,
+    });
     // } else onChange?.(inputValue);
   };
   return (
-    <AutoComplete
-      id={id}
-      options={options}
-      value={value?.value?.value ?? undefined}
-      onSelect={(val) => {
-        handleChange(val as any);
-      }}
-      style={style}
-      disabled={disabled}
-      // onFocus={}
-    >
-      <IntervalInput
-        unit={addonAfter ?? ""}
-        value={value?.value ?? undefined}
-        onChange={(e: any) => handleChange(e.target.value)}
+    <span id={id}>
+      <AutoComplete
+        options={options}
+        value={value ?? undefined}
+        onSelect={(e) => {
+          // console.log(e);
+          handleChange(e as any);
+        }}
+        style={style}
         disabled={disabled}
-        placeholder={placeholder}
-        extra={true}
-        addonBefore={addonBefore ?? levelPrefix}
-        decimalPlace={3}
-      />
-    </AutoComplete>
+        // onFocus={}
+      >
+        <IntervalInput1
+          addonAfter={addonAfter}
+          value={value?.toString() ?? ""}
+          onChange={(e: any) => handleChange(e.target.value)}
+          disabled={disabled}
+          placeholder={placeholder}
+          extra={true}
+          addonBefore={addonBefore ?? levelPrefix}
+          decimalPlace={3}
+        />
+      </AutoComplete>
+    </span>
   );
 };

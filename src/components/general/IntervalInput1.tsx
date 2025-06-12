@@ -13,8 +13,8 @@ import type { IntervalValue } from "../../types/types";
 const DELIMITER = "~";
 
 export interface IntervalInputProps {
-  value?: IntervalValue;
-  onChange?: (value: IntervalValue) => void;
+  value?: string;
+  onChange?: (value: string) => void;
   placeholder?: string;
   addonAfter?: string | null;
   addonBefore?: string | null;
@@ -29,13 +29,13 @@ export interface IntervalInputProps {
   style?: React.CSSProperties;
 }
 
-const IntervalInput: React.FC<IntervalInputProps> = forwardRef<
+const IntervalInput1: React.FC<IntervalInputProps> = forwardRef<
   HTMLInputElement,
   IntervalInputProps
 >(
   (
     {
-      value,
+      value = "",
       onChange = () => {},
       placeholder = "请输入数值",
       disabled = false,
@@ -50,7 +50,7 @@ const IntervalInput: React.FC<IntervalInputProps> = forwardRef<
     },
     ref
   ) => {
-    const [internalValue, setInternalValue] = useState(value?.value ?? "");
+    const [internalValue, setInternalValue] = useState(value);
     const [isFocused, setIsFocused] = useState(false);
     const inputRef = useRef<any>(null);
     const lastCursorPos = useRef(0);
@@ -73,38 +73,21 @@ const IntervalInput: React.FC<IntervalInputProps> = forwardRef<
     // );
 
     useEffect(() => {
-      if (value?.value !== internalValue) {
-        setInternalValue(value?.value ?? "");
-      }
-    }, [value?.value]);
-
-    const constructValue = (val: string): IntervalValue => {
-      const [frontStr, rearStr] = val.split(DELIMITER);
-      return {
-        front: frontStr ? parseFloat(frontStr) : NaN,
-        rear: rearStr ? parseFloat(rearStr) : NaN,
-        value: val,
-        unit: unit ?? "",
-      };
-    };
+      setInternalValue(value);
+    }, [value]);
 
     const customOnChange = (newValue: string) => {
-      try {
-        const v = constructValue(newValue);
-        if (extra) {
-          const e = { target: { value: v.value } };
-          onChange?.(e as any);
-        } else {
-          onChange?.(v);
-        }
-      } catch (error) {
-        console.log(error);
+      if (extra) {
+        const e = { target: { value: newValue } };
+        onChange?.(e as any);
+      } else {
+        onChange?.(newValue);
       }
     };
 
     const formatDisplayValue = (val: string) => {
       let display = val;
-      if (!isFocused && display.endsWith(DELIMITER)) {
+      if (!isFocused && display?.endsWith(DELIMITER)) {
         display = display.slice(0, -1);
       }
       if (!isFocused && unit) {
@@ -280,7 +263,7 @@ const IntervalInputFormItem: React.FC<NumberRangeInputFormItemProps> = ({
         isSecondNumberGreater ? intervalInputRules[0] : intervalInputRules[1],
       ]}
     >
-      <IntervalInput
+      <IntervalInput1
         disabled={disabled}
         id={id}
         placeholder={placeholder}
@@ -292,4 +275,4 @@ const IntervalInputFormItem: React.FC<NumberRangeInputFormItemProps> = ({
   );
 };
 
-export { IntervalInput, IntervalInputFormItem };
+export { IntervalInput1, IntervalInputFormItem };

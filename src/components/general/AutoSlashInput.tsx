@@ -59,9 +59,12 @@ const AutoSlashInput: React.FC<StrictUpperSlashInputProps> = ({
 
   const handleCompositionStart = () => {
     setIsComposing(true);
+    setIsComposing(false);
   };
 
-  const handleCompositionEnd = (e: React.CompositionEvent<HTMLInputElement>) => {
+  const handleCompositionEnd = (
+    e: React.CompositionEvent<HTMLInputElement>
+  ) => {
     setIsComposing(false);
     handleChange(e as any);
   };

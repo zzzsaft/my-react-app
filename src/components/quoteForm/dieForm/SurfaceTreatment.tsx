@@ -8,6 +8,7 @@ import { RadioWithInput } from "../../general/RadioWithInput";
 import { AutoCompleteIntervalInput } from "../../general/AutoCompleteIntervalInput";
 import { useState } from "react";
 import TextArea from "antd/es/input/TextArea";
+import { IntervalInput1 } from "../../general/IntervalInput1";
 
 // 常量定义
 const precisionLevelOptions = [
@@ -200,7 +201,7 @@ export const SurfaceTreatment = ({
                         { required: true, message: "请选择流道表面镀层厚度" },
                         ...autoCompleteIntervalInputRules,
                       ]}
-                      initialValue={defaultChannelThickness}
+                      // initialValue={defaultChannelThickness}
                     >
                       <AutoCompleteIntervalInput
                         options={CHANNEL_THICKNESS}
@@ -235,6 +236,7 @@ export const SurfaceTreatment = ({
                       ]}
                       initialValue={defaultOuterThickness}
                     >
+                      {/* <IntervalInput1 /> */}
                       <AutoCompleteIntervalInput
                         options={OUTER_THICKNESS}
                         addonAfter={"mm"}
