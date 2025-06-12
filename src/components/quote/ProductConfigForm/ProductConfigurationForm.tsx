@@ -15,6 +15,7 @@ import { QuoteItem } from "../../../types/types";
 import MeteringPumpForm from "../../quoteForm/MeteringPumpForm/MeteringPumpForm";
 import FeedblockForm from "../../quoteForm/FeedblockForm/FeedblockForm";
 import FilterForm from "../../quoteForm/FilterForm/FilterForm";
+import HydraulicStationForm from "../../quoteForm/HydraulicStationForm/HydraulicStationForm";
 
 interface ProductConfigurationFormProps {
   quoteItem?: QuoteItem;
@@ -114,6 +115,16 @@ const ProductConfigurationForm = forwardRef(
         return {
           form: (
             <FilterForm
+              ref={modelFormRef}
+              quoteId={quoteId}
+              quoteItemId={quoteItem?.id ?? 0}
+            />
+          ),
+        };
+      if (category?.includes("液压站"))
+        return {
+          form: (
+            <HydraulicStationForm
               ref={modelFormRef}
               quoteId={quoteId}
               quoteItemId={quoteItem?.id ?? 0}
