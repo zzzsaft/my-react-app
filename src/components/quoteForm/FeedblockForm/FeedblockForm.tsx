@@ -240,51 +240,6 @@ const FeedblockForm = forwardRef(
               />
             </Col>
 
-            {/* <Form.Item noStyle dependencies={["extruderNumber"]}>
-              {({ getFieldValue }) => {
-                // const extruderNumber = getFieldValue("extruderNumber");
-                return (
-                  <>
-                    <Col xs={24} md={24}>
-                      <ProFormListWrapper
-                        name="compositeRatio"
-                        label="每层复合比例"
-                        canCreate={false}
-                        canDelete={false}
-                        rules={[
-                          {
-                            validator: async (_: any, value: LevelValue[]) => {
-                              const sum = value?.reduce(
-                                (t, c) => t + Number(c?.value || 0),
-                                0
-                              );
-                              if (sum !== 100) {
-                                return Promise.reject(
-                                  new Error("比例和需为100%")
-                                );
-                              }
-                              return Promise.resolve();
-                            },
-                          },
-                        ]}
-                        isHorizontal
-                        formItems={
-                          <ProForm.Item>
-                            <LevelInputNumber
-                              formatter={(v) => `${v}%`}
-                              parser={(v) => v?.replace(/%/g, "") as any}
-                              style={{ width: 120 }}
-                              min={0}
-                              max={100}
-                            />
-                          </ProForm.Item>
-                        }
-                      />
-                    </Col>
-                  </>
-                );
-              }}
-            </Form.Item> */}
             <Col xs={24} md={24}>
               <ProFormListWrapper
                 initialValue={[{ level: "A" }, { level: "B" }]}
@@ -302,6 +257,22 @@ const FeedblockForm = forwardRef(
                           const num = parseFloat(value?.value?.value || "0");
                           if (isNaN(num) || num === 0) {
                             return Promise.reject(new Error("比例不得为0"));
+                          }
+                          if (
+                            (value?.value?.front &&
+                              value?.value?.front >= 100) ||
+                            (value?.value?.rear && value?.value?.rear >= 100)
+                          ) {
+                            return Promise.reject(new Error("比例不得超过100"));
+                          }
+                          if (
+                            value?.value?.front &&
+                            value?.value?.rear &&
+                            value?.value?.front >= value?.value?.rear
+                          ) {
+                            return Promise.reject(
+                              new Error("第一个应比第二个小")
+                            );
                           }
                           return Promise.resolve();
                         },

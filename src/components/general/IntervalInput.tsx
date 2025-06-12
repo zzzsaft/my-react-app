@@ -26,6 +26,7 @@ export interface IntervalInputProps {
   id?: string;
   extra?: boolean;
   decimalPlace?: number;
+  style?: React.CSSProperties;
 }
 
 const IntervalInput: React.FC<IntervalInputProps> = forwardRef(
@@ -41,6 +42,7 @@ const IntervalInput: React.FC<IntervalInputProps> = forwardRef(
       addonBefore = null,
       unit,
       extra = false,
+      style,
       decimalPlace = 2,
     },
     ref
@@ -226,6 +228,7 @@ const IntervalInput: React.FC<IntervalInputProps> = forwardRef(
         disabled={disabled}
         addonAfter={addonAfter}
         readOnly={readOnly}
+        style={style}
       />
     );
   }

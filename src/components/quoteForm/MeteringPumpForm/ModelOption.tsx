@@ -187,7 +187,10 @@ export const ModelOption = () => {
                         name="pumpHeatingType"
                         rules={[{ required: true, message: "请选择加热方式" }]}
                       >
-                        <HeatingMethodSelect temperature={temperature} />
+                        <HeatingMethodSelect
+                          multiple
+                          temperature={temperature?.value}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xs={24} md={12}>
