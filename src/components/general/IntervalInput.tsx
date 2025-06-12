@@ -135,8 +135,8 @@ const IntervalInput: React.FC<IntervalInputProps> = forwardRef(
         customOnChange?.(newValue);
         setTimeout(() => {
           inputRef.current?.setSelectionRange(
-            newValue.length - 1,
-            newValue.length - 1
+            newValue.length,
+            newValue.length
           );
         }, 0);
       }
@@ -156,29 +156,43 @@ const IntervalInput: React.FC<IntervalInputProps> = forwardRef(
       const { key } = e;
       const currentPos = inputRef.current?.selectionStart || 0;
 
-      if (key === DELIMITER) {
-        e.preventDefault();
-        if (internalValue.includes(DELIMITER)) {
-          const dashPos = internalValue.indexOf(DELIMITER);
-          if (currentPos <= dashPos) {
-            inputRef.current?.setSelectionRange(dashPos + 1, dashPos + 1);
-          }
-        } else {
-          const newValue = `${internalValue.slice(
-            0,
-            currentPos
-          )}${DELIMITER}${internalValue.slice(currentPos)}`;
-          if (validateInput(newValue)) {
-            setInternalValue(newValue);
-            customOnChange?.(newValue);
-            setTimeout(() => {
-              inputRef.current?.setSelectionRange(
-                currentPos + 1,
-                currentPos + 1
-              );
-            }, 0);
-          }
+      const allowedKeys = [
+        "Backspace",
+        "Delete",
+        "ArrowLeft",
+        "ArrowRight",
+        "Tab",
+      ];
+
+      if (/^[0-9-]$/.test(key) || allowedKeys.includes(key)) {
+        lastCursorPos.current = currentPos;
+        return;
+      }
+
+      e.preventDefault();
+
+      if (!/\d/.test(internalValue.slice(0, currentPos))) {
+        return;
+      }
+
+      if (internalValue.includes(DELIMITER)) {
+        const dashPos = internalValue.indexOf(DELIMITER);
+        if (currentPos <= dashPos) {
+          inputRef.current?.setSelectionRange(dashPos + 1, dashPos + 1);
         }
+        return;
+      }
+
+      const newValue = `${internalValue.slice(0, currentPos)}${DELIMITER}${internalValue.slice(
+        currentPos
+      )}`;
+
+      if (validateInput(newValue)) {
+        setInternalValue(newValue);
+        customOnChange?.(newValue);
+        setTimeout(() => {
+          inputRef.current?.setSelectionRange(currentPos + 1, currentPos + 1);
+        }, 0);
       }
 
       lastCursorPos.current = currentPos;
@@ -193,7 +207,7 @@ const IntervalInput: React.FC<IntervalInputProps> = forwardRef(
         onChange={handleChange}
         onFocus={handleFocus}
         onBlur={handleBlur}
-        // onKeyDown={handleKeyDown}
+        onKeyDown={handleKeyDown}
         placeholder={placeholder}
         disabled={disabled}
         addonAfter={addonAfter}
