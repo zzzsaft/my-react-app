@@ -23,7 +23,7 @@ const QuoteModal: React.FC<QuoteModalProps> = ({
   onSubmit,
 }) => {
   const { message } = App.useApp();
-  const { isQuoteDirty, saveQuote } = useQuoteStore();
+  const { isQuoteDirty, saveQuote, discardQuoteChanges } = useQuoteStore();
   const [form] = Form.useForm();
   const [isFullscreen, setIsFullscreen] = useState(false);
 
@@ -52,6 +52,7 @@ const QuoteModal: React.FC<QuoteModalProps> = ({
           onCancel();
         },
         onCancel: () => {
+          discardQuoteChanges(id);
           onCancel();
         },
       });
