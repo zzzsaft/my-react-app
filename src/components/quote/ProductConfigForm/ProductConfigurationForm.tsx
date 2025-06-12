@@ -17,6 +17,7 @@ import FeedblockForm from "../../quoteForm/FeedblockForm/FeedblockForm";
 import FilterForm from "../../quoteForm/FilterForm/FilterForm";
 import ThicknessGaugeForm from "../../quoteForm/ThicknessGaugeForm/ThicknessGaugeForm";
 import HydraulicStationForm from "../../quoteForm/HydraulicStationForm/HydraulicStationForm";
+import GiftForm from "../../quoteForm/GiftForm";
 
 interface ProductConfigurationFormProps {
   quoteItem?: QuoteItem;
@@ -176,6 +177,10 @@ const ProductConfigurationForm = forwardRef(
           ),
         };
 
+      if (category?.[0] === "赠品")
+        return {
+          form: (<GiftForm ref={modelFormRef} />),
+        };
       return {
         form: <OtherForm ref={modelFormRef} />,
       };
