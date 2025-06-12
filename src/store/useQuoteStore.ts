@@ -108,6 +108,7 @@ interface QuotesStore {
   calculateItemPrice: (item: QuoteItem) => void;
   dirtyQuotes: Record<number, boolean>;
   isQuoteDirty: (quoteId: number) => boolean;
+  discardQuoteChanges: (quoteId: number) => void;
   // calculateQuoteTotal: (quoteId: number) => void;
 }
 
@@ -132,6 +133,12 @@ export const useQuoteStore = create<QuotesStore>()(
 
     isQuoteDirty: (quoteId) => {
       return !!get().dirtyQuotes[quoteId];
+    },
+
+    discardQuoteChanges: (quoteId) => {
+      set((state) => {
+        state.dirtyQuotes[quoteId] = false;
+      });
     },
 
     initialize: async () => {
