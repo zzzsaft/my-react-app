@@ -73,6 +73,12 @@ const ProductConfigurationForm = forwardRef(
           return `${model}${name}`;
         }
       }
+      if (category.includes("液压站")) {
+        const model = modelFormRef.current?.form.getFieldValue("valveShare");
+        if (model) {
+          return `${model}阀液压站`;
+        }
+      }
       if (category.at(-1) === "测厚仪") {
         const model = modelFormRef.current?.form.getFieldValue("model");
         if (model) {
