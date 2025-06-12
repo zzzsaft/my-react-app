@@ -30,9 +30,9 @@ const flattenItems = (items: QuoteItem[]): QuoteItem[] => {
   const result: QuoteItem[] = [];
   items.forEach((item) => {
     result.push(item);
-    if (item.children) {
-      result.push(...flattenItems(item.children));
-    }
+    // if (item.children) {
+    //   result.push(...flattenItems(item.children));
+    // }
   });
   return result;
 };
@@ -75,10 +75,10 @@ const DesktopQuoteItemsTable: React.FC<QuoteItemsTableProps> = ({
     }
   };
 
-  const expandedRowKeys = useMemo(
-    () => getDefaultExpandedRowKeys(items),
-    [items]
-  );
+  // const expandedRowKeys = useMemo(
+  //   () => getDefaultExpandedRowKeys(items),
+  //   [items]
+  // );
 
   const flatItems = useMemo(() => flattenItems(items), [items]);
 
@@ -294,7 +294,7 @@ const DesktopQuoteItemsTable: React.FC<QuoteItemsTableProps> = ({
           showExpandColumn: false,
           indentSize: 50,
           defaultExpandAllRows: true,
-          expandedRowKeys: expandedRowKeys,
+          // expandedRowKeys: expandedRowKeys,
         }}
         footer={() => (
           <Button
@@ -329,11 +329,11 @@ const DesktopQuoteItemsTable: React.FC<QuoteItemsTableProps> = ({
   );
 };
 
-const getDefaultExpandedRowKeys = (data: QuoteItem[]) => {
-  return data
-    .filter((item) => item.children && item.children.length > 0)
-    .map((item) => item.id);
-};
+// const getDefaultExpandedRowKeys = (data: QuoteItem[]) => {
+//   return data
+//     .filter((item) => item.children && item.children.length > 0)
+//     .map((item) => item.id);
+// };
 const formatValueWithUnit = (value: number | string, unit?: string) => {
   // 处理无效值
   if (value == null || value === "") return "-";

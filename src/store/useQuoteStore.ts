@@ -79,11 +79,11 @@ interface QuotesStore {
     updateData: Partial<Omit<Quote, "items">>
   ) => void;
   addQuoteItem: (quoteId: number, item?: Partial<QuoteItem>) => Promise<number>;
-  addChildQuoteItem: (
-    quoteId: number,
-    parentId: number,
-    item: Partial<QuoteItem>
-  ) => Promise<number>;
+  // addChildQuoteItem: (
+  //   quoteId: number,
+  //   parentId: number,
+  //   item: Partial<QuoteItem>
+  // ) => Promise<number>;
   deleteQuoteItem: (quoteId: number, itemId: number) => Promise<void>;
   updateQuoteItem: (
     quoteId: number,
@@ -215,9 +215,9 @@ export const useQuoteStore = create<QuotesStore>()(
         );
 
         // 3. 使用 Immer 更新状态
-      set((state) => {
-        const quote = state.quotes.find((q) => q.id === quoteId);
-        if (!quote) return state;
+        set((state) => {
+          const quote = state.quotes.find((q) => q.id === quoteId);
+          if (!quote) return state;
 
           // 查找目标位置（假设用 linkId 匹配）
           const targetIndex = quote.items.findIndex(
@@ -253,30 +253,30 @@ export const useQuoteStore = create<QuotesStore>()(
       }
     },
 
-    addChildQuoteItem: async (quoteId, parentId, item) => {
-      const state = get();
-      const quote = state.quotes.find((q) => q.id === quoteId);
-      if (!quote) throw new Error(`Quote ${quoteId} not found`);
-      const currentLength = quote.items.length;
-      const quoteItem = await QuoteService.createQuoteItem(quoteId, parentId, {
-        ...item,
-        index: currentLength + 1, // 初始索引
-      });
-      set((state) => {
-        const quote = state.quotes.find((q) => q.id === quoteId);
-        if (quote) {
-          const parentItem = get().findItemById(quote.items, parentId);
-          if (parentItem) {
-            if (!parentItem.children) {
-              parentItem.children = [];
-            }
-            parentItem.children.push(quoteItem);
-          }
-          state.dirtyQuotes[quoteId] = true;
-        }
-      });
-      return quoteItem.id;
-    },
+    // addChildQuoteItem: async (quoteId, parentId, item) => {
+    //   const state = get();
+    //   const quote = state.quotes.find((q) => q.id === quoteId);
+    //   if (!quote) throw new Error(`Quote ${quoteId} not found`);
+    //   const currentLength = quote.items.length;
+    //   const quoteItem = await QuoteService.createQuoteItem(quoteId, parentId, {
+    //     ...item,
+    //     index: currentLength + 1, // 初始索引
+    //   });
+    //   set((state) => {
+    //     const quote = state.quotes.find((q) => q.id === quoteId);
+    //     if (quote) {
+    //       const parentItem = get().findItemById(quote.items, parentId);
+    //       if (parentItem) {
+    //         if (!parentItem.children) {
+    //           parentItem.children = [];
+    //         }
+    //         parentItem.children.push(quoteItem);
+    //       }
+    //       state.dirtyQuotes[quoteId] = true;
+    //     }
+    //   });
+    //   return quoteItem.id;
+    // },
 
     deleteQuoteItem: async (quoteId, itemId) => {
       await QuoteService.deleteQuoteItem(itemId);
@@ -293,10 +293,10 @@ export const useQuoteStore = create<QuotesStore>()(
 
           // If not found in top-level, search in children
           const parentInfo = get().findItemParent(quote.items, itemId);
-          if (parentInfo && parentInfo.parent?.children) {
-            parentInfo.parent.children.splice(parentInfo.index, 1);
-            calculateQuoteTotal(quote);
-          }
+          // if (parentInfo && parentInfo.parent?.children) {
+          //   parentInfo.parent.children.splice(parentInfo.index, 1);
+          //   calculateQuoteTotal(quote);
+          // }
           state.dirtyQuotes[quoteId] = true;
         }
       });
@@ -341,10 +341,10 @@ export const useQuoteStore = create<QuotesStore>()(
     findItemById: (items, itemId) => {
       for (const item of items) {
         if (item.id === itemId) return item;
-        if (item.children) {
-          const found = get().findItemById(item.children, itemId);
-          if (found) return found;
-        }
+        // if (item.children) {
+        //   const found = get().findItemById(item.children, itemId);
+        //   if (found) return found;
+        // }
       }
       return undefined;
     },
@@ -353,17 +353,17 @@ export const useQuoteStore = create<QuotesStore>()(
     findItemParent: (items, itemId) => {
       for (let i = 0; i < items.length; i++) {
         const item = items[i];
-        if (item.children) {
-          const childIndex = item.children.findIndex(
-            (child) => child.id === itemId
-          );
-          if (childIndex !== -1) {
-            return { parent: item, index: childIndex };
-          }
+        // if (item.children) {
+        //   const childIndex = item.children.findIndex(
+        //     (child) => child.id === itemId
+        //   );
+        //   if (childIndex !== -1) {
+        //     return { parent: item, index: childIndex };
+        //   }
 
-          const foundInChildren = get().findItemParent(item.children, itemId);
-          if (foundInChildren) return foundInChildren;
-        }
+        //   const foundInChildren = get().findItemParent(item.children, itemId);
+        //   if (foundInChildren) return foundInChildren;
+        // }
       }
       return undefined;
     },
