@@ -67,48 +67,52 @@ export const AutoCompleteIntervalInput: React.FC<AutoCompleteInputProps> = ({
   };
 
   const handleChange = (inputValue: IntervalValue | string | number | null) => {
-    const valueStr =
-      typeof inputValue === "object" && inputValue !== null
-        ? inputValue.value
-        : (inputValue as string | number | null);
-    const selectedOption = options.find((opt) => opt.value === valueStr);
+    try {
+      const valueStr =
+        typeof inputValue === "object" && inputValue !== null
+          ? inputValue.value
+          : (inputValue as string | number | null);
+      const selectedOption = options.find((opt) => opt.value === valueStr);
 
-    const valObj =
-      typeof inputValue === "object" && inputValue !== null
-        ? (inputValue as IntervalValue)
-        : inputValue !== null
-        ? toIntervalValue(inputValue)
-        : null;
+      const valObj =
+        typeof inputValue === "object" && inputValue !== null
+          ? (inputValue as IntervalValue)
+          : inputValue !== null
+          ? toIntervalValue(inputValue)
+          : null;
 
-    onChange?.({
-      value: valObj,
-      level: selectedOption?.level ?? null,
-    });
+      onChange?.({
+        value: valObj,
+        level: selectedOption?.level ?? null,
+      });
+    } catch (e) {
+      console.log(e);
+    }
+
     // } else onChange?.(inputValue);
   };
   return (
-    <span id={id}>
-      <AutoComplete
-        options={options}
-        value={value?.value?.value ?? undefined}
-        onSelect={(val) => {
-          handleChange(val as any);
-        }}
-        style={style}
+    <AutoComplete
+      id={id}
+      options={options}
+      value={value?.value?.value ?? undefined}
+      onSelect={(val) => {
+        handleChange(val as any);
+      }}
+      style={style}
+      disabled={disabled}
+      // onFocus={}
+    >
+      <IntervalInput
+        unit={addonAfter ?? ""}
+        value={value?.value ?? undefined}
+        onChange={(e: any) => handleChange(e.target.value)}
         disabled={disabled}
-        // onFocus={}
-      >
-        <IntervalInput
-          addonAfter={addonAfter}
-          value={value?.value ?? undefined}
-          onChange={(e: any) => handleChange(e.target.value)}
-          disabled={disabled}
-          placeholder={placeholder}
-          extra={true}
-          addonBefore={addonBefore ?? levelPrefix}
-          decimalPlace={3}
-        />
-      </AutoComplete>
-    </span>
+        placeholder={placeholder}
+        extra={true}
+        addonBefore={addonBefore ?? levelPrefix}
+        decimalPlace={3}
+      />
+    </AutoComplete>
   );
 };

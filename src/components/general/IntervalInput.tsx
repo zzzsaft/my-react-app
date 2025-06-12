@@ -77,12 +77,16 @@ const IntervalInput: React.FC<IntervalInputProps> = forwardRef(
     };
 
     const customOnChange = (newValue: string) => {
-      const v = constructValue(newValue);
-      if (extra) {
-        const e = { target: { value: v } };
-        onChange?.(e as any);
-      } else {
-        onChange?.(v);
+      try {
+        const v = constructValue(newValue);
+        if (extra) {
+          const e = { target: { value: v.value } };
+          onChange?.(e as any);
+        } else {
+          onChange?.(v);
+        }
+      } catch (error) {
+        console.log(error);
       }
     };
 
@@ -221,7 +225,7 @@ const IntervalInput: React.FC<IntervalInputProps> = forwardRef(
         addonBefore={addonBefore}
         value={formatDisplayValue(internalValue)}
         onChange={handleChange}
-        onFocus={handleFocus}
+        // onFocus={handleFocus}
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
         placeholder={placeholder}

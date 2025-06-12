@@ -38,6 +38,7 @@ export type Position = {
 
 export interface Clause {
   id: number;
+  index: number;
   title: string;
   content: string;
 }
