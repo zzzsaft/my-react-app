@@ -196,6 +196,19 @@ export const DieBody = () => {
             </Radio.Group>
           </Form.Item>
         </Col>
+        <Col xs={12} md={8}>
+          <Form.Item
+            name="thicknessGauge"
+            label="是否选配测厚仪"
+            rules={[{ required: true, message: "是否选配测厚仪" }]}
+            initialValue={false}
+          >
+            <Radio.Group>
+              <Radio value={true}>是</Radio>
+              <Radio value={false}>否</Radio>
+            </Radio.Group>
+          </Form.Item>
+        </Col>
       </Row>
     </ProCard>
   );

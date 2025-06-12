@@ -1,5 +1,7 @@
 import { Col, Form, FormInstance, Input, Radio, Row } from "antd";
-import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
+import { forwardRef, useImperativeHandle, useState } from "react";
+import useProductActionModal from "../../hook/showProductActionModal";
+import { useQuoteStore } from "../../store/useQuoteStore";
 
 import TextArea from "antd/es/input/TextArea";
 import ProForm from "@ant-design/pro-form";
@@ -26,18 +28,69 @@ const vison = [
   { label: "不含视觉", value: "不含视觉" },
 ];
 
-const SmartRegulator = forwardRef<PriceFormRef>((props, ref) => {
+const SmartRegulator = forwardRef<
+  PriceFormRef,
+  { quoteId: number; quoteItemId: number }
+>(({ quoteId, quoteItemId }, ref) => {
   const [form] = Form.useForm();
-  const [isBundled, setIsBundled] = useState<boolean>(true);
+  const [isBundled] = useState<boolean>(true);
+  const quoteItems = useQuoteStore
+    .getState()
+    .quotes.find((q) => q.id === quoteId)?.items;
+  const { showProductActionModal } = useProductActionModal();
 
   // 暴露form实例给父组件
   useImperativeHandle(ref, () => ({
     form,
   }));
 
+  const addProp: any = (category: string[], key: string, value: any) => ({
+    method: "add",
+    quoteId,
+    quoteItems,
+    productCategory: category,
+    productName: category.at(-1) ?? "",
+    linkId: quoteItemId,
+    source: {
+      name: category.at(-1) ?? "",
+      value,
+      key,
+    },
+  });
+
+  const deleteProp: any = (category: string[]) => ({
+    method: "delete",
+    linkId: quoteItemId,
+    quoteId,
+    quoteItems,
+    productCategory: category,
+    items: [{ name: category.at(-1) ?? "" }],
+  });
+
+  const handleThicknessGauge = async (v: boolean) => {
+    if (v) {
+      const r = await showProductActionModal(
+        addProp(["测厚仪"], "thicknessGauge", false)
+      );
+      if (!r.result) form.setFieldValue("thicknessGauge", false);
+      return;
+    }
+    const r = await showProductActionModal(deleteProp(["测厚仪"]));
+    if (!r.result) form.setFieldValue("thicknessGauge", true);
+  };
+
+  const handleValuesChange = async (changed: any) => {
+    if (changed.thicknessGauge != null) await handleThicknessGauge(changed.thicknessGauge);
+  };
+
   return (
     <>
-      <ProForm layout={"vertical"} form={form} submitter={false}>
+      <ProForm
+        layout={"vertical"}
+        form={form}
+        submitter={false}
+        onValuesChange={handleValuesChange}
+      >
         <Row gutter={16}>
           <Col xs={12} md={8}>
             <Form.Item
@@ -86,6 +139,19 @@ const SmartRegulator = forwardRef<PriceFormRef>((props, ref) => {
           <Col xs={24} sm={12}>
             <Form.Item label="视觉" name="vison" rules={RadioWithInputRules}>
               <CustomRadioGroup options={vison} showCustomInput={false} />
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={12}>
+            <Form.Item
+              label="是否选配测厚仪"
+              name="thicknessGauge"
+              rules={[{ required: true, message: "是否选配测厚仪" }]}
+              initialValue={false}
+            >
+              <Radio.Group>
+                <Radio value={true}>是</Radio>
+                <Radio value={false}>否</Radio>
+              </Radio.Group>
             </Form.Item>
           </Col>
           <Col xs={24} sm={24}>

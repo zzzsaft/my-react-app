@@ -70,7 +70,13 @@ const ProductConfigurationForm = forwardRef(
         const model = modelFormRef.current?.form.getFieldValue("model");
         const name = modelFormRef.current?.form.getFieldValue("name");
         if (model) {
-          return `${model}${name}`;
+          form: (
+            <SmartRegulator
+              ref={modelFormRef}
+              quoteId={quoteId}
+              quoteItemId={quoteItem?.id ?? 0}
+            />
+          ),
         }
       }
       if (category.at(-1) === "测厚仪") {
