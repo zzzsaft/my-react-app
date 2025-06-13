@@ -101,7 +101,8 @@ const ProductConfigurationForm = forwardRef(
       quoteId,
       quoteItem?.id ?? 0,
       modelFormRef,
-      formTypeProp
+      formTypeProp,
+      readOnly
     );
 
     useEffect(() => {

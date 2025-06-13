@@ -16,7 +16,11 @@ interface PartFormRef {
   form: FormInstance;
 }
 
-const PartForm = forwardRef<PartFormRef>((props, ref) => {
+interface PartFormProps {
+  readOnly?: boolean;
+}
+
+const PartForm = forwardRef<PartFormRef, PartFormProps>(({ readOnly = false }, ref) => {
   const [form] = Form.useForm();
 
   useImperativeHandle(ref, () => ({
@@ -28,7 +32,11 @@ const PartForm = forwardRef<PartFormRef>((props, ref) => {
       <ProFormList
         name="parts"
         label="配件明细"
-        creatorButtonProps={{ creatorButtonText: "新增物料" }}
+        creatorButtonProps={
+          readOnly ? false : { creatorButtonText: "新增物料" }
+        }
+        deleteIconProps={readOnly ? false : undefined}
+        copyIconProps={readOnly ? false : undefined}
         alwaysShowItemLabel
         rules={[
           {
@@ -57,6 +65,7 @@ const PartForm = forwardRef<PartFormRef>((props, ref) => {
                   options={[]}
                   style={{ width: "100%" }}
                   placeholder="物料名称"
+                  disabled={readOnly}
                 />
               </ProForm.Item>
             </Col>
@@ -71,6 +80,7 @@ const PartForm = forwardRef<PartFormRef>((props, ref) => {
                   min={1}
                   style={{ width: "100%" }}
                   controls={false}
+                  disabled={readOnly}
                 />
               </ProForm.Item>
             </Col>
@@ -81,7 +91,7 @@ const PartForm = forwardRef<PartFormRef>((props, ref) => {
                 rules={[{ required: true, message: "请选择单位" }]}
                 initialValue="件"
               >
-                <Select style={{ width: "100%" }}>
+                <Select style={{ width: "100%" }} disabled={readOnly}>
                   <Select.Option value="件">件</Select.Option>
                   <Select.Option value="套">套</Select.Option>
                   <Select.Option value="个">个</Select.Option>
@@ -99,6 +109,7 @@ const PartForm = forwardRef<PartFormRef>((props, ref) => {
                   precision={2}
                   controls={false}
                   style={{ width: "100%" }}
+                  disabled={readOnly}
                 />
               </ProForm.Item>
             </Col>

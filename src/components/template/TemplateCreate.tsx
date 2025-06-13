@@ -137,8 +137,8 @@ const TemplateCreate = forwardRef<TemplateCreateRef, TemplateCreateProps>(
             key: "config",
             label: "配置",
             forceRender: true,
-            children: getFormByCategory(undefined, 0, 0, configRef, formType)
-              .form,
+            children:
+              getFormByCategory(undefined, 0, 0, configRef, formType, false).form,
           },
         ]}
       />
