@@ -98,7 +98,12 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
                 <div style={{ marginBottom: 16 }}>
                   <Button
                     type="primary"
-                    onClick={() => window.open("/template/create", "_blank")}
+                    onClick={() =>
+                      window.open(
+                        `/template/create?formType=${formType ?? ""}`,
+                        "_blank"
+                      )
+                    }
                     disabled={isOtherForm}
                   >
                     创建模版

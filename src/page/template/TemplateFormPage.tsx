@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, App } from "antd";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import ProductConfigurationForm from "../../components/quote/ProductConfigForm/ProductConfigurationForm";
 import { QuoteTemplate } from "../../types/types";
 import { useTemplateStore } from "../../store/useTemplateStore";
@@ -8,11 +8,13 @@ import { TemplateService } from "../../api/services/template.service";
 
 const TemplateFormPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [template, setTemplate] = useState<QuoteTemplate | null>(null);
   const { refreshTemplates } = useTemplateStore();
   const { message } = App.useApp();
   const [saving, setSaving] = useState(false);
+  const formTypeParam = searchParams.get("formType") || undefined;
 
   useEffect(() => {
     if (!id) {
@@ -50,6 +52,7 @@ const TemplateFormPage: React.FC = () => {
         quoteId={0}
         quoteItem={template as any}
         showPrice={false}
+        formType={formTypeParam || template?.templateType}
       />
       <div style={{ marginTop: 16 }}>
         <Button type="primary" onClick={handleSubmit} loading={saving}>

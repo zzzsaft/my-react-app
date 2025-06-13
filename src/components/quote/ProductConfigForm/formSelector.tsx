@@ -27,9 +27,10 @@ export function getFormByCategory(
   category: string[] | undefined,
   quoteId: number,
   quoteItemId: number,
-  modelFormRef: ModelFormRef
+  modelFormRef: ModelFormRef,
+  formTypeOverride?: string
 ): { form: React.ReactNode; formType: string } {
-  const formType = getFormType(category);
+  const formType = formTypeOverride || getFormType(category);
   if (formType === "DieForm")
     return {
       form: <DieForm quoteItemId={quoteItemId} quoteId={quoteId} ref={modelFormRef} />,
