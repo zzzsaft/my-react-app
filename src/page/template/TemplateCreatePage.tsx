@@ -1,31 +1,34 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Button, App } from "antd";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import TemplateCreate, { TemplateCreateRef } from "../../components/template/TemplateCreate";
 import { TemplateService } from "../../api/services/template.service";
-import { useTemplateStore } from "../../store/useTemplateStore";
 import { QuoteTemplate } from "../../types/types";
+import { useTemplateStore } from "../../store/useTemplateStore";
 
 const TemplateCreatePage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
-  const fixedType = searchParams.get("formType") || undefined;
-  const { message } = App.useApp();
+  const formTypeParam = searchParams.get("formType") || undefined;
+  const ref = useRef<TemplateCreateRef>(null);
   const navigate = useNavigate();
   const { refreshTemplates } = useTemplateStore();
-  const ref = useRef<TemplateCreateRef>(null);
-  const [initial, setInitial] = useState<QuoteTemplate | undefined>();
+  const { message } = App.useApp();
+  const [initialValues, setInitialValues] = useState<Partial<QuoteTemplate>>();
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (id) {
-      TemplateService.getTemplate(id).then(setInitial);
-    } else {
-      setInitial(undefined);
+    if (!id) {
+      setInitialValues(undefined);
+      return;
     }
+    (async () => {
+      const data = await TemplateService.getTemplate(id);
+      setInitialValues(data);
+    })();
   }, [id]);
 
-  const handleSave = async () => {
+  const handleSubmit = async () => {
     if (!ref.current) return;
     const data = await ref.current.getData();
     setSaving(true);
@@ -38,8 +41,8 @@ const TemplateCreatePage: React.FC = () => {
       await refreshTemplates();
       message.success("保存成功");
       navigate("/template");
-    } catch (e) {
-      console.error(e);
+    } catch (err) {
+      console.error(err);
       message.error("保存失败");
     } finally {
       setSaving(false);
@@ -48,9 +51,9 @@ const TemplateCreatePage: React.FC = () => {
 
   return (
     <div>
-      <TemplateCreate ref={ref} initialValues={initial} formType={fixedType} />
+      <TemplateCreate ref={ref} initialValues={initialValues} formType={formTypeParam} />
       <div style={{ marginTop: 16 }}>
-        <Button type="primary" onClick={handleSave} loading={saving}>
+        <Button type="primary" onClick={handleSubmit} loading={saving}>
           保存
         </Button>
       </div>
