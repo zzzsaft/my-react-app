@@ -152,6 +152,7 @@ const IntervalInput: React.FC<IntervalInputProps> = forwardRef<
     };
 
     const handleFocus = () => {
+      if (readOnly) return;
       setIsFocused(true);
       if (!internalValue.includes(DELIMITER)) {
         const newValue = `${internalValue}`;

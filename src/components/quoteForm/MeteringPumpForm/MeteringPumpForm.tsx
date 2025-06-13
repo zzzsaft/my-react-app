@@ -87,22 +87,30 @@ const MeteringPumpForm = forwardRef(
           p.model === model.replace("-NL", "").replace("（定制）", "")
       );
 
-      form.setFieldValue(
-        "pumpage",
-        selectedPump?.pumpage.replace("cm³/rev", "")
-      );
-      form.setFieldValue(
-        "heatingPower",
-        selectedPump?.heatingPower.replace("kw", "")
-      );
-      form.setFieldValue(
-        "production",
-        selectedPump?.production.replace("kg/h", "")
-      );
-      form.setFieldValue(
-        "rotateSpeed",
-        selectedPump?.rotateSpeed.replace("rmp", "")
-      );
+      form.setFieldValue("pumpage", {
+        front: selectedPump?.pumpage.replace("cm³/rev", ""),
+        rear: NaN,
+        value: selectedPump?.pumpage.replace("cm³/rev", ""),
+        unit: "cm³/rev",
+      });
+      form.setFieldValue("heatingPower", {
+        front: selectedPump?.heatingPower.replace("kw", ""),
+        rear: NaN,
+        value: selectedPump?.heatingPower.replace("kw", ""),
+        unit: "kw",
+      });
+      form.setFieldValue("production", {
+        front: selectedPump?.rotateSpeed.replace("rmp", ""),
+        rear: NaN,
+        value: selectedPump?.rotateSpeed.replace("rmp", ""),
+        unit: "kg/h",
+      });
+      form.setFieldValue("rotateSpeed", {
+        front: selectedPump?.production.replace("kg/h", ""),
+        rear: NaN,
+        value: selectedPump?.production.replace("kg/h", ""),
+        unit: "rpm",
+      });
     };
 
     const handlePumpBracket = async (value: boolean) => {
@@ -181,20 +189,6 @@ const MeteringPumpForm = forwardRef(
         >
           <ModelSelection />
           <ModelOption />
-          {/* <Form.Item noStyle dependencies={["hasCart"]}>
-            {({ getFieldValue }) => {
-              const isBuySameProduct = getFieldValue("isBuySameProduct"); // 获取 hasCart 的值
-              return !isBuySameProduct ? (
-                <>
-                  <Product />
-                  <DieBody />
-                  <DieInstall />
-                  <TemperatureControl />
-                  <SurfaceTreatment />
-                </>
-              ) : null;
-            }}
-          </Form.Item> */}
 
           <Form.Item label="其他备注" name="remark">
             <TextArea />

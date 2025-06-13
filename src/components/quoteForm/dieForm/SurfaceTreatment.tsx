@@ -69,16 +69,7 @@ const PLATING_REQUIREMENT = [
   { label: "其他", value: "other", showInput: true },
 ];
 
-export const SurfaceTreatment = ({
-  plating = false,
-  temperature,
-  heatingMethod,
-}: {
-  temperature?: string;
-  heatingMethod?: string[];
-  plating?: boolean;
-}) => {
-  const [hasPlating, setHasPlating] = useState<boolean>(plating || false);
+export const SurfaceTreatment = () => {
   const [precisionLevel, setPrecisionLevel] = useState<string>("S");
   return (
     <ProCard
@@ -162,11 +153,25 @@ export const SurfaceTreatment = ({
         <Col xs={12} md={12}>
           {/* 是否电镀 */}
           <Form.Item
+            name="hasLaser"
+            label="是否激光硬化"
+            rules={[{ required: true, message: "请选择是否激光硬化" }]}
+            initialValue={false}
+          >
+            <Radio.Group>
+              <Radio value={true}>是</Radio>
+              <Radio value={false}>否</Radio>
+            </Radio.Group>
+          </Form.Item>
+        </Col>
+        <Col xs={12} md={12}>
+          {/* 是否电镀 */}
+          <Form.Item
             name="hasPlating"
             label="是否电镀"
             rules={[{ required: true, message: "请选择是否电镀" }]}
           >
-            <Radio.Group onChange={(e) => setHasPlating(e.target.value)}>
+            <Radio.Group>
               <Radio value={true}>是</Radio>
               <Radio value={false}>否</Radio>
             </Radio.Group>
@@ -193,23 +198,6 @@ export const SurfaceTreatment = ({
                     </Form.Item>
                   </Col>
                   <Col xs={24} sm={12}>
-                    {/* 流道表面镀层厚度 */}
-                    <Form.Item
-                      name="channelThickness"
-                      label="流道表面镀层厚度"
-                      rules={[
-                        { required: true, message: "请选择流道表面镀层厚度" },
-                        ...autoCompleteIntervalInputRules,
-                      ]}
-                      // initialValue={defaultChannelThickness}
-                    >
-                      <AutoCompleteIntervalInput
-                        options={CHANNEL_THICKNESS}
-                        addonAfter={"mm"}
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col xs={24} sm={12}>
                     {/* 流道表面镀层硬度 */}
                     <Form.Item
                       name="channelHardness"
@@ -225,6 +213,24 @@ export const SurfaceTreatment = ({
                       />
                     </Form.Item>
                   </Col>
+                  <Col xs={24} sm={12}>
+                    {/* 流道表面镀层厚度 */}
+                    <Form.Item
+                      name="channelThickness"
+                      label="流道表面镀层厚度"
+                      rules={[
+                        { required: true, message: "请选择流道表面镀层厚度" },
+                        ...autoCompleteIntervalInputRules,
+                      ]}
+                      initialValue={defaultChannelThickness}
+                    >
+                      <AutoCompleteIntervalInput
+                        options={CHANNEL_THICKNESS}
+                        addonAfter={"mm"}
+                      />
+                    </Form.Item>
+                  </Col>
+
                   <Col xs={24} sm={12}>
                     {/* 外表面镀层厚度 */}
                     <Form.Item
