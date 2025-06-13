@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import dayjs from "dayjs";
 import { Table, Tag, Form, Input } from "antd";
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
 import MemberAvatar from "../general/MemberAvatar";
@@ -128,10 +129,10 @@ const QuoteTable: React.FC<QuoteTableProps> = ({ type }) => {
       title: "创建日期",
       dataIndex: "createdAt",
       key: "createdAt",
-      width: 120,
+      width: 180,
       sorter: (a, b) =>
         new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-      render: (date: string) => new Date(date).toLocaleDateString(),
+      render: (date: string) => dayjs(date).format("YYYY-MM-DD HH:mm:ss"),
     },
     {
       title: "当前状态",
@@ -208,6 +209,7 @@ const QuoteTable: React.FC<QuoteTableProps> = ({ type }) => {
       dataIndex: "creatorId",
       key: "creatorId",
       width: 120,
+      sorter: (a, b) => a.creatorId.localeCompare(b.creatorId),
       render: (creatorId: string) =>
         (creatorId && <MemberAvatar id={creatorId} />) || "-",
     },
