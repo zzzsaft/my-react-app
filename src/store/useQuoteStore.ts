@@ -2,6 +2,7 @@
 import { create } from "zustand";
 import { OpportunityService } from "../api/services/opportunity.service";
 import { ProductCategory, Quote, QuoteItem } from "../types/types";
+import { getFormType } from "../components/quote/ProductConfigForm/formSelector";
 import { immer } from "zustand/middleware/immer";
 import { QuoteService } from "../api/services/quote.service";
 
@@ -159,18 +160,30 @@ export const useQuoteStore = create<QuotesStore>()(
       try {
         set({ loading: { ...get().loading, getQuote: true } });
         const newQuote = await QuoteService.getQuote(quoteId);
+        let needSave = false;
+        newQuote.items.forEach((item) => {
+          const type = getFormType(item.productCategory || undefined);
+          if (item.formType !== type) {
+            item.formType = type;
+            needSave = true;
+          }
+        });
         set((state) => {
-          const existingIndex = state.quotes.findIndex(
-            (q) => q.id === newQuote.id
-          );
+          const existingIndex = state.quotes.findIndex((q) => q.id === newQuote.id);
           if (existingIndex >= 0) {
             state.quotes[existingIndex] = newQuote;
           } else {
             state.quotes.push(newQuote);
           }
           state.loading.getQuote = false;
-          state.dirtyQuotes[newQuote.id] = false;
+          state.dirtyQuotes[newQuote.id] = needSave;
         });
+        if (needSave) {
+          await QuoteService.updateQuoteItem(newQuote);
+          set((state) => {
+            state.dirtyQuotes[newQuote.id] = false;
+          });
+        }
         console.log(newQuote);
         return newQuote;
       } catch (error) {

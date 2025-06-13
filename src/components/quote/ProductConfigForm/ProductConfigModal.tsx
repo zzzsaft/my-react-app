@@ -5,6 +5,7 @@ import { FormInstance } from "antd/lib";
 import ProductConfigurationForm from "./ProductConfigurationForm";
 import { CheckOutlined, EditOutlined } from "@ant-design/icons";
 import { QuoteItem } from "../../../types/types";
+import ImportProductModal from "./ImportProductModal";
 
 interface ProductConfigModalProps {
   open: boolean;
@@ -33,6 +34,7 @@ const ProductConfigModal: React.FC<ProductConfigModalProps> = ({
   }>(null);
   const priceForm = formRef.current?.priceForm;
   const [loading, setLoading] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
 
   useEffect(() => {
     if (!quoteItem || !open) return;
@@ -139,7 +141,14 @@ const ProductConfigModal: React.FC<ProductConfigModalProps> = ({
     <>
       <Modal
         style={{ overflow: "auto" }}
-        title={`${quoteItem?.productCategory?.join("/")}`}
+        title={
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <span>{quoteItem?.productCategory?.join("/")}</span>
+            <Button type="link" onClick={() => setImportOpen(true)}>
+              从模版导入
+            </Button>
+          </div>
+        }
         width={800}
         open={open}
         afterClose={() => {
@@ -164,14 +173,29 @@ const ProductConfigModal: React.FC<ProductConfigModalProps> = ({
             <Skeleton active paragraph={{ rows: 8 }} />
           </div>
         )}
-        <ProductConfigurationForm
-          quoteId={quoteId}
-          quoteItem={quoteItem}
-          ref={formRef}
-          style={{ display: loading ? "none" : "block" }}
-          material={material}
-          finalProduct={finalProduct}
-        />
+      <ProductConfigurationForm
+        quoteId={quoteId}
+        quoteItem={quoteItem}
+        ref={formRef}
+        style={{ display: loading ? "none" : "block" }}
+        material={material}
+        finalProduct={finalProduct}
+      />
+      <ImportProductModal
+        open={importOpen}
+        onCancel={() => setImportOpen(false)}
+        onImport={(item) => {
+          if (quoteItem?.id) {
+            onUpdateItem(quoteId, quoteItem.id, {
+              productName: item.productName,
+              config: item.config,
+            });
+          }
+          setImportOpen(false);
+          setOpen(false);
+        }}
+        formType={quoteItem?.formType}
+      />
       </Modal>
     </>
   );

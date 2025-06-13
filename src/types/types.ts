@@ -94,6 +94,7 @@ export interface QuoteItem {
   productName?: string;
   productCode?: string;
   config?: ProductConfig;
+  formType?: string; // 记录使用的表单类型
   quantity: number;
   unitPrice: number | null;
   discountRate: number | null;
@@ -110,6 +111,15 @@ export interface QuoteItem {
     key: string;
   };
   isCategoryLocked: boolean;
+}
+
+export interface ProductSearchResult {
+  item: QuoteItem;
+  material: string[];
+  industry: string;
+  customer: string;
+  finalProduct: string;
+  orderDate: string;
 }
 
 interface ProductConfig {
