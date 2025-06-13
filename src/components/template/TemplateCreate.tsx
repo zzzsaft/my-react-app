@@ -2,7 +2,9 @@ import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } f
 import { Form, Input, Tabs, Select } from "antd";
 import MaterialSelect from "../general/MaterialSelect";
 import { CustomSelect } from "../general/CustomSelect";
+
 import { getFormByCategory } from "../quote/ProductConfigForm/formSelector";
+
 import { QuoteTemplate } from "../../types/types";
 
 export interface TemplateCreateRef {
@@ -60,6 +62,7 @@ const TemplateCreate = forwardRef<TemplateCreateRef, TemplateCreateProps>(
       async getData() {
         const base = await infoForm.validateFields();
         const config = configRef.current?.form?.getFieldsValue?.() || {};
+
         return {
           ...initialValues,
           ...base,
@@ -111,6 +114,7 @@ const TemplateCreate = forwardRef<TemplateCreateRef, TemplateCreateProps>(
             label: "配置",
             forceRender: true,
             children: getFormByCategory(undefined, 0, 0, configRef, formType).form,
+
           },
         ]}
       />
