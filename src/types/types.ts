@@ -160,3 +160,15 @@ export interface IntervalValue {
   value: string;
   unit: string;
 }
+
+export interface QuoteTemplate {
+  id: string;
+  name: string;
+  description: string;
+  materials: string[]; // 适用材料
+  industries: string[]; // 适用行业
+  templateType: string; // 模版类型：平模/计量泵/换网器...
+  creatorId: string;
+  createdAt: string;
+  config?: ProductConfig;
+}

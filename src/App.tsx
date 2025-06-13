@@ -20,6 +20,8 @@ import JdyRedirect from "./page/JdyRedirect";
 import HistoryQuoteTablePage from "./page/quote/HistoryQuoteTablePage";
 import OAQuoteTablePage from "./page/quote/OAQuoteTablePage";
 import QuoteFormPage from "./page/quote/QuoteFormPage";
+import TemplateListPage from "./page/template/TemplateListPage";
+import TemplateFormPage from "./page/template/TemplateFormPage";
 import { NoPermissionPage } from "./page/NoPermissionPage";
 
 const App: React.FC = () => {
@@ -35,11 +37,16 @@ const App: React.FC = () => {
                 path="external_contact"
                 element={<ExternalContactBindingPage />}
               />
-              <Route path="quote" element={<Outlet />}> 
+              <Route path="quote" element={<Outlet />}>
                 <Route index element={<HistoryQuoteTablePage />} />
                 <Route path="history" element={<HistoryQuoteTablePage />} />
                 <Route path="oa" element={<OAQuoteTablePage />} />
                 <Route path=":id" element={<QuoteFormPage />} />
+              </Route>
+              <Route path="template" element={<Outlet />}>
+                <Route index element={<TemplateListPage />} />
+                <Route path="create" element={<TemplateFormPage />} />
+                <Route path=":id" element={<TemplateFormPage />} />
               </Route>
             </Route>
             <Route path="/jdy_redirect" element={<JdyRedirect />} />
