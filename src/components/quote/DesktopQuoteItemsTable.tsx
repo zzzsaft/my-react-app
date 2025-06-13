@@ -210,11 +210,6 @@ const DesktopQuoteItemsTable: React.FC<QuoteItemsTableProps> = ({
       ),
     },
     {
-      title: "表单类型",
-      dataIndex: "formType",
-      width: 100,
-    },
-    {
       title: "品牌",
       dataIndex: "brand",
       width: 80,

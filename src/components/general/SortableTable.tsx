@@ -136,7 +136,7 @@ export function SortableTable<
   return (
     <DndContext modifiers={[restrictToVerticalAxis]} onDragEnd={handleDragEnd}>
       <SortableContext
-        items={dataSource.map((item) => {
+        items={dataSource?.map((item) => {
           const id = item[rowKey as keyof T];
           // 确保返回的是 UniqueIdentifier 或 { id: UniqueIdentifier }
           return typeof id === "string" || typeof id === "number"

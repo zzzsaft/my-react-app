@@ -161,7 +161,7 @@ export const useQuoteStore = create<QuotesStore>()(
         set({ loading: { ...get().loading, getQuote: true } });
         const newQuote = await QuoteService.getQuote(quoteId);
         let needSave = false;
-        newQuote.items.forEach((item) => {
+        newQuote.items.forEach((item: QuoteItem) => {
           const type = getFormType(item.productCategory || undefined);
           if (item.formType !== type) {
             item.formType = type;
@@ -169,7 +169,9 @@ export const useQuoteStore = create<QuotesStore>()(
           }
         });
         set((state) => {
-          const existingIndex = state.quotes.findIndex((q) => q.id === newQuote.id);
+          const existingIndex = state.quotes.findIndex(
+            (q) => q.id === newQuote.id
+          );
           if (existingIndex >= 0) {
             state.quotes[existingIndex] = newQuote;
           } else {

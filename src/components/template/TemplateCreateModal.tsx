@@ -10,7 +10,11 @@ interface TemplateCreateModalProps {
   formType?: string;
 }
 
-const TemplateCreateModal: React.FC<TemplateCreateModalProps> = ({ open, onClose, formType }) => {
+const TemplateCreateModal: React.FC<TemplateCreateModalProps> = ({
+  open,
+  onClose,
+  formType,
+}) => {
   const ref = useRef<TemplateCreateRef>(null);
   const refresh = useTemplateStore((s) => s.refreshTemplates);
   const [saving, setSaving] = useState(false);
@@ -33,17 +37,23 @@ const TemplateCreateModal: React.FC<TemplateCreateModalProps> = ({ open, onClose
       open={open}
       title="创建模版"
       onCancel={onClose}
-      width={800}
-      destroyOnClose
+      width={700}
+      destroyOnHidden
       forceRender
       footer={[
-        <Button key="cancel" onClick={onClose}>取消</Button>,
+        <Button key="cancel" onClick={onClose}>
+          取消
+        </Button>,
         <Button key="ok" type="primary" onClick={handleOk} loading={saving}>
           保存
         </Button>,
       ]}
     >
-      <TemplateCreate ref={ref} formType={formType} />
+      <TemplateCreate
+        ref={ref}
+        formType={formType}
+        initialValues={{ templateType: formType }}
+      />
     </Modal>
   );
 };

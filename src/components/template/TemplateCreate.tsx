@@ -1,4 +1,10 @@
-import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import { Form, Input, Tabs, Select } from "antd";
 import MaterialSelect from "../general/MaterialSelect";
 import { CustomSelect } from "../general/CustomSelect";
@@ -6,6 +12,7 @@ import { CustomSelect } from "../general/CustomSelect";
 import { getFormByCategory } from "../quote/ProductConfigForm/formSelector";
 
 import { QuoteTemplate } from "../../types/types";
+import TextArea from "antd/es/input/TextArea";
 
 export interface TemplateCreateRef {
   getData: () => Promise<Partial<QuoteTemplate>>;
@@ -89,11 +96,22 @@ const TemplateCreate = forwardRef<TemplateCreateRef, TemplateCreateProps>(
                 >
                   <Input />
                 </Form.Item>
+                <Form.Item
+                  label="描述"
+                  name="description"
+                  rules={[{ required: true, message: "请输入描述" }]}
+                >
+                  <TextArea />
+                </Form.Item>
                 <Form.Item label="适用材料" name="materials">
                   <MaterialSelect />
                 </Form.Item>
                 <Form.Item label="行业" name="industries">
-                  <CustomSelect mode="tags" initialGroups={INDUSTRY} />
+                  <CustomSelect
+                    mode="multiple"
+                    dropdown={false}
+                    initialGroups={INDUSTRY}
+                  />
                 </Form.Item>
                 <Form.Item
                   label="类型"
@@ -113,8 +131,8 @@ const TemplateCreate = forwardRef<TemplateCreateRef, TemplateCreateProps>(
             key: "config",
             label: "配置",
             forceRender: true,
-            children: getFormByCategory(undefined, 0, 0, configRef, formType).form,
-
+            children: getFormByCategory(undefined, 0, 0, configRef, formType)
+              .form,
           },
         ]}
       />
