@@ -363,6 +363,7 @@ export const useQuoteStore = create<QuotesStore>()(
     },
     // Helper function to find item by ID (searches recursively in children)
     findItemById: (items, itemId) => {
+      if (!Array.isArray(items)) return undefined;
       for (const item of items) {
         if (item.id === itemId) return item;
         // if (item.children) {

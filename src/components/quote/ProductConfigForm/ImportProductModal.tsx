@@ -125,6 +125,7 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
                     <ProductConfigurationForm
                       quoteId={0}
                       quoteItem={selectedTemplate as any}
+                      formType={selectedTemplate.templateType}
                       showPrice={false}
                       readOnly
                     />
@@ -171,6 +172,7 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
                     <ProductConfigurationForm
                       quoteId={0}
                       quoteItem={selected.item}
+                      formType={selected.item.formType || formType}
                       showPrice={false}
                       readOnly
                     />

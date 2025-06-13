@@ -16,6 +16,7 @@ import TextArea from "antd/es/input/TextArea";
 
 export interface TemplateCreateRef {
   getData: () => Promise<Partial<QuoteTemplate>>;
+  reset: () => void;
 }
 
 interface TemplateCreateProps {
@@ -76,6 +77,11 @@ const TemplateCreate = forwardRef<TemplateCreateRef, TemplateCreateProps>(
           templateType: formType,
           config,
         } as Partial<QuoteTemplate>;
+      },
+      reset() {
+        infoForm.resetFields();
+        configRef.current?.form?.resetFields?.();
+        setFormType(fixedFormType || FORM_TYPE_OPTIONS[0].value);
       },
     }));
 
