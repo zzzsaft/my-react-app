@@ -52,9 +52,26 @@ const ProductConfigurationForm = forwardRef(
       if (!category) return "";
 
       if (category[0] === "平模") {
-        const mat = material.join("");
+        const width = modelFormRef.current?.form.getFieldValue("dieWidth");
+        const widthStr =
+          width && width.front ? `${width.front}mm` : "";
+        const mat = Array.isArray(material)
+          ? material.join("、")
+          : material.toString();
+        const upperLip =
+          modelFormRef.current?.form.getFieldValue("upperLipStructure");
+        const manualOrAuto =
+          typeof upperLip === "string" && upperLip.includes("自动")
+            ? "自动"
+            : "手动";
+        const runnerNumber =
+          modelFormRef.current?.form.getFieldValue("runnerNumber");
+        const runnerStr =
+          runnerNumber && runnerNumber > 1
+            ? `${runnerNumber}层模内共挤`
+            : "";
         const final = finalProduct;
-        return `${mat}${final}模头`;
+        return `${widthStr}${mat}${runnerStr}${final}${manualOrAuto}模头`;
       }
 
       if (category.at(-1) === "共挤复合分配器") {
