@@ -2,7 +2,9 @@ import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } f
 import { Form, Input, Tabs, Select } from "antd";
 import MaterialSelect from "../general/MaterialSelect";
 import { CustomSelect } from "../general/CustomSelect";
-import ProductConfigurationForm from "../quote/ProductConfigForm/ProductConfigurationForm";
+
+import { getFormByCategory } from "../quote/ProductConfigForm/formSelector";
+
 import { QuoteTemplate } from "../../types/types";
 
 export interface TemplateCreateRef {
@@ -59,7 +61,8 @@ const TemplateCreate = forwardRef<TemplateCreateRef, TemplateCreateProps>(
     useImperativeHandle(ref, () => ({
       async getData() {
         const base = await infoForm.validateFields();
-        const config = configRef.current?.modelForm?.getFieldsValue?.() || {};
+        const config = configRef.current?.form?.getFieldsValue?.() || {};
+
         return {
           ...initialValues,
           ...base,
@@ -110,15 +113,8 @@ const TemplateCreate = forwardRef<TemplateCreateRef, TemplateCreateProps>(
             key: "config",
             label: "配置",
             forceRender: true,
-            children: (
-              <ProductConfigurationForm
-                quoteId={0}
-                quoteItem={initialValues as any}
-                showPrice={false}
-                formType={formType}
-                ref={configRef}
-              />
-            ),
+            children: getFormByCategory(undefined, 0, 0, configRef, formType).form,
+
           },
         ]}
       />

@@ -3,10 +3,8 @@ import { Button } from "antd";
 import { useTemplateStore } from "../../store/useTemplateStore";
 import TemplateTable from "../../components/template/TemplateTable";
 import TemplateCreateModal from "../../components/template/TemplateCreateModal";
-import { useNavigate } from "react-router-dom";
 
 const TemplateListPage: React.FC = () => {
-  const navigate = useNavigate();
   const { templates, loading, refreshTemplates, fetchTemplates } = useTemplateStore();
 
   useEffect(() => {
@@ -25,11 +23,7 @@ const TemplateListPage: React.FC = () => {
           刷新
         </Button>
       </div>
-      <TemplateTable
-        templates={templates}
-        loading={loading}
-        onDoubleClick={(tpl) => navigate(`/template/${tpl.id}`)}
-      />
+      <TemplateTable templates={templates} loading={loading} />
       <TemplateCreateModal open={open} onClose={() => setOpen(false)} />
     </div>
   );
