@@ -9,9 +9,9 @@ import HydraulicStationForm from "../../quoteForm/HydraulicStationForm/Hydraulic
 import GiftForm from "../../quoteForm/GiftForm";
 import { OtherForm } from "../../quoteForm/OtherForm";
 
-export type ModelFormRef = RefObject<{ form: any }>;
+export type ModelFormRef = RefObject<{ form: any } | null>;
 
-export function getFormType(category: string[] | undefined): string {
+export function getFormType(category: string[] | undefined | null): string {
   if (category?.includes("平模")) return "DieForm";
   if (category?.includes("智能调节器")) return "SmartRegulator";
   if (category?.at(1) == "熔体计量泵") return "MeteringPumpForm";
@@ -24,7 +24,7 @@ export function getFormType(category: string[] | undefined): string {
 }
 
 export function getFormByCategory(
-  category: string[] | undefined,
+  category: string[] | undefined | null,
   quoteId: number,
   quoteItemId: number,
   modelFormRef: ModelFormRef,
@@ -33,37 +33,79 @@ export function getFormByCategory(
   const formType = formTypeOverride || getFormType(category);
   if (formType === "DieForm")
     return {
-      form: <DieForm quoteItemId={quoteItemId} quoteId={quoteId} ref={modelFormRef} />,
+      form: (
+        <DieForm
+          quoteItemId={quoteItemId}
+          quoteId={quoteId}
+          ref={modelFormRef}
+        />
+      ),
       formType,
     };
   if (formType === "SmartRegulator")
     return {
-      form: <SmartRegulator ref={modelFormRef} quoteId={quoteId} quoteItemId={quoteItemId} />,
+      form: (
+        <SmartRegulator
+          ref={modelFormRef}
+          quoteId={quoteId}
+          quoteItemId={quoteItemId}
+        />
+      ),
       formType,
     };
   if (formType === "MeteringPumpForm")
     return {
-      form: <MeteringPumpForm ref={modelFormRef} quoteId={quoteId} quoteItemId={quoteItemId} />,
+      form: (
+        <MeteringPumpForm
+          ref={modelFormRef}
+          quoteId={quoteId}
+          quoteItemId={quoteItemId}
+        />
+      ),
       formType,
     };
   if (formType === "FeedblockForm")
     return {
-      form: <FeedblockForm ref={modelFormRef} quoteId={quoteId} quoteItemId={quoteItemId} />,
+      form: (
+        <FeedblockForm
+          ref={modelFormRef}
+          quoteId={quoteId}
+          quoteItemId={quoteItemId}
+        />
+      ),
       formType,
     };
   if (formType === "FilterForm")
     return {
-      form: <FilterForm ref={modelFormRef} quoteId={quoteId} quoteItemId={quoteItemId} />,
+      form: (
+        <FilterForm
+          ref={modelFormRef}
+          quoteId={quoteId}
+          quoteItemId={quoteItemId}
+        />
+      ),
       formType,
     };
   if (formType === "ThicknessGaugeForm")
     return {
-      form: <ThicknessGaugeForm ref={modelFormRef} quoteId={quoteId} quoteItemId={quoteItemId} />,
+      form: (
+        <ThicknessGaugeForm
+          ref={modelFormRef}
+          quoteId={quoteId}
+          quoteItemId={quoteItemId}
+        />
+      ),
       formType,
     };
   if (formType === "HydraulicStationForm")
     return {
-      form: <HydraulicStationForm ref={modelFormRef} quoteId={quoteId} quoteItemId={quoteItemId} />,
+      form: (
+        <HydraulicStationForm
+          ref={modelFormRef}
+          quoteId={quoteId}
+          quoteItemId={quoteItemId}
+        />
+      ),
       formType,
     };
   if (formType === "GiftForm")

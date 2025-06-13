@@ -100,7 +100,6 @@ const ProductConfigurationForm = forwardRef(
       formTypeProp
     );
 
-
     useEffect(() => {
       if (quoteItem?.id && quoteItem.formType !== formType) {
         updateItem(quoteId, quoteItem.id, { formType });

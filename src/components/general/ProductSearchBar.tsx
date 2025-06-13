@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Input, Select, Button } from "antd";
+import { Input, Select, Button, Space } from "antd";
 
 interface Props {
   onSearch: (field: "code" | "name", keyword: string) => void;
@@ -16,7 +16,7 @@ const ProductSearchBar: React.FC<Props> = ({ onSearch, loading }) => {
   };
 
   return (
-    <Input.Group compact>
+    <Space.Compact>
       <Select
         value={field}
         onChange={(val) => setField(val as any)}
@@ -35,7 +35,7 @@ const ProductSearchBar: React.FC<Props> = ({ onSearch, loading }) => {
       <Button type="primary" onClick={handleSearch} loading={loading}>
         搜索
       </Button>
-    </Input.Group>
+    </Space.Compact>
   );
 };
 
