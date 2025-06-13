@@ -46,7 +46,11 @@ const TemplateFormPage: React.FC = () => {
 
   return (
     <div>
-      <ProductConfigurationForm quoteId={0} quoteItem={template as any} />
+      <ProductConfigurationForm
+        quoteId={0}
+        quoteItem={template as any}
+        showPrice={false}
+      />
       <div style={{ marginTop: 16 }}>
         <Button type="primary" onClick={handleSubmit} loading={saving}>
           保存

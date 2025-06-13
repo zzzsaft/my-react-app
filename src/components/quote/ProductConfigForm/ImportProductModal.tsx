@@ -20,12 +20,21 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
   onImport,
   formType,
 }) => {
-  const [mode, setMode] = useState<"template" | "other">("template");
+  const isOtherForm = formType === "OtherForm";
+  const [mode, setMode] = useState<"template" | "other">(
+    isOtherForm ? "other" : "template"
+  );
   const [list, setList] = useState<ProductSearchResult[]>([]);
   const [selected, setSelected] = useState<ProductSearchResult>();
   const [selectedTemplate, setSelectedTemplate] = useState<QuoteTemplate>();
   const [loading, setLoading] = useState(false);
   const { templates, loading: tplLoading, refreshTemplates } = useTemplateStore();
+
+  useEffect(() => {
+    if (isOtherForm) {
+      setMode("other");
+    }
+  }, [isOtherForm]);
 
   useEffect(() => {
     if (open && mode === "template") {
@@ -83,12 +92,14 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
           {
             key: "template",
             label: "从模版导入",
+            disabled: isOtherForm,
             children: (
               <div>
                 <div style={{ marginBottom: 16 }}>
                   <Button
                     type="primary"
                     onClick={() => window.open("/template/create", "_blank")}
+                    disabled={isOtherForm}
                   >
                     创建模版
                   </Button>

@@ -41,7 +41,11 @@ const TemplateFormModal: React.FC<TemplateFormModalProps> = ({ open, onClose }) 
       destroyOnClose
       forceRender
     >
-      <ProductConfigurationForm quoteId={0} quoteItem={template as any} />
+      <ProductConfigurationForm
+        quoteId={0}
+        quoteItem={template as any}
+        showPrice={false}
+      />
     </Modal>
   );
 };
