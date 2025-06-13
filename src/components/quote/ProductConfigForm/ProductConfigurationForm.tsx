@@ -8,16 +8,9 @@ import {
   useState,
 } from "react";
 import PriceForm from "../../quoteForm/PriceForm";
-import DieForm from "../../quoteForm/dieForm/DieForm";
-import { OtherForm } from "../../quoteForm/OtherForm";
-import SmartRegulator from "../../quoteForm/SmartRegulator";
 import { QuoteItem } from "../../../types/types";
-import MeteringPumpForm from "../../quoteForm/MeteringPumpForm/MeteringPumpForm";
-import FeedblockForm from "../../quoteForm/FeedblockForm/FeedblockForm";
-import FilterForm from "../../quoteForm/FilterForm/FilterForm";
-import ThicknessGaugeForm from "../../quoteForm/ThicknessGaugeForm/ThicknessGaugeForm";
-import HydraulicStationForm from "../../quoteForm/HydraulicStationForm/HydraulicStationForm";
-import GiftForm from "../../quoteForm/GiftForm";
+import { getFormByCategory, ModelFormRef } from "./formSelector";
+import { useQuoteStore } from "../../../store/useQuoteStore";
 
 interface ProductConfigurationFormProps {
   quoteItem?: QuoteItem;
@@ -25,6 +18,8 @@ interface ProductConfigurationFormProps {
   material?: string[];
   finalProduct?: string;
   style?: any;
+  showPrice?: boolean;
+  readOnly?: boolean;
 }
 const ProductConfigurationForm = forwardRef(
   (
@@ -34,11 +29,14 @@ const ProductConfigurationForm = forwardRef(
       material = [],
       finalProduct = "",
       style,
+      showPrice = true,
+      readOnly = false,
     }: ProductConfigurationFormProps,
     ref
   ) => {
     const priceFormRef = useRef<{ form: FormInstance }>(null);
     const modelFormRef = useRef<{ form: FormInstance }>(null);
+    const updateItem = useQuoteStore((state) => state.updateQuoteItem);
 
     const [activeKey, setActiveKey] = useState("1");
 
@@ -91,100 +89,18 @@ const ProductConfigurationForm = forwardRef(
       }
       return "";
     };
+    const { form, formType } = getFormByCategory(
+      quoteItem?.productCategory,
+      quoteId,
+      quoteItem?.id ?? 0,
+      modelFormRef
+    );
 
-    const setForm = () => {
-      const category = quoteItem?.productCategory;
-      if (category?.includes("平模"))
-        return {
-          form: (
-            <DieForm
-              quoteItemId={quoteItem?.id ?? 0}
-              quoteId={quoteId}
-              ref={modelFormRef}
-            />
-          ),
-        };
-      if (category?.includes("智能调节器"))
-        return {
-          form: (
-            <SmartRegulator
-              ref={modelFormRef}
-              quoteId={quoteId}
-              quoteItemId={quoteItem?.id ?? 0}
-            />
-          ),
-        };
-      if (category?.at(1) == "熔体计量泵")
-        return {
-          form: (
-            <MeteringPumpForm
-              ref={modelFormRef}
-              quoteId={quoteId}
-              quoteItemId={quoteItem?.id ?? 0}
-            />
-          ),
-        };
-      if (category?.at(1) == "共挤复合分配器")
-        return {
-          form: (
-            <FeedblockForm
-              ref={modelFormRef}
-              quoteId={quoteId}
-              quoteItemId={quoteItem?.id ?? 0}
-            />
-          ),
-        };
-      if (category?.at(1) == "过滤器")
-        return {
-          form: (
-            <FilterForm
-              ref={modelFormRef}
-              quoteId={quoteId}
-              quoteItemId={quoteItem?.id ?? 0}
-            />
-          ),
-        };
-      if (category?.at(1) == "测厚仪")
-        return {
-          form: (
-            <ThicknessGaugeForm
-              ref={modelFormRef}
-              quoteId={quoteId}
-              quoteItemId={quoteItem?.id ?? 0}
-            />
-          ),
-        };
-
-      if (category?.at(1) == "测厚仪")
-        return {
-          form: (
-            <ThicknessGaugeForm
-              ref={modelFormRef}
-              quoteId={quoteId}
-              quoteItemId={quoteItem?.id ?? 0}
-            />
-          ),
-        };
-
-      if (category?.includes("液压站"))
-        return {
-          form: (
-            <HydraulicStationForm
-              ref={modelFormRef}
-              quoteId={quoteId}
-              quoteItemId={quoteItem?.id ?? 0}
-            />
-          ),
-        };
-
-      if (category?.[1].includes("赠品"))
-        return {
-          form: <GiftForm ref={modelFormRef} />,
-        };
-      return {
-        form: <OtherForm ref={modelFormRef} />,
-      };
-    };
+    useEffect(() => {
+      if (quoteItem?.id && quoteItem.formType !== formType) {
+        updateItem(quoteId, quoteItem.id, { formType });
+      }
+    }, [formType, quoteItem?.id]);
     // 暴露priceForm给祖父组件
     useImperativeHandle(ref, () => {
       return {
@@ -194,30 +110,47 @@ const ProductConfigurationForm = forwardRef(
       };
     });
     return (
-      <Tabs
-        centered
-        activeKey={activeKey}
-        onChange={setActiveKey}
-        defaultActiveKey="1"
-        style={{ ...style }}
-        // destroyInactiveTabPane={false}
-        items={[
-          {
-            label: "规格配置",
-            key: "1",
-            children: setForm().form,
-            forceRender: true,
-          },
-          {
-            label: "价格配置",
-            key: "2",
-            children: (
-              <PriceForm ref={priceFormRef} onGenerateName={generateName} />
-            ),
-            forceRender: true,
-          },
-        ]}
-      />
+      <div style={{ position: "relative", ...style }}>
+        <Tabs
+          centered
+          activeKey={activeKey}
+          onChange={setActiveKey}
+          defaultActiveKey="1"
+          items={((): any[] => {
+            const arr = [
+              {
+                label: "规格配置",
+                key: "1",
+                children: form,
+                forceRender: true,
+              },
+            ];
+            if (showPrice) {
+              arr.push({
+                label: "价格配置",
+                key: "2",
+                children: (
+                  <PriceForm ref={priceFormRef} onGenerateName={generateName} />
+                ),
+                forceRender: true,
+              });
+            }
+            return arr;
+          })()}
+        />
+        {readOnly && (
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              zIndex: 10,
+            }}
+          />
+        )}
+      </div>
     );
   }
 );
