@@ -326,22 +326,26 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
             label: "报价条约",
             key: "2",
             children: (
-              <QuoteTermsTab
-                value={quoteTerms}
-                onChange={handleQuoteTermsChange}
-                onSetDefault={setDefaultQuoteTerms}
-              />
+              <Form.Item name="quoteTerms" noStyle>
+                <QuoteTermsTab
+                  value={quoteTerms}
+                  onChange={handleQuoteTermsChange}
+                  onSetDefault={setDefaultQuoteTerms}
+                />
+              </Form.Item>
             ),
           },
           {
             label: "合同",
             key: "3",
             children: (
-              <ContractTab
-                value={contractTerms}
-                onChange={handleContractTermsChange}
-                onSetDefault={setDefaultContractTerms}
-              />
+              <Form.Item name="contractTerms" noStyle>
+                <ContractTab
+                  value={contractTerms}
+                  onChange={handleContractTermsChange}
+                  onSetDefault={setDefaultContractTerms}
+                />
+              </Form.Item>
             ),
           },
         ]}
