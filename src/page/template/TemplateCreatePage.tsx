@@ -1,39 +1,42 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button, App } from "antd";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import ProductConfigurationForm from "../../components/quote/ProductConfigForm/ProductConfigurationForm";
+import TemplateCreate, { TemplateCreateRef } from "../../components/template/TemplateCreate";
+import { TemplateService } from "../../api/services/template.service";
 import { QuoteTemplate } from "../../types/types";
 import { useTemplateStore } from "../../store/useTemplateStore";
-import { TemplateService } from "../../api/services/template.service";
 
-const TemplateFormPage: React.FC = () => {
+const TemplateCreatePage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
+  const formTypeParam = searchParams.get("formType") || undefined;
+  const ref = useRef<TemplateCreateRef>(null);
   const navigate = useNavigate();
-  const [template, setTemplate] = useState<QuoteTemplate | null>(null);
   const { refreshTemplates } = useTemplateStore();
   const { message } = App.useApp();
+  const [initialValues, setInitialValues] = useState<Partial<QuoteTemplate>>();
   const [saving, setSaving] = useState(false);
-  const formTypeParam = searchParams.get("formType") || undefined;
 
   useEffect(() => {
     if (!id) {
-      setTemplate(null);
+      setInitialValues(undefined);
       return;
     }
     (async () => {
       const data = await TemplateService.getTemplate(id);
-      setTemplate(data);
+      setInitialValues(data);
     })();
   }, [id]);
 
   const handleSubmit = async () => {
+    if (!ref.current) return;
+    const data = await ref.current.getData();
     setSaving(true);
     try {
       if (id) {
-        await TemplateService.updateTemplate(id, template as any);
+        await TemplateService.updateTemplate(id, data);
       } else {
-        await TemplateService.createTemplate(template as any);
+        await TemplateService.createTemplate(data);
       }
       await refreshTemplates();
       message.success("保存成功");
@@ -48,12 +51,7 @@ const TemplateFormPage: React.FC = () => {
 
   return (
     <div>
-      <ProductConfigurationForm
-        quoteId={0}
-        quoteItem={template as any}
-        showPrice={false}
-        formType={formTypeParam || template?.templateType}
-      />
+      <TemplateCreate ref={ref} initialValues={initialValues} formType={formTypeParam} />
       <div style={{ marginTop: 16 }}>
         <Button type="primary" onClick={handleSubmit} loading={saving}>
           保存
@@ -63,4 +61,4 @@ const TemplateFormPage: React.FC = () => {
   );
 };
 
-export default TemplateFormPage;
+export default TemplateCreatePage;

@@ -21,7 +21,7 @@ import HistoryQuoteTablePage from "./page/quote/HistoryQuoteTablePage";
 import OAQuoteTablePage from "./page/quote/OAQuoteTablePage";
 import QuoteFormPage from "./page/quote/QuoteFormPage";
 import TemplateListPage from "./page/template/TemplateListPage";
-import TemplateFormPage from "./page/template/TemplateFormPage";
+import TemplateCreatePage from "./page/template/TemplateCreatePage";
 import { NoPermissionPage } from "./page/NoPermissionPage";
 
 const App: React.FC = () => {
@@ -45,8 +45,8 @@ const App: React.FC = () => {
               </Route>
               <Route path="template" element={<Outlet />}>
                 <Route index element={<TemplateListPage />} />
-                <Route path="create" element={<TemplateFormPage />} />
-                <Route path=":id" element={<TemplateFormPage />} />
+                <Route path="create" element={<TemplateCreatePage />} />
+                <Route path=":id" element={<TemplateCreatePage />} />
               </Route>
             </Route>
             <Route path="/jdy_redirect" element={<JdyRedirect />} />
