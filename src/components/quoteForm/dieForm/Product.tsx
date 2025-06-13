@@ -1,4 +1,8 @@
-import { ProCard, ProFormDependency } from "@ant-design/pro-components";
+import {
+  ProCard,
+  ProForm,
+  ProFormDependency,
+} from "@ant-design/pro-components";
 import { Col, Form, Input, InputNumber, Radio, Row } from "antd";
 import { IntervalInputFormItem } from "../../general/IntervalInput";
 import { CustomSelect } from "../../general/CustomSelect";
@@ -53,17 +57,42 @@ export const Product = () => {
             <IntervalInputFormItem
               name="productWidth"
               label="制品宽度(mm)"
-              // rules={[{ required: true, message: "请输入有效厚度范围" }]}
+              dependencies={["dieWidth"]}
+              rules={[
+                {
+                  validator: (_, value) => {
+                    const other = form.getFieldValue("dieWidth");
+                    if (!value?.value && !other?.value) {
+                      return Promise.reject(
+                        new Error("口模有效宽度和制品宽度至少要填一个")
+                      );
+                    }
+                    return Promise.resolve();
+                  },
+                },
+              ]}
               placeholder={"制品宽度"}
               unit="mm"
-              // unit="mm"
             />
           </Col>
           <Col xs={12} md={6}>
             <IntervalInputFormItem
               name="dieWidth"
               label="口模有效宽度(mm)"
-              rules={[{ required: true, message: "请输入有效宽度范围" }]}
+              dependencies={["productWidth"]}
+              rules={[
+                {
+                  validator: (_, value) => {
+                    const other = form.getFieldValue("productWidth");
+                    if (!value?.value && !other?.value) {
+                      return Promise.reject(
+                        new Error("口模有效宽度和制品宽度至少要填一个")
+                      );
+                    }
+                    return Promise.resolve();
+                  },
+                },
+              ]}
               placeholder={"有效宽度"}
               unit="mm"
               // addonAfter="mm"
@@ -185,23 +214,36 @@ export const Product = () => {
                               name={[]}
                               rules={[
                                 {
-                                  validator: async (_: any, value: LevelValue) => {
-                                    const num = parseFloat(value?.value?.value || "0");
+                                  validator: async (
+                                    _: any,
+                                    value: LevelValue
+                                  ) => {
+                                    const num = parseFloat(
+                                      value?.value?.value || "0"
+                                    );
                                     if (isNaN(num) || num === 0) {
-                                      return Promise.reject(new Error("比例不得为0"));
+                                      return Promise.reject(
+                                        new Error("比例不得为0")
+                                      );
                                     }
                                     if (
-                                      (value?.value?.front && value?.value?.front >= 100) ||
-                                      (value?.value?.rear && value?.value?.rear >= 100)
+                                      (value?.value?.front &&
+                                        value?.value?.front >= 100) ||
+                                      (value?.value?.rear &&
+                                        value?.value?.rear >= 100)
                                     ) {
-                                      return Promise.reject(new Error("比例不得超过100"));
+                                      return Promise.reject(
+                                        new Error("比例不得超过100")
+                                      );
                                     }
                                     if (
                                       value?.value?.front &&
                                       value?.value?.rear &&
                                       value?.value?.front >= value?.value?.rear
                                     ) {
-                                      return Promise.reject(new Error("第一个应比第二个小"));
+                                      return Promise.reject(
+                                        new Error("第一个应比第二个小")
+                                      );
                                     }
                                     return Promise.resolve();
                                   },

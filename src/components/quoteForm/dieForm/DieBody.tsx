@@ -2,6 +2,7 @@ import { ProCard } from "@ant-design/pro-components";
 import { Badge, Col, Form, Radio, Row } from "antd";
 import { CustomSelect } from "../../general/CustomSelect";
 import { AutoCompleteInput } from "../../general/AutoCompleteInput";
+import { MATERIAL_OPTIONS } from "../../../util/MATERIAL";
 
 // 常量定义
 const UPPER_LIP_OPTIONS = {
@@ -47,12 +48,6 @@ const LOWER_OPTIONS = [
   { label: "90°阻流棒", value: "90°阻流棒" },
   // { label: "其他", value: "other", showInput: true },
 ];
-
-const MATERIAL_OPTIONS = {
-  合金钢: ["XPM光学级", "1.2311锻件", "1.2714锻件", "SUS420锻件"],
-  不锈钢: ["SUS630锻件", "4Cr13锻件", "S316锻件"],
-  特殊材料: ["哈氏合金钢材锻件"],
-};
 
 export const DieBody = () => {
   return (

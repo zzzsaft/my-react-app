@@ -89,7 +89,13 @@ const QuoteConfigTab: React.FC<QuoteConfigTabProps> = ({
   return (
     <>
       <Row gutter={16}></Row>
-      <ProCard title="基础信息" collapsible defaultCollapsed={false} style={{ marginBottom: 16 }} headerBordered>
+      <ProCard
+        title="基础信息"
+        collapsible
+        defaultCollapsed={false}
+        style={{ marginBottom: 16 }}
+        headerBordered
+      >
         <Row gutter={16}>
           {quote?.type != "history" && (
             <Col xs={8} md={4}>
@@ -98,13 +104,23 @@ const QuoteConfigTab: React.FC<QuoteConfigTabProps> = ({
                 label="报价单编号"
                 rules={[{ required: true, message: "请输入报价单编号" }]}
               >
-                <Input style={{ width: "100%" }} readOnly={quote?.type != "history"} />
+                <Input
+                  style={{ width: "100%" }}
+                  readOnly={quote?.type != "history"}
+                />
               </Form.Item>
             </Col>
           )}
           <Col xs={8} md={4}>
-            <Form.Item name="orderId" label="订单编号" rules={[{ required: true, message: "订单编号" }]}> 
-              <Input style={{ width: "100%" }} readOnly={quote?.type != "history"} />
+            <Form.Item
+              name="orderId"
+              label="订单编号"
+              rules={[{ required: true, message: "订单编号" }]}
+            >
+              <Input
+                style={{ width: "100%" }}
+                readOnly={quote?.type != "history"}
+              />
             </Form.Item>
           </Col>
           {quote?.type != "history" && (
@@ -115,19 +131,31 @@ const QuoteConfigTab: React.FC<QuoteConfigTabProps> = ({
             </Col>
           )}
           <Col xs={12} md={8}>
-            <Form.Item name="quoteName" label="报价单名称" rules={[{ required: true, message: "请输入报价单名称" }]}> 
+            <Form.Item
+              name="quoteName"
+              label="报价单名称"
+              rules={[{ required: true, message: "请输入报价单名称" }]}
+            >
               <Input />
             </Form.Item>
           </Col>
         </Row>
         <Row gutter={16}>
           <Col xs={12} md={8}>
-            <Form.Item name="material" label="适用原料" rules={[{ required: true, message: "请填写适用原料" }]}> 
+            <Form.Item
+              name="material"
+              label="适用原料"
+              rules={[{ required: true, message: "请填写适用原料" }]}
+            >
               <MaterialSelect />
             </Form.Item>
           </Col>
           <Col xs={12} md={8}>
-            <Form.Item name="finalProduct" label="最终产品">
+            <Form.Item
+              name="finalProduct"
+              label="最终产品"
+              rules={[{ required: true, message: "请填写最终产品" }]}
+            >
               <AutoComplete options={FINALPRODUCT_OPTIONS} />
             </Form.Item>
           </Col>
@@ -155,9 +183,13 @@ const QuoteConfigTab: React.FC<QuoteConfigTabProps> = ({
                 {
                   required: true,
                   validator: () => {
-                    const index = quote?.items.findIndex((item) => !item.isCompleted);
+                    const index = quote?.items.findIndex(
+                      (item) => !item.isCompleted
+                    );
                     if (index != -1) {
-                      return Promise.reject(`第${(index ?? 0) + 1}个产品产品配置未完成`);
+                      return Promise.reject(
+                        `第${(index ?? 0) + 1}个产品产品配置未完成`
+                      );
                     }
                     return Promise.resolve();
                   },
@@ -169,25 +201,47 @@ const QuoteConfigTab: React.FC<QuoteConfigTabProps> = ({
           </Col>
         </Row>
       </ProCard>
-      <ProCard title="报价单价格" collapsible defaultCollapsed={false} style={{ marginBottom: 16 }} headerBordered>
+      <ProCard
+        title="报价单价格"
+        collapsible
+        defaultCollapsed={false}
+        style={{ marginBottom: 16 }}
+        headerBordered
+      >
         <Row gutter={16}>
           <Col xs={12} md={6}>
             <Form.Item label="产品价格合计">
-              <MoneyInput quoteId={quote?.id ?? 0} value={quote?.totalProductPrice ?? 0} readOnly />
+              <MoneyInput
+                quoteId={quote?.id ?? 0}
+                value={quote?.totalProductPrice ?? 0}
+                readOnly
+              />
             </Form.Item>
           </Col>
           <Col xs={12} md={6}>
-            <Form.Item name="discountAmount" label="优惠金额" normalize={(value) => parseFloat(value)}>
+            <Form.Item
+              name="discountAmount"
+              label="优惠金额"
+              normalize={(value) => parseFloat(value)}
+            >
               <MoneyInput quoteId={quote?.id ?? 0} />
             </Form.Item>
           </Col>
           <Col xs={12} md={6}>
             <Form.Item label="报价单金额">
-              <MoneyInput quoteId={quote?.id ?? 0} value={quote?.quoteAmount ?? 0} readOnly />
+              <MoneyInput
+                quoteId={quote?.id ?? 0}
+                value={quote?.quoteAmount ?? 0}
+                readOnly
+              />
             </Form.Item>
           </Col>
           <Col xs={12} md={6}>
-            <Form.Item name="deliveryDays" label="交期天数" rules={[{ required: true, message: "请输入交期天数" }]}> 
+            <Form.Item
+              name="deliveryDays"
+              label="交期天数"
+              rules={[{ required: true, message: "请输入交期天数" }]}
+            >
               <InputNumber
                 style={{ width: "100%" }}
                 min={0}
@@ -203,20 +257,38 @@ const QuoteConfigTab: React.FC<QuoteConfigTabProps> = ({
           </Col>
         </Row>
       </ProCard>
-      <ProCard title="联系信息" collapsible defaultCollapsed={false} style={{ marginBottom: 16 }} headerBordered>
+      <ProCard
+        title="联系信息"
+        collapsible
+        defaultCollapsed={false}
+        style={{ marginBottom: 16 }}
+        headerBordered
+      >
         <Row gutter={16}>
-          <Col xs={12} md={8}>
-            <Form.Item name="customerName" label="客户选择" rules={[{ required: true, message: "请选择客户" }]}> 
+          <Col xs={16} md={12}>
+            <Form.Item
+              name="customerName"
+              label="客户选择"
+              rules={[{ required: true, message: "请选择客户" }]}
+            >
               <CompanySearchSelect placeholder="请选择客户" />
             </Form.Item>
           </Col>
-          <Col xs={12} md={8}>
-            <Form.Item name="contactName" label="联系人姓名" rules={[{ required: true, message: "请输入联系人姓名" }]}> 
+          <Col xs={12} md={6}>
+            <Form.Item
+              name="contactName"
+              label="联系人姓名"
+              rules={[{ required: true, message: "请输入联系人姓名" }]}
+            >
               <AutoComplete options={nameOptions} onSelect={handleNameSelect} />
             </Form.Item>
           </Col>
-          <Col xs={12} md={8}>
-            <Form.Item name="contactPhone" label="联系人手机号" rules={[{ required: true, message: "请输入联系人手机号" }]}> 
+          <Col xs={12} md={6}>
+            <Form.Item
+              name="contactPhone"
+              label="联系人手机号"
+              rules={[{ required: true, message: "请输入联系人手机号" }]}
+            >
               <AutoComplete options={phoneOptions} />
             </Form.Item>
           </Col>
@@ -237,15 +309,29 @@ const QuoteConfigTab: React.FC<QuoteConfigTabProps> = ({
           </Col>
         </Row>
       </ProCard>
-      <ProCard title="负责人信息" collapsible defaultCollapsed={false} style={{ marginBottom: 16 }} headerBordered>
+      <ProCard
+        title="负责人信息"
+        collapsible
+        defaultCollapsed={false}
+        style={{ marginBottom: 16 }}
+        headerBordered
+      >
         <Row gutter={16}>
           <Col xs={12} md={6}>
-            <Form.Item name="creatorId" label="创建人" rules={[{ required: true, message: "请选择创建人" }]}> 
+            <Form.Item
+              name="creatorId"
+              label="创建人"
+              rules={[{ required: true, message: "请选择创建人" }]}
+            >
               <MemberSelect placeholder="选择创建人" disabled />
             </Form.Item>
           </Col>
           <Col xs={12} md={6}>
-            <Form.Item name="chargerId" label="负责人" rules={[{ required: true, message: "请选择负责人" }]}> 
+            <Form.Item
+              name="chargerId"
+              label="负责人"
+              rules={[{ required: true, message: "请选择负责人" }]}
+            >
               <MemberSelect placeholder="选择负责人" />
             </Form.Item>
           </Col>
@@ -260,8 +346,16 @@ const QuoteConfigTab: React.FC<QuoteConfigTabProps> = ({
             </Form.Item>
           </Col>
           <Col xs={12} md={6}>
-            <Form.Item name="quoteTime" label="报价时间" rules={[{ required: true, message: "请选择报价时间" }]}> 
-              <DatePicker style={{ width: "100%" }} onChange={onDateChange} maxDate={dayjs("2025/5/1")} />
+            <Form.Item
+              name="quoteTime"
+              label="报价时间"
+              rules={[{ required: true, message: "请选择报价时间" }]}
+            >
+              <DatePicker
+                style={{ width: "100%" }}
+                onChange={onDateChange}
+                maxDate={dayjs("2025/5/1")}
+              />
             </Form.Item>
           </Col>
         </Row>

@@ -6,7 +6,6 @@ import {
 } from "../../../util/rules";
 import { RadioWithInput } from "../../general/RadioWithInput";
 import { AutoCompleteIntervalInput } from "../../general/AutoCompleteIntervalInput";
-import { useState } from "react";
 import TextArea from "antd/es/input/TextArea";
 import { IntervalInput1 } from "../../general/IntervalInput1";
 
@@ -70,7 +69,6 @@ const PLATING_REQUIREMENT = [
 ];
 
 export const SurfaceTreatment = () => {
-  const [precisionLevel, setPrecisionLevel] = useState<string>("S");
   return (
     <ProCard
       title="表面处理"
@@ -86,70 +84,90 @@ export const SurfaceTreatment = () => {
               options={precisionLevelOptions}
               optionType="button"
               buttonStyle="solid"
-              onChange={(e) => setPrecisionLevel(e.target.value)}
             />
           </Form.Item>
         </Col>
-        <Col xs={24} sm={12}>
-          {/* 模唇流面抛光精度 */}
-          <Form.Item
-            label="模唇流面抛光精度"
-            name="lipSurfacePrecision"
-            rules={[
-              { required: true, message: "请选择或输入抛光精度" },
-              ...autoCompleteIntervalInputRules,
-            ]}
-          >
-            <AutoCompleteIntervalInput
-              options={precisionOptions.lipSurface}
-              disabled={precisionLevel !== "custom"}
-              level={precisionLevel}
-              addonAfter={"μm"}
-            />
-          </Form.Item>
-        </Col>
-        <Col xs={24} sm={12}>
-          {/* 其它流面抛光精度 */}
-          <Form.Item
-            label="其它流面抛光精度"
-            name="otherSurfacePrecision"
-            rules={[
-              {
-                required: true,
-                message: "请选择或输入抛光精度",
-              },
-              ...autoCompleteIntervalInputRules,
-            ]}
-          >
-            <AutoCompleteIntervalInput
-              options={precisionOptions.otherSurface}
-              disabled={precisionLevel !== "custom"}
-              level={precisionLevel}
-              addonAfter={"μm"}
-            />
-          </Form.Item>
-        </Col>
-        <Col xs={24} sm={12}>
-          {/* 外形抛光精度 */}
-          <Form.Item
-            label="外形抛光精度"
-            name="shapePrecision"
-            rules={[
-              {
-                required: true,
-                message: "请选择或输入抛光精度",
-              },
-              ...autoCompleteIntervalInputRules,
-            ]}
-          >
-            <AutoCompleteIntervalInput
-              options={precisionOptions.shape}
-              disabled={precisionLevel !== "custom"}
-              level={precisionLevel}
-              addonAfter={"μm"}
-            />
-          </Form.Item>
-        </Col>
+        <Form.Item noStyle dependencies={["precisionLevel"]}>
+          {({ getFieldValue }) => {
+            const precisionLevel = getFieldValue("precisionLevel");
+            return (
+              <Col xs={24} sm={12}>
+                {/* 模唇流面抛光精度 */}
+                <Form.Item
+                  label="模唇流面抛光精度"
+                  name="lipSurfacePrecision"
+                  rules={[
+                    { required: true, message: "请选择或输入抛光精度" },
+                    ...autoCompleteIntervalInputRules,
+                  ]}
+                >
+                  <AutoCompleteIntervalInput
+                    options={precisionOptions.lipSurface}
+                    disabled={precisionLevel !== "custom"}
+                    level={precisionLevel}
+                    addonAfter={"μm"}
+                  />
+                </Form.Item>
+              </Col>
+            );
+          }}
+        </Form.Item>
+        <Form.Item noStyle dependencies={["precisionLevel"]}>
+          {({ getFieldValue }) => {
+            const precisionLevel = getFieldValue("precisionLevel");
+            return (
+              <Col xs={24} sm={12}>
+                {/* 其它流面抛光精度 */}
+                <Form.Item
+                  label="其它流面抛光精度"
+                  name="otherSurfacePrecision"
+                  rules={[
+                    {
+                      required: true,
+                      message: "请选择或输入抛光精度",
+                    },
+                    ...autoCompleteIntervalInputRules,
+                  ]}
+                >
+                  <AutoCompleteIntervalInput
+                    options={precisionOptions.otherSurface}
+                    disabled={precisionLevel !== "custom"}
+                    level={precisionLevel}
+                    addonAfter={"μm"}
+                  />
+                </Form.Item>
+              </Col>
+            );
+          }}
+        </Form.Item>
+        <Form.Item noStyle dependencies={["precisionLevel"]}>
+          {({ getFieldValue }) => {
+            const precisionLevel = getFieldValue("precisionLevel");
+            return (
+              <Col xs={24} sm={12}>
+                {/* 外形抛光精度 */}
+                <Form.Item
+                  label="外形抛光精度"
+                  name="shapePrecision"
+                  rules={[
+                    {
+                      required: true,
+                      message: "请选择或输入抛光精度",
+                    },
+                    ...autoCompleteIntervalInputRules,
+                  ]}
+                >
+                  <AutoCompleteIntervalInput
+                    options={precisionOptions.shape}
+                    disabled={precisionLevel !== "custom"}
+                    level={precisionLevel}
+                    addonAfter={"μm"}
+                  />
+                </Form.Item>
+              </Col>
+            );
+          }}
+        </Form.Item>
         <Col xs={12} md={12}>
           {/* 是否电镀 */}
           <Form.Item

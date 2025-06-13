@@ -75,10 +75,13 @@ const DieForm = forwardRef(
       const list = value.split("").map((s: any) => ({ layer: s }));
       form.setFieldValue("screwList", list);
 
-      const ratioList = (form.getFieldValue("compositeRatio") || []) as LevelValue[];
+      const ratioList = (form.getFieldValue("compositeRatio") ||
+        []) as LevelValue[];
       const base = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
       const len = value.length;
-      const ratioNext = Array.from({ length: len }, (_, i) => ({ level: base[i] }));
+      const ratioNext = Array.from({ length: len }, (_, i) => ({
+        level: base[i],
+      }));
       form.setFieldValue(
         "compositeRatio",
         ratioList.slice(0, len).concat(ratioNext.slice(ratioList.length))

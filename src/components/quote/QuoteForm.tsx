@@ -159,12 +159,8 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
     { value: string; label: string }[]
   >([]);
   const deliveryDays = Form.useWatch("deliveryDays", form);
-  const [quoteTerms, setQuoteTerms] = useState<Clause[]>(
-    getDefaultQuoteTerms(deliveryDays ?? 0)
-  );
-  const [contractTerms, setContractTerms] = useState<Clause[]>(
-    DEFAULT_CONTRACT_TERMS
-  );
+  const quoteTerms: Clause[] = Form.useWatch("quoteTerms", form) || [];
+  const contractTerms: Clause[] = Form.useWatch("contractTerms", form) || [];
   const autoSaveTimer = useRef<NodeJS.Timeout | null>(null);
 
   const scheduleAutoSave = () => {
@@ -176,13 +172,11 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
     }, 60000);
   };
   const handleQuoteTermsChange = (terms: Clause[]) => {
-    setQuoteTerms(terms);
-    if (quote?.id) updateQuote(quote.id, { quoteTerms: terms });
+    form.setFieldsValue({ quoteTerms: terms });
   };
 
   const handleContractTermsChange = (terms: Clause[]) => {
-    setContractTerms(terms);
-    if (quote?.id) updateQuote(quote.id, { contractTerms: terms });
+    form.setFieldsValue({ contractTerms: terms });
   };
   const fetchContacts = throttle(async (id: string) => {
     try {
@@ -209,6 +203,15 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
       form.setFieldsValue({ contactPhone: phones[0] });
     }
   };
+
+  const setDefaultQuoteTerms = () => {
+    const days = deliveryDays ?? 0;
+    form.setFieldsValue({ quoteTerms: getDefaultQuoteTerms(days) });
+  };
+
+  const setDefaultContractTerms = () => {
+    form.setFieldsValue({ contractTerms: DEFAULT_CONTRACT_TERMS });
+  };
   const quote = useQuoteStore((state) =>
     state.quotes.find((q) => q.id == quoteId)
   );
@@ -216,10 +219,10 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
 
   useEffect(() => {
     if (quote?.quoteTerms) {
-      setQuoteTerms(quote.quoteTerms);
+      form.setFieldsValue({ quoteTerms: quote.quoteTerms });
     }
     if (quote?.contractTerms) {
-      setContractTerms(quote.contractTerms);
+      form.setFieldsValue({ contractTerms: quote.contractTerms });
     }
   }, [quote?.quoteTerms, quote?.contractTerms]);
 
@@ -229,16 +232,6 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
     }
   }, [quote?.customerId]);
 
-  useEffect(() => {
-    const days = deliveryDays ?? 0;
-    const updated = quoteTerms.map((c) =>
-      c.title === "交货期"
-        ? { ...c, content: c.content.replace(/（\d+）/, `（${days}）`) }
-        : c
-    );
-    setQuoteTerms(updated);
-    if (quote?.id) updateQuote(quote.id, { quoteTerms: updated });
-  }, [deliveryDays]);
   const onFinish = async () => {
     setSubmitLoading(true);
     if (quote?.id) updateQuote(quote.id, { status: "completed" });
@@ -336,6 +329,7 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
               <QuoteTermsTab
                 value={quoteTerms}
                 onChange={handleQuoteTermsChange}
+                onSetDefault={setDefaultQuoteTerms}
               />
             ),
           },
@@ -346,6 +340,7 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
               <ContractTab
                 value={contractTerms}
                 onChange={handleContractTermsChange}
+                onSetDefault={setDefaultContractTerms}
               />
             ),
           },

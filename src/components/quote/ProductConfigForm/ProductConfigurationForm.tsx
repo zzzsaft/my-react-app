@@ -9,6 +9,7 @@ import {
 } from "react";
 import PriceForm from "../../quoteForm/PriceForm";
 import { QuoteItem } from "../../../types/types";
+
 import { getFormByCategory, ModelFormRef } from "./formSelector";
 import { useQuoteStore } from "../../../store/useQuoteStore";
 
@@ -87,7 +88,7 @@ const ProductConfigurationForm = forwardRef(
           return `${model}-${width}测厚仪`;
         }
       }
-      return "";
+      return category.at(-1);
     };
     const { form, formType } = getFormByCategory(
       quoteItem?.productCategory,
@@ -96,11 +97,13 @@ const ProductConfigurationForm = forwardRef(
       modelFormRef
     );
 
+
     useEffect(() => {
       if (quoteItem?.id && quoteItem.formType !== formType) {
         updateItem(quoteId, quoteItem.id, { formType });
       }
     }, [formType, quoteItem?.id]);
+
     // 暴露priceForm给祖父组件
     useImperativeHandle(ref, () => {
       return {
