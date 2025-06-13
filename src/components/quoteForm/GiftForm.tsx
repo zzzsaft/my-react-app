@@ -12,11 +12,11 @@ import ProForm, { ProFormList, ProFormDependency } from "@ant-design/pro-form";
 import { forwardRef, useImperativeHandle } from "react";
 import { formatPrice } from "../../util/valueUtil";
 
-interface GiftFormRef {
+interface PartFormRef {
   form: FormInstance;
 }
 
-const GiftForm = forwardRef<GiftFormRef>((props, ref) => {
+const PartForm = forwardRef<PartFormRef>((props, ref) => {
   const [form] = Form.useForm();
 
   useImperativeHandle(ref, () => ({
@@ -120,8 +120,8 @@ const GiftForm = forwardRef<GiftFormRef>((props, ref) => {
       </ProFormList>
       <Form.Item shouldUpdate>
         {({ getFieldValue }) => {
-          const gifts = getFieldValue("parts") || [];
-          const total = gifts.reduce((sum: number, g: any) => {
+          const parts = getFieldValue("parts") || [];
+          const total = parts.reduce((sum: number, g: any) => {
             const q = g?.quantity;
             const p = g?.unitPrice;
             if (q && p) return sum + q * p;
@@ -138,4 +138,4 @@ const GiftForm = forwardRef<GiftFormRef>((props, ref) => {
   );
 });
 
-export default GiftForm;
+export default PartForm;

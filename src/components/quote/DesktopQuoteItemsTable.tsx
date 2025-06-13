@@ -117,7 +117,6 @@ const DesktopQuoteItemsTable: React.FC<QuoteItemsTableProps> = ({
     record?: QuoteItem;
   }>({ x: 0, y: 0, visible: false });
 
-
   const handleContextMenu = (
     e: React.MouseEvent<HTMLTableRowElement, MouseEvent>,
     record: QuoteItem
@@ -345,6 +344,9 @@ const DesktopQuoteItemsTable: React.FC<QuoteItemsTableProps> = ({
       <Dropdown
         open={contextMenu.visible}
         menu={{
+          style: {
+            width: 100, // 设置宽度为 200px
+          },
           items: [
             {
               key: "delete",
@@ -360,7 +362,11 @@ const DesktopQuoteItemsTable: React.FC<QuoteItemsTableProps> = ({
             },
           ],
         }}
-        overlayStyle={{ position: "fixed", left: contextMenu.x, top: contextMenu.y }}
+        overlayStyle={{
+          position: "fixed",
+          left: contextMenu.x,
+          top: contextMenu.y,
+        }}
         onOpenChange={(open) => {
           if (!open) {
             setContextMenu((prev) => ({ ...prev, visible: false }));
