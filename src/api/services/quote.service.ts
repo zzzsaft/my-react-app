@@ -2,6 +2,7 @@
 import { redirect } from "react-router-dom";
 import { apiClient } from "../http/client";
 import { Quote, QuoteItem } from "../../types/types";
+import axios from "axios";
 
 export const QuoteService = {
   async createQuote(params: {
@@ -62,5 +63,21 @@ export const QuoteService = {
       params: { quoteId },
     });
     return quote.data;
+  },
+  async executePrint(quote: Quote) {
+    const result = await axios.post(
+      "http://122.226.146.110:777/Contract/Execute",
+      quote
+    );
+    const data = result.data as {
+      productQuotation: string;
+      productPurchase: string;
+      productConfiguration: string;
+    };
+    return {
+      quotationPdf: data.productQuotation,
+      contractPdf: data.productPurchase,
+      configPdf: data.productConfiguration,
+    };
   },
 };

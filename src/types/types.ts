@@ -79,6 +79,9 @@ export interface Quote {
   quoteTime: Date | null; // 报价时间
   quoteTerms: Clause[];
   contractTerms: Clause[];
+  quotationPdf?: string; // 报价单打印链接
+  contractPdf?: string; // 合同打印链接
+  configPdf?: string; // 配置表打印链接
   items: QuoteItem[];
   status: "draft" | "completed" | "locked";
 }
