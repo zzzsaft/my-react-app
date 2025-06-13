@@ -69,7 +69,7 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
   const handleImport = () => {
     if (mode === "template" && selectedTemplate) {
       onImport({
-        // ...selectedTemplate,
+        ...selectedTemplate,
         config: selectedTemplate.config,
       } as any);
     } else if (mode === "other" && selected) {

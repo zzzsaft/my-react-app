@@ -142,7 +142,13 @@ const ProductConfigModal: React.FC<ProductConfigModalProps> = ({
       <Modal
         style={{ overflow: "auto" }}
         title={
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
             <span>{quoteItem?.productCategory?.join("/")}</span>
             <Button
               type="link"
@@ -177,28 +183,29 @@ const ProductConfigModal: React.FC<ProductConfigModalProps> = ({
             <Skeleton active paragraph={{ rows: 8 }} />
           </div>
         )}
-      <ProductConfigurationForm
-        quoteId={quoteId}
-        quoteItem={quoteItem}
-        ref={formRef}
-        style={{ display: loading ? "none" : "block" }}
-        material={material}
-        finalProduct={finalProduct}
-      />
-      <ImportProductModal
-        open={importOpen}
-        onCancel={() => setImportOpen(false)}
-        onImport={(item) => {
-          if (quoteItem?.id) {
-            onUpdateItem(quoteId, quoteItem.id, {
-              productName: item.productName,
-              config: item.config,
-            });
-          }
-          setImportOpen(false);
-        }}
-        formType={quoteItem?.formType}
-      />
+        <ProductConfigurationForm
+          quoteId={quoteId}
+          quoteItem={quoteItem}
+          ref={formRef}
+          style={{ display: loading ? "none" : "block" }}
+          material={material}
+          finalProduct={finalProduct}
+        />
+        <ImportProductModal
+          open={importOpen}
+          onCancel={() => setImportOpen(false)}
+          onImport={(item) => {
+            if (quoteItem?.id) {
+              onUpdateItem(quoteId, quoteItem.id, {
+                productName: item.productName,
+                config: item.config,
+              });
+            }
+            setImportOpen(false);
+            setOpen(false);
+          }}
+          formType={quoteItem?.formType}
+        />
       </Modal>
     </>
   );

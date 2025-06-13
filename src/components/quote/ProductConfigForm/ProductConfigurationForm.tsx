@@ -53,11 +53,9 @@ const ProductConfigurationForm = forwardRef(
 
       if (category[0] === "平模") {
         const width = modelFormRef.current?.form.getFieldValue("dieWidth");
-        const widthStr =
-          width && width.front ? `${width.front}mm` : "";
-        const mat = Array.isArray(material)
-          ? material.join("、")
-          : material.toString();
+        const material1 = modelFormRef.current?.form.getFieldValue("material");
+        const widthStr = width && width.front ? `${width.front}mm` : "";
+        const mat = material1?.join("、");
         const upperLip =
           modelFormRef.current?.form.getFieldValue("upperLipStructure");
         const manualOrAuto =
@@ -67,9 +65,7 @@ const ProductConfigurationForm = forwardRef(
         const runnerNumber =
           modelFormRef.current?.form.getFieldValue("runnerNumber");
         const runnerStr =
-          runnerNumber && runnerNumber > 1
-            ? `${runnerNumber}层模内共挤`
-            : "";
+          runnerNumber && runnerNumber > 1 ? `${runnerNumber}层模内共挤` : "";
         const final = finalProduct;
         return `${widthStr}${mat}${runnerStr}${final}${manualOrAuto}模头`;
       }

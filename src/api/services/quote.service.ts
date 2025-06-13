@@ -65,10 +65,7 @@ export const QuoteService = {
     return quote.data;
   },
   async executePrint(quote: Quote) {
-    const result = await axios.post(
-      "http://local.jc-times.com:777/Contract/Execute",
-      { ...quote }
-    );
+    const result = await apiClient.post("/contract/execute", { ...quote });
     const data = result.data as {
       productQuotation: string;
       productPurchase: string;
