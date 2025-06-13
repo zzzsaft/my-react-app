@@ -19,7 +19,7 @@ export interface CustomSelectProps {
 
 const CustomSelect: React.FC<CustomSelectProps> = ({
   mode = undefined,
-  value = mode == "multiple" ? [] : "",
+  value = mode ? [] : "",
   onChange,
   initialGroups = {},
   initialOptions = [],
