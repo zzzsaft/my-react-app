@@ -28,7 +28,8 @@ export function getFormByCategory(
   quoteId: number,
   quoteItemId: number,
   modelFormRef: ModelFormRef,
-  formTypeOverride?: string
+  formTypeOverride?: string,
+  readOnly?: boolean
 ): { form: React.ReactNode; formType: string } {
   const formType = formTypeOverride || getFormType(category);
   if (formType === "DieForm")
@@ -109,6 +110,6 @@ export function getFormByCategory(
       formType,
     };
   if (formType === "PartsForm")
-    return { form: <PartsForm ref={modelFormRef} />, formType };
+    return { form: <PartsForm ref={modelFormRef} readOnly={readOnly} />, formType };
   return { form: <OtherForm ref={modelFormRef} />, formType };
 }
