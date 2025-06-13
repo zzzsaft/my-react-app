@@ -77,6 +77,7 @@ export interface Quote {
   currentApprovalNode: string; // 当前审批节点
   currentApprover: string; // 当前审批人
   quoteTime: Date | null; // 报价时间
+  createdAt?: string; // 创建日期
   quoteTerms: Clause[];
   contractTerms: Clause[];
   quotationPdf?: string; // 报价单打印链接

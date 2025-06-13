@@ -12,6 +12,7 @@ interface QuoteTableProps {
 interface QuoteTableItem {
   key: number;
   quoteId: string;
+  orderId: string;
   customerName: string;
   quoteTime: Date;
   status: string;
@@ -20,6 +21,8 @@ interface QuoteTableItem {
   salesSupportId: string;
   quoteName: string;
   projectManagerId: string;
+  creatorId: string;
+  createdAt: string;
 }
 
 const QuoteTable: React.FC<QuoteTableProps> = ({ type }) => {
@@ -85,11 +88,18 @@ const QuoteTable: React.FC<QuoteTableProps> = ({ type }) => {
 
   const columns: ColumnsType<QuoteTableItem> = [
     {
-      title: "ID",
+      title: "报价编号",
       dataIndex: "quoteId",
       key: "quoteId",
       width: 80,
       sorter: (a, b) => a.quoteId.localeCompare(b.quoteId),
+    },
+    {
+      title: "订单编号",
+      dataIndex: "orderId",
+      key: "orderId",
+      width: 80,
+      sorter: (a, b) => (a.orderId || "").localeCompare(b.orderId || ""),
     },
     {
       title: "报价名称",
@@ -113,6 +123,15 @@ const QuoteTable: React.FC<QuoteTableProps> = ({ type }) => {
       sorter: (a, b) =>
         new Date(a.quoteTime).getTime() - new Date(b.quoteTime).getTime(),
       render: (date: Date) => new Date(date).toLocaleDateString(),
+    },
+    {
+      title: "创建日期",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      width: 120,
+      sorter: (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+      render: (date: string) => new Date(date).toLocaleDateString(),
     },
     {
       title: "当前状态",
@@ -184,21 +203,32 @@ const QuoteTable: React.FC<QuoteTableProps> = ({ type }) => {
       render: (salesSupportId: string) =>
         (salesSupportId && <MemberAvatar id={salesSupportId} />) || "-",
     },
+    {
+      title: "创建人",
+      dataIndex: "creatorId",
+      key: "creatorId",
+      width: 120,
+      render: (creatorId: string) =>
+        (creatorId && <MemberAvatar id={creatorId} />) || "-",
+    },
   ];
 
   const tableData = useMemo(
     () =>
       quotes.map((quote) => ({
         key: quote.id,
-        quoteId: (quote.quoteId || quote.orderId) ?? "",
+        quoteId: quote.quoteId ?? "",
+        orderId: quote.orderId ?? "",
         customerName: quote.customerName,
         quoteTime: quote.quoteTime as any,
+        createdAt: (quote as any).createdAt ?? "",
         status: quote.status,
         flowState: quote.flowState,
         chargerId: quote.chargerId,
         salesSupportId: quote.salesSupportId,
         quoteName: quote.quoteName,
         projectManagerId: quote.projectManagerId,
+        creatorId: quote.creatorId,
       })),
     [quotes]
   );

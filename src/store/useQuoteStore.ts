@@ -187,6 +187,7 @@ export const useQuoteStore = create<QuotesStore>()(
       set((state) => {
         state.quotes.push(quote);
       });
+      return quote;
     },
 
     updateQuote: async (quoteId, updateData) => {

@@ -3,12 +3,14 @@ import { CustomerService } from "../../api/services/customer.service";
 import CompanySearchSelect from "../general/CompanySearchSelect";
 import { useQuoteStore } from "../../store/useQuoteStore";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import MemberSelect from "../general/MemberSelect";
 import dayjs from "dayjs";
 
 export const AddHistoryModal = () => {
   // 处理提交历史报价单
   const { message } = App.useApp();
+  const navigate = useNavigate();
   const [form] = Form.useForm();
   const { createQuote } = useQuoteStore();
   const [modalVisible, setModalVisible] = useState(false);
@@ -16,7 +18,7 @@ export const AddHistoryModal = () => {
     try {
       const values = await form.validateFields();
       setModalVisible(false);
-      await createQuote({
+      const quote = await createQuote({
         ...values,
         orderId: values.orderId,
         quoteId: values.quoteId,
@@ -29,6 +31,9 @@ export const AddHistoryModal = () => {
       });
       message.success("历史报价单添加成功");
       form.resetFields();
+      if (quote?.id) {
+        navigate(`/quote/${quote.id}`);
+      }
     } catch (error: any) {
       if (
         error?.response?.data?.message &&
