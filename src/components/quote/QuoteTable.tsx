@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import dayjs from "dayjs";
 import { Table, Tag, Form, Input } from "antd";
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
@@ -34,7 +40,7 @@ const QuoteTable: React.FC<QuoteTableProps> = ({ type }) => {
   const [searchForm] = Form.useForm();
   const [pagination, setPagination] = useState<TablePaginationConfig>({
     current: 1,
-    pageSize: 10,
+    pageSize: 20,
   });
   const lastClickTime = useRef(0);
 
@@ -263,7 +269,7 @@ const QuoteTable: React.FC<QuoteTableProps> = ({ type }) => {
         scroll={{ x: "max-content", y: "calc(100vh - 250px)" }}
         pagination={{
           ...pagination,
-          pageSizeOptions: ["10", "20", "50", "100"],
+          pageSizeOptions: ["20", "50", "100"],
           showSizeChanger: true,
           showQuickJumper: true,
         }}

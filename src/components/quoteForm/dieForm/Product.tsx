@@ -1,4 +1,8 @@
-import { ProCard, ProFormDependency } from "@ant-design/pro-components";
+import {
+  ProCard,
+  ProForm,
+  ProFormDependency,
+} from "@ant-design/pro-components";
 import { Col, Form, Input, InputNumber, Radio, Row } from "antd";
 import { IntervalInputFormItem } from "../../general/IntervalInput";
 import { CustomSelect } from "../../general/CustomSelect";
@@ -185,23 +189,36 @@ export const Product = () => {
                               name={[]}
                               rules={[
                                 {
-                                  validator: async (_: any, value: LevelValue) => {
-                                    const num = parseFloat(value?.value?.value || "0");
+                                  validator: async (
+                                    _: any,
+                                    value: LevelValue
+                                  ) => {
+                                    const num = parseFloat(
+                                      value?.value?.value || "0"
+                                    );
                                     if (isNaN(num) || num === 0) {
-                                      return Promise.reject(new Error("比例不得为0"));
+                                      return Promise.reject(
+                                        new Error("比例不得为0")
+                                      );
                                     }
                                     if (
-                                      (value?.value?.front && value?.value?.front >= 100) ||
-                                      (value?.value?.rear && value?.value?.rear >= 100)
+                                      (value?.value?.front &&
+                                        value?.value?.front >= 100) ||
+                                      (value?.value?.rear &&
+                                        value?.value?.rear >= 100)
                                     ) {
-                                      return Promise.reject(new Error("比例不得超过100"));
+                                      return Promise.reject(
+                                        new Error("比例不得超过100")
+                                      );
                                     }
                                     if (
                                       value?.value?.front &&
                                       value?.value?.rear &&
                                       value?.value?.front >= value?.value?.rear
                                     ) {
-                                      return Promise.reject(new Error("第一个应比第二个小"));
+                                      return Promise.reject(
+                                        new Error("第一个应比第二个小")
+                                      );
                                     }
                                     return Promise.resolve();
                                   },

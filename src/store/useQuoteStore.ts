@@ -73,7 +73,7 @@ interface QuotesStore {
     chargerId: string;
     projectManagerId: string;
     quoteName: string;
-  }) => Promise<void>;
+  }) => Promise<Quote>;
   updateQuote: (
     quoteId: number,
     updateData: Partial<Omit<Quote, "items">>

@@ -89,7 +89,7 @@ const ProductConfigurationForm = forwardRef(
           return `${model}-${width}测厚仪`;
         }
       }
-      return "";
+      return category.at(-1);
     };
 
     const setForm = () => {
@@ -177,7 +177,7 @@ const ProductConfigurationForm = forwardRef(
           ),
         };
 
-      if (category?.[1].includes("赠品"))
+      if (category?.at(1)?.includes("赠品"))
         return {
           form: <GiftForm ref={modelFormRef} />,
         };

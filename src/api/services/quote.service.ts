@@ -66,7 +66,7 @@ export const QuoteService = {
   },
   async executePrint(quote: Quote) {
     const result = await axios.post(
-      "http://122.226.146.110:777/Contract/Execute",
+      "http://local.jc-times.com:777/Contract/Execute",
       { ...quote }
     );
     const data = result.data as {

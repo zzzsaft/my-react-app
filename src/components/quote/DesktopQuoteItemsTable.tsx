@@ -55,10 +55,14 @@ const DesktopQuoteItemsTable: React.FC<QuoteItemsTableProps> = ({
 
   const handleCascaderChange = (value: string[], record: QuoteItem) => {
     if (!value || value.length === 0) return;
+    let productName = value[value.length - 1] ?? "";
+    if (value[0] == "平模" || value[0] == "配套件") {
+      productName = "";
+    }
     updateQuoteItem(quoteId, record.id, {
       productCategory: value,
       isCompleted: false,
-      productName: value[value.length - 1] ?? "",
+      productName,
     });
   };
   const [open, setOpen] = useState(false);

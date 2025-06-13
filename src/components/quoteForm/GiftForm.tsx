@@ -26,24 +26,42 @@ const GiftForm = forwardRef<GiftFormRef>((props, ref) => {
   return (
     <ProForm layout="vertical" form={form} submitter={false}>
       <ProFormList
-        name="gifts"
-        label="赠品明细"
+        name="parts"
+        label="配件明细"
         creatorButtonProps={{ creatorButtonText: "新增赠品" }}
         alwaysShowItemLabel
+        rules={[
+          {
+            required: true,
+            message: "请至少输入一个配件",
+            validator: (_, value) => {
+              if (value.length == 0) {
+                return Promise.reject(
+                  new Error("制品厚度和模唇开口至少要填一个")
+                );
+              }
+              return Promise.resolve();
+            },
+          },
+        ]}
       >
         {(f, index, action) => (
           <Row gutter={16}>
             <Col xs={24} md={8}>
-              <Form.Item
-                name="name"
-                label="赠品名称"
+              <ProForm.Item
+                name={"name"}
+                label="名称"
                 rules={[{ required: true, message: "请输入赠品名称" }]}
               >
-                <AutoComplete options={[]} placeholder="赠品名称" />
-              </Form.Item>
+                <AutoComplete
+                  options={[]}
+                  style={{ width: "100%" }}
+                  placeholder="赠品名称"
+                />
+              </ProForm.Item>
             </Col>
             <Col xs={12} md={3}>
-              <Form.Item
+              <ProForm.Item
                 name="quantity"
                 label="数量"
                 rules={[{ required: true, message: "请输入数量" }]}
@@ -54,10 +72,10 @@ const GiftForm = forwardRef<GiftFormRef>((props, ref) => {
                   style={{ width: "100%" }}
                   controls={false}
                 />
-              </Form.Item>
+              </ProForm.Item>
             </Col>
             <Col xs={12} md={3}>
-              <Form.Item
+              <ProForm.Item
                 name="unit"
                 label="单位"
                 rules={[{ required: true, message: "请选择单位" }]}
@@ -68,10 +86,10 @@ const GiftForm = forwardRef<GiftFormRef>((props, ref) => {
                   <Select.Option value="套">套</Select.Option>
                   <Select.Option value="个">个</Select.Option>
                 </Select>
-              </Form.Item>
+              </ProForm.Item>
             </Col>
             <Col xs={12} md={4}>
-              <Form.Item
+              <ProForm.Item
                 name="unitPrice"
                 label="单价"
                 rules={[{ required: true, message: "请输入单价" }]}
@@ -82,7 +100,7 @@ const GiftForm = forwardRef<GiftFormRef>((props, ref) => {
                   controls={false}
                   style={{ width: "100%" }}
                 />
-              </Form.Item>
+              </ProForm.Item>
             </Col>
             <Col xs={12} md={6}>
               <ProFormDependency name={["quantity", "unitPrice"]}>
@@ -102,7 +120,7 @@ const GiftForm = forwardRef<GiftFormRef>((props, ref) => {
       </ProFormList>
       <Form.Item shouldUpdate>
         {({ getFieldValue }) => {
-          const gifts = getFieldValue("gifts") || [];
+          const gifts = getFieldValue("parts") || [];
           const total = gifts.reduce((sum: number, g: any) => {
             const q = g?.quantity;
             const p = g?.unitPrice;
