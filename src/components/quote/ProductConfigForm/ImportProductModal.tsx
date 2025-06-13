@@ -6,6 +6,7 @@ import ProductSearchBar from "../../general/ProductSearchBar";
 import { QuoteItem, ProductSearchResult, QuoteTemplate } from "../../../types/types";
 import { useTemplateStore } from "../../../store/useTemplateStore";
 import TemplateTable from "../../template/TemplateTable";
+import TemplateCreateModal from "../../template/TemplateCreateModal";
 
 interface ImportProductModalProps {
   open: boolean;
@@ -28,6 +29,7 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
   const [selected, setSelected] = useState<ProductSearchResult>();
   const [selectedTemplate, setSelectedTemplate] = useState<QuoteTemplate>();
   const [loading, setLoading] = useState(false);
+  const [createOpen, setCreateOpen] = useState(false);
   const { templates, loading: tplLoading, refreshTemplates } = useTemplateStore();
 
   useEffect(() => {
@@ -64,6 +66,7 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
   };
 
   return (
+    <>
     <Modal
       width={800}
       open={open}
@@ -98,12 +101,7 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
                 <div style={{ marginBottom: 16 }}>
                   <Button
                     type="primary"
-                    onClick={() =>
-                      window.open(
-                        `/template/create?formType=${formType ?? ""}`,
-                        "_blank"
-                      )
-                    }
+                    onClick={() => setCreateOpen(true)}
                     disabled={isOtherForm}
                   >
                     创建模版
@@ -184,6 +182,12 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
         ]}
       />
     </Modal>
+    <TemplateCreateModal
+      open={createOpen}
+      onClose={() => setCreateOpen(false)}
+      formType={formType}
+    />
+    </>
   );
 };
 
