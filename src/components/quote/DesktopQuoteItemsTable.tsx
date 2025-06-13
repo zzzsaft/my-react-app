@@ -3,6 +3,7 @@ import { PlusOutlined, DeleteOutlined, LinkOutlined } from "@ant-design/icons";
 import { useQuoteStore } from "../../store/useQuoteStore";
 import ProductCascader from "./ProductCascader";
 import { formatPrice } from "../../util/valueUtil";
+import { isTextSelecting } from "../../util/domUtil";
 import ProductConfigModal from "./ProductConfigForm/ProductConfigModal";
 import { QuoteItem } from "../../types/types";
 import { useMemo, useState } from "react";
@@ -67,6 +68,7 @@ const DesktopQuoteItemsTable: React.FC<QuoteItemsTableProps> = ({
   };
 
   const handleRowClick = (record: QuoteItem) => {
+    if (isTextSelecting()) return;
     if (!record.productCategory || record.productCategory.length === 0) {
       message.warning("请先填写产品类型");
     } else {
