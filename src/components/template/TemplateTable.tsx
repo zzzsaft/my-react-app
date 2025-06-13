@@ -9,7 +9,20 @@ interface TemplateTableProps {
   selectedId?: string;
   onSelect?: (tpl: QuoteTemplate) => void;
   onDoubleClick?: (tpl: QuoteTemplate) => void;
+  showType?: boolean;
 }
+
+const TEMPLATE_TYPE_MAP: Record<string, string> = {
+  DieForm: "平模",
+  SmartRegulator: "智能调节器",
+  MeteringPumpForm: "熔体计量泵",
+  FeedblockForm: "共挤复合分配器",
+  FilterForm: "过滤器",
+  ThicknessGaugeForm: "测厚仪",
+  HydraulicStationForm: "液压站",
+  PartsForm: "赠品",
+  OtherForm: "其他",
+};
 
 const TemplateTable: React.FC<TemplateTableProps> = ({
   templates,
@@ -17,11 +30,19 @@ const TemplateTable: React.FC<TemplateTableProps> = ({
   selectedId,
   onSelect,
   onDoubleClick,
+  showType = true,
 }) => {
   const columns = [
     { title: "ID", dataIndex: "id", width: 80 },
     { title: "名称", dataIndex: "name" },
-    { title: "类型", dataIndex: "templateType" },
+    { title: "描述", dataIndex: "description" },
+    showType
+      ? {
+          title: "类型",
+          dataIndex: "templateType",
+          render: (v: string) => TEMPLATE_TYPE_MAP[v] || v,
+        }
+      : null,
     {
       title: "创建人",
       dataIndex: "creatorId",
@@ -38,7 +59,7 @@ const TemplateTable: React.FC<TemplateTableProps> = ({
       dataIndex: "industries",
       render: (v: string[]) => v?.join("/") || "",
     },
-  ];
+  ].filter(Boolean);
 
   return (
     <Table

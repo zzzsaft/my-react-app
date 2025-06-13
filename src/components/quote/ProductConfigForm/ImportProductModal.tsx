@@ -135,6 +135,7 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
                     loading={tplLoading}
                     selectedId={selectedTemplate?.id}
                     onSelect={setSelectedTemplate}
+                    showType={false}
                   />
                   {selectedTemplate && (
                     <div style={{ marginTop: 16 }}>
