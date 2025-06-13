@@ -1,6 +1,6 @@
 // components/quote/QuoteForm.tsx
 import React, { useState, useEffect, useRef } from "react";
-import { Form, Button, Tabs, App, Row, Col } from "antd";
+import { Form, Button, Tabs, App, Row, Col, Dropdown, MenuProps } from "antd";
 import { Quote, Clause } from "../../types/types";
 import QuoteConfigTab from "./QuoteConfigTab";
 import QuoteTermsTab from "./QuoteTermsTab";
@@ -146,7 +146,7 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
   isModal = false,
 }) => {
   const { message } = App.useApp();
-  const { updateQuote, saveQuote, isQuoteDirty } = useQuoteStore();
+  const { updateQuote, saveQuote, isQuoteDirty, fetchPrintUrls } = useQuoteStore();
   const [saveLoading, setSaveLoading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [contacts, setContacts] = useState<any[]>([]);
@@ -254,6 +254,17 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
     }
   };
 
+  const print = async (type: "config" | "quote" | "contract") => {
+    if (!quote?.id) return;
+    await fetchPrintUrls(quote.id);
+    const q = useQuoteStore.getState().quotes.find((i) => i.id === quote.id);
+    let url = "";
+    if (type === "config") url = q?.configPdf ?? "";
+    if (type === "quote") url = q?.quotationPdf ?? "";
+    if (type === "contract") url = q?.contractPdf ?? "";
+    if (url) window.open(url, "_blank");
+  };
+
   const save = throttle(
     async () => {
       setSaveLoading(true);
@@ -339,8 +350,22 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
         ]}
       />
 
-      <Row>
-        <Col span={24} style={{ textAlign: "right" }}>
+      <Row justify="space-between">
+        <Col>
+          <Dropdown.Button
+            onClick={({ key }) => print(key as any)}
+            menu={{
+              items: [
+                { key: "config", label: "配置表" },
+                { key: "quote", label: "报价" },
+                { key: "contract", label: "合同" },
+              ],
+            }}
+          >
+            打印
+          </Dropdown.Button>
+        </Col>
+        <Col style={{ textAlign: "right" }}>
           <Button
             type="primary"
             htmlType="submit"

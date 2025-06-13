@@ -97,6 +97,7 @@ interface QuotesStore {
   ) => void;
   setQuoteItem: (quoteId: number, items: QuoteItem[]) => void;
   saveQuote: (quoteId: number) => Promise<void>;
+  fetchPrintUrls: (quoteId: number) => Promise<void>;
   findItemById: (
     items: QuoteItem[],
     itemId: number | null
@@ -385,6 +386,29 @@ export const useQuoteStore = create<QuotesStore>()(
         });
       }
       set({ loading: { ...get().loading, saveQuote: false } });
+    },
+
+    fetchPrintUrls: async (quoteId) => {
+      const quote = get().quotes.find((q) => q.id === quoteId);
+      if (!quote) return;
+      if (
+        !get().dirtyQuotes[quoteId] &&
+        quote.quotationPdf &&
+        quote.contractPdf &&
+        quote.configPdf
+      ) {
+        return;
+      }
+      await get().saveQuote(quoteId);
+      const data = await QuoteService.executePrint(quote);
+      set((state) => {
+        const q = state.quotes.find((i) => i.id === quoteId);
+        if (q) {
+          q.quotationPdf = data.quotationPdf;
+          q.contractPdf = data.contractPdf;
+          q.configPdf = data.configPdf;
+        }
+      });
     },
 
     // 计算单个QuoteItem的价格
