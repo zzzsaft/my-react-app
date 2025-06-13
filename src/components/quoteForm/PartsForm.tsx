@@ -28,7 +28,7 @@ const PartForm = forwardRef<PartFormRef>((props, ref) => {
       <ProFormList
         name="parts"
         label="配件明细"
-        creatorButtonProps={{ creatorButtonText: "新增赠品" }}
+        creatorButtonProps={{ creatorButtonText: "新增物料" }}
         alwaysShowItemLabel
         rules={[
           {
@@ -51,12 +51,12 @@ const PartForm = forwardRef<PartFormRef>((props, ref) => {
               <ProForm.Item
                 name={"name"}
                 label="名称"
-                rules={[{ required: true, message: "请输入赠品名称" }]}
+                rules={[{ required: true, message: "请输入物料名称" }]}
               >
                 <AutoComplete
                   options={[]}
                   style={{ width: "100%" }}
-                  placeholder="赠品名称"
+                  placeholder="物料名称"
                 />
               </ProForm.Item>
             </Col>
