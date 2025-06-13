@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 import PriceForm from "../../quoteForm/PriceForm";
-import { QuoteItem } from "../../../types/types";
+import { QuoteItem, QuoteTemplate } from "../../../types/types";
 
 import { getFormByCategory, ModelFormRef } from "./formSelector";
 import { useQuoteStore } from "../../../store/useQuoteStore";
@@ -22,6 +22,7 @@ interface ProductConfigurationFormProps {
   showPrice?: boolean;
   readOnly?: boolean;
   formType?: string;
+  quoteTemplate?: QuoteTemplate;
 }
 const ProductConfigurationForm = forwardRef(
   (
@@ -34,6 +35,7 @@ const ProductConfigurationForm = forwardRef(
       showPrice = true,
       readOnly = false,
       formType: formTypeProp,
+      quoteTemplate,
     }: ProductConfigurationFormProps,
     ref
   ) => {
@@ -42,7 +44,9 @@ const ProductConfigurationForm = forwardRef(
     const updateItem = useQuoteStore((state) => state.updateQuoteItem);
 
     const [activeKey, setActiveKey] = useState("1");
-
+    useEffect(() => {
+      modelFormRef.current?.form.setFieldsValue(quoteTemplate?.config);
+    }, [quoteTemplate?.config]);
     const generateName = () => {
       const category = quoteItem?.productCategory;
       if (!category) return "";

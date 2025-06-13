@@ -6,7 +6,7 @@ import FeedblockForm from "../../quoteForm/FeedblockForm/FeedblockForm";
 import FilterForm from "../../quoteForm/FilterForm/FilterForm";
 import ThicknessGaugeForm from "../../quoteForm/ThicknessGaugeForm/ThicknessGaugeForm";
 import HydraulicStationForm from "../../quoteForm/HydraulicStationForm/HydraulicStationForm";
-import GiftForm from "../../quoteForm/GiftForm";
+import PartsForm from "../../quoteForm/PartsForm";
 import { OtherForm } from "../../quoteForm/OtherForm";
 
 export type ModelFormRef = RefObject<{ form: any } | null>;
@@ -19,7 +19,7 @@ export function getFormType(category: string[] | undefined | null): string {
   if (category?.at(1) == "过滤器") return "FilterForm";
   if (category?.at(1) == "测厚仪") return "ThicknessGaugeForm";
   if (category?.includes("液压站")) return "HydraulicStationForm";
-  if (category?.[1]?.includes("赠品")) return "GiftForm";
+  if (category?.[1]?.includes("赠品")) return "PartsForm";
   return "OtherForm";
 }
 
@@ -108,7 +108,7 @@ export function getFormByCategory(
       ),
       formType,
     };
-  if (formType === "GiftForm")
-    return { form: <GiftForm ref={modelFormRef} />, formType };
+  if (formType === "PartsForm")
+    return { form: <PartsForm ref={modelFormRef} />, formType };
   return { form: <OtherForm ref={modelFormRef} />, formType };
 }

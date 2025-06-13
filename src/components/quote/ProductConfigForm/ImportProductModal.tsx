@@ -69,11 +69,15 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
   const handleImport = () => {
     if (mode === "template" && selectedTemplate) {
       onImport({
-        ...selectedTemplate,
+        // ...selectedTemplate,
         config: selectedTemplate.config,
       } as any);
     } else if (mode === "other" && selected) {
-      onImport(selected.item);
+      onImport({
+        // ...selectedTemplate,
+        config: selected.item.config,
+      } as any);
+      // onImport(selected.item);
     }
   };
 
@@ -137,8 +141,10 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
                       <ProductConfigurationForm
                         quoteId={0}
                         quoteItem={selectedTemplate as any}
+                        formType={selectedTemplate.templateType}
                         showPrice={false}
                         readOnly
+                        quoteTemplate={selectedTemplate}
                       />
                     </div>
                   )}

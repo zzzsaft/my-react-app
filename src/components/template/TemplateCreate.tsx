@@ -40,7 +40,7 @@ const FORM_TYPE_OPTIONS = [
   { label: "过滤器", value: "FilterForm" },
   { label: "测厚仪", value: "ThicknessGaugeForm" },
   { label: "液压站", value: "HydraulicStationForm" },
-  { label: "赠品", value: "GiftForm" },
+  { label: "赠品", value: "PartsForm" },
   { label: "其他", value: "OtherForm" },
 ];
 
