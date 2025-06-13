@@ -21,6 +21,7 @@ interface ProductConfigurationFormProps {
   style?: any;
   showPrice?: boolean;
   readOnly?: boolean;
+  formType?: string;
 }
 const ProductConfigurationForm = forwardRef(
   (
@@ -32,6 +33,7 @@ const ProductConfigurationForm = forwardRef(
       style,
       showPrice = true,
       readOnly = false,
+      formType: formTypeProp,
     }: ProductConfigurationFormProps,
     ref
   ) => {
@@ -94,7 +96,8 @@ const ProductConfigurationForm = forwardRef(
       quoteItem?.productCategory,
       quoteId,
       quoteItem?.id ?? 0,
-      modelFormRef
+      modelFormRef,
+      formTypeProp
     );
 
 
