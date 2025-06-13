@@ -1,4 +1,4 @@
-import { Button, Typography, App, Tooltip } from "antd";
+import { Button, Typography, App, Tooltip, Dropdown } from "antd";
 import { PlusOutlined, DeleteOutlined, LinkOutlined } from "@ant-design/icons";
 import { useQuoteStore } from "../../store/useQuoteStore";
 import ProductCascader from "./ProductCascader";
@@ -105,6 +105,22 @@ const DesktopQuoteItemsTable: React.FC<QuoteItemsTableProps> = ({
     });
     return set;
   }, [flatItems]);
+
+  const [contextMenu, setContextMenu] = useState<{
+    x: number;
+    y: number;
+    visible: boolean;
+    record?: QuoteItem;
+  }>({ x: 0, y: 0, visible: false });
+
+
+  const handleContextMenu = (
+    e: React.MouseEvent<HTMLTableRowElement, MouseEvent>,
+    record: QuoteItem
+  ) => {
+    e.preventDefault();
+    setContextMenu({ x: e.clientX, y: e.clientY, visible: true, record });
+  };
 
   const columns = [
     {
@@ -287,6 +303,7 @@ const DesktopQuoteItemsTable: React.FC<QuoteItemsTableProps> = ({
         pagination={false}
         onRow={(record) => ({
           onClick: () => handleRowClick(record),
+          onContextMenu: (e) => handleContextMenu(e, record),
         })}
         expandable={{
           // rowExpandable: (record) => {
@@ -321,6 +338,33 @@ const DesktopQuoteItemsTable: React.FC<QuoteItemsTableProps> = ({
           </Button>
         )}
       />
+      <Dropdown
+        open={contextMenu.visible}
+        menu={{
+          items: [
+            {
+              key: "delete",
+              label: "删除",
+              danger: true,
+              icon: <DeleteOutlined />,
+              onClick: () => {
+                if (contextMenu.record) {
+                  confirmDelete(contextMenu.record);
+                }
+                setContextMenu((prev) => ({ ...prev, visible: false }));
+              },
+            },
+          ],
+        }}
+        overlayStyle={{ position: "fixed", left: contextMenu.x, top: contextMenu.y }}
+        onOpenChange={(open) => {
+          if (!open) {
+            setContextMenu((prev) => ({ ...prev, visible: false }));
+          }
+        }}
+      >
+        <div />
+      </Dropdown>
       <ProductConfigModal
         open={open}
         setOpen={setOpen}
