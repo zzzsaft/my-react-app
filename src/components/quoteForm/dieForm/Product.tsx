@@ -4,7 +4,8 @@ import { IntervalInputFormItem } from "../../general/IntervalInput";
 import { CustomSelect } from "../../general/CustomSelect";
 import ScrewForm from "../formComponents/ScrewForm";
 import AutoSlashInput from "../../general/AutoSlashInput";
-import RatioInput from "../../general/RatioInput";
+import ProFormListWrapper from "../formComponents/ProFormListWrapper";
+import LevelInputNumber, { LevelValue } from "../../general/LevelInputNumber";
 import MaterialSelect from "../../general/MaterialSelect";
 
 const RUNNER_NUMBER_OPTIONS = {
@@ -170,31 +171,47 @@ export const Product = () => {
                       <AutoSlashInput />
                     </Form.Item>
                   </Col>
-                  <Col xs={12} md={6}>
+                  <Col xs={24} md={24}>
                     <ProFormDependency name={["compositeStructure"]}>
                       {({ compositeStructure }) => (
-                        <Form.Item
+                        <ProFormListWrapper
                           name="compositeRatio"
-                          label="复合比例"
-                          rules={[
-                            { required: true, message: "请输入复合比例" },
-                            {
-                              validator: (_, value) => {
-                                const length1 = value?.split(":").length;
-                                const length2 =
-                                  compositeStructure?.split("").length;
-                                if (length1 != length2) {
-                                  return Promise.reject(
-                                    new Error("复合比例与复合结构数量不匹配")
-                                  );
-                                }
-                                return Promise.resolve();
-                              },
-                            },
-                          ]}
-                        >
-                          <RatioInput />
-                        </Form.Item>
+                          label="每层复合比例"
+                          canCreate={false}
+                          canDelete={false}
+                          isHorizontal
+                          formItems={
+                            <ProForm.Item
+                              name={[]}
+                              rules={[
+                                {
+                                  validator: async (_: any, value: LevelValue) => {
+                                    const num = parseFloat(value?.value?.value || "0");
+                                    if (isNaN(num) || num === 0) {
+                                      return Promise.reject(new Error("比例不得为0"));
+                                    }
+                                    if (
+                                      (value?.value?.front && value?.value?.front >= 100) ||
+                                      (value?.value?.rear && value?.value?.rear >= 100)
+                                    ) {
+                                      return Promise.reject(new Error("比例不得超过100"));
+                                    }
+                                    if (
+                                      value?.value?.front &&
+                                      value?.value?.rear &&
+                                      value?.value?.front >= value?.value?.rear
+                                    ) {
+                                      return Promise.reject(new Error("第一个应比第二个小"));
+                                    }
+                                    return Promise.resolve();
+                                  },
+                                },
+                              ]}
+                            >
+                              <LevelInputNumber style={{ width: 120 }} />
+                            </ProForm.Item>
+                          }
+                        />
                       )}
                     </ProFormDependency>
                   </Col>
