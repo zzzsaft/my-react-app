@@ -95,9 +95,24 @@ export const TemperatureControl = () => {
             label="热电偶孔"
             rules={[{ required: true, message: "请选择热电偶控位" }]}
           >
-            <Checkbox.Group options={["上模", "下模"]} />
+            <Checkbox.Group options={["上模", "下模", "自定义"]} />
           </Form.Item>
         </Col>
+        <Form.Item noStyle dependencies={["thermocoupleHoles"]}>
+          {({ getFieldValue }) =>
+            getFieldValue("thermocoupleHoles")?.includes("自定义") ? (
+              <Col xs={12} sm={12}>
+                <Form.Item
+                  name="customThermocoupleHoles"
+                  label="自定义热电偶孔"
+                  rules={[{ required: true, message: "请输入自定义热电偶孔" }]}
+                >
+                  <Input />
+                </Form.Item>
+              </Col>
+            ) : null
+          }
+        </Form.Item>
         <Col xs={12} sm={12}>
           {/* 玻璃测温孔 */}
           <Form.Item
