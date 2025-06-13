@@ -20,27 +20,36 @@ const QuoteFormPage = () => {
   );
 
   useEffect(() => {
-    if (id && !quote) {
-      const newQuote = fetchQuote(parseInt(id));
-      if (!newQuote) {
-        navigate("/error/no-permission", { replace: true });
-        return;
+    const loadQuote = async () => {
+      if (id && !quote) {
+        try {
+          const newQuote = await fetchQuote(parseInt(id));
+          if (!newQuote) {
+            navigate("/error/no-permission", { replace: true });
+            return;
+          }
+        } catch (error) {
+          navigate("/error/no-permission", { replace: true });
+          return;
+        }
       }
-    }
 
-    if (quote) {
-      const { items, ...restQuote } = quote;
-      form.setFieldsValue({
-        ...restQuote,
-        quoteTime: quote.quoteTime ? dayjs(quote.quoteTime) : null,
-        customerName: {
-          name: quote.customerName,
-          value: quote.customerName,
-          id: quote.customerId,
-        } as any,
-      });
-    }
-  }, [quote?.id]);
+      if (quote) {
+        const { items, ...restQuote } = quote;
+        form.setFieldsValue({
+          ...restQuote,
+          quoteTime: quote.quoteTime ? dayjs(quote.quoteTime) : null,
+          customerName: {
+            name: quote.customerName,
+            value: quote.customerName,
+            id: quote.customerId,
+          } as any,
+        });
+      }
+    };
+
+    loadQuote();
+  }, [id, quote?.id]);
 
   return <QuoteForm form={form} quoteId={quote?.id} onSubmit={() => {}} />;
 };
