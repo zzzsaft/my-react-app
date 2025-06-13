@@ -57,17 +57,42 @@ export const Product = () => {
             <IntervalInputFormItem
               name="productWidth"
               label="制品宽度(mm)"
-              // rules={[{ required: true, message: "请输入有效厚度范围" }]}
+              dependencies={["dieWidth"]}
+              rules={[
+                {
+                  validator: (_, value) => {
+                    const other = form.getFieldValue("dieWidth");
+                    if (!value?.value && !other?.value) {
+                      return Promise.reject(
+                        new Error("口模有效宽度和制品宽度至少要填一个")
+                      );
+                    }
+                    return Promise.resolve();
+                  },
+                },
+              ]}
               placeholder={"制品宽度"}
               unit="mm"
-              // unit="mm"
             />
           </Col>
           <Col xs={12} md={6}>
             <IntervalInputFormItem
               name="dieWidth"
               label="口模有效宽度(mm)"
-              rules={[{ required: true, message: "请输入有效宽度范围" }]}
+              dependencies={["productWidth"]}
+              rules={[
+                {
+                  validator: (_, value) => {
+                    const other = form.getFieldValue("productWidth");
+                    if (!value?.value && !other?.value) {
+                      return Promise.reject(
+                        new Error("口模有效宽度和制品宽度至少要填一个")
+                      );
+                    }
+                    return Promise.resolve();
+                  },
+                },
+              ]}
               placeholder={"有效宽度"}
               unit="mm"
               // addonAfter="mm"
