@@ -196,7 +196,6 @@ const ProductConfigModal: React.FC<ProductConfigModalProps> = ({
             });
           }
           setImportOpen(false);
-          setOpen(false);
         }}
         formType={quoteItem?.formType}
       />

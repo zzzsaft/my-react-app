@@ -35,6 +35,7 @@ const TemplateCreateModal: React.FC<TemplateCreateModalProps> = ({
   return (
     <Modal
       open={open}
+      zIndex={1600}
       title="创建模版"
       onCancel={onClose}
       width={700}
