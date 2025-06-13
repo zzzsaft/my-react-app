@@ -8,6 +8,7 @@ import ContractTab from "./ContractTab";
 import { debounce, throttle } from "lodash-es";
 import { useQuoteStore } from "../../store/useQuoteStore";
 import { CustomerService } from "../../api/services/customer.service";
+import { DownOutlined } from "@ant-design/icons";
 
 const getDefaultQuoteTerms = (days: number): Clause[] => [
   {
@@ -146,7 +147,8 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
   isModal = false,
 }) => {
   const { message } = App.useApp();
-  const { updateQuote, saveQuote, isQuoteDirty, fetchPrintUrls } = useQuoteStore();
+  const { updateQuote, saveQuote, isQuoteDirty, fetchPrintUrls } =
+    useQuoteStore();
   const [saveLoading, setSaveLoading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [contacts, setContacts] = useState<any[]>([]);
@@ -352,18 +354,23 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
 
       <Row justify="space-between">
         <Col>
-          <Dropdown.Button
-            onClick={({ key }) => print(key as any)}
+          <Dropdown
+            // trigger={["click"]}
+            // onClick={({ key }) => print(key as any)}
             menu={{
               items: [
                 { key: "config", label: "配置表" },
                 { key: "quote", label: "报价" },
                 { key: "contract", label: "合同" },
               ],
+              onClick: ({ key }) => print(key as any),
+              // onClick: ({ key }) => console.log(key),
             }}
           >
-            打印
-          </Dropdown.Button>
+            <Button>
+              打印 <DownOutlined />
+            </Button>
+          </Dropdown>
         </Col>
         <Col style={{ textAlign: "right" }}>
           <Button

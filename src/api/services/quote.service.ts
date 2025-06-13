@@ -67,7 +67,7 @@ export const QuoteService = {
   async executePrint(quote: Quote) {
     const result = await axios.post(
       "http://122.226.146.110:777/Contract/Execute",
-      quote
+      { ...quote }
     );
     const data = result.data as {
       productQuotation: string;

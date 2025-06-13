@@ -129,7 +129,7 @@ export const Product = () => {
               label="工艺温度(℃)"
               rules={[{ required: true, message: "请输入工艺温度" }]}
               placeholder={"工艺温度"}
-              addonAfter="℃"
+              unit="℃"
             />
           </Col>
           <Col xs={12} md={6}>

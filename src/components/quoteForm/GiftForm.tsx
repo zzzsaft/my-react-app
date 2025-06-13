@@ -1,4 +1,13 @@
-import { AutoComplete, Col, Form, FormInstance, InputNumber, Row, Select, Typography } from "antd";
+import {
+  AutoComplete,
+  Col,
+  Form,
+  FormInstance,
+  InputNumber,
+  Row,
+  Select,
+  Typography,
+} from "antd";
 import ProForm, { ProFormList, ProFormDependency } from "@ant-design/pro-form";
 import { forwardRef, useImperativeHandle } from "react";
 import { formatPrice } from "../../util/valueUtil";
@@ -20,10 +29,11 @@ const GiftForm = forwardRef<GiftFormRef>((props, ref) => {
         name="gifts"
         label="赠品明细"
         creatorButtonProps={{ creatorButtonText: "新增赠品" }}
+        alwaysShowItemLabel
       >
         {(f, index, action) => (
           <Row gutter={16}>
-            <Col xs={24} md={5}>
+            <Col xs={24} md={8}>
               <Form.Item
                 name="name"
                 label="赠品名称"
@@ -32,17 +42,21 @@ const GiftForm = forwardRef<GiftFormRef>((props, ref) => {
                 <AutoComplete options={[]} placeholder="赠品名称" />
               </Form.Item>
             </Col>
-            <Col xs={12} md={4}>
+            <Col xs={12} md={3}>
               <Form.Item
                 name="quantity"
                 label="数量"
                 rules={[{ required: true, message: "请输入数量" }]}
                 initialValue={1}
               >
-                <InputNumber min={1} style={{ width: "100%" }} />
+                <InputNumber
+                  min={1}
+                  style={{ width: "100%" }}
+                  controls={false}
+                />
               </Form.Item>
             </Col>
-            <Col xs={12} md={4}>
+            <Col xs={12} md={3}>
               <Form.Item
                 name="unit"
                 label="单位"
@@ -56,13 +70,18 @@ const GiftForm = forwardRef<GiftFormRef>((props, ref) => {
                 </Select>
               </Form.Item>
             </Col>
-            <Col xs={12} md={5}>
+            <Col xs={12} md={4}>
               <Form.Item
                 name="unitPrice"
                 label="单价"
                 rules={[{ required: true, message: "请输入单价" }]}
               >
-                <InputNumber min={0} precision={2} style={{ width: "100%" }} />
+                <InputNumber
+                  min={0}
+                  precision={2}
+                  controls={false}
+                  style={{ width: "100%" }}
+                />
               </Form.Item>
             </Col>
             <Col xs={12} md={6}>
@@ -70,7 +89,9 @@ const GiftForm = forwardRef<GiftFormRef>((props, ref) => {
                 {({ quantity, unitPrice }) => (
                   <Form.Item label="合计">
                     <Typography.Text strong>
-                      {quantity && unitPrice ? `¥ ${formatPrice(quantity * unitPrice)}` : 0}
+                      {quantity && unitPrice
+                        ? `¥ ${formatPrice(quantity * unitPrice)}`
+                        : 0}
                     </Typography.Text>
                   </Form.Item>
                 )}

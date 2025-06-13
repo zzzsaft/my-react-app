@@ -177,9 +177,9 @@ const ProductConfigurationForm = forwardRef(
           ),
         };
 
-      if (category?.[0] === "赠品")
+      if (category?.[1].includes("赠品"))
         return {
-          form: (<GiftForm ref={modelFormRef} />),
+          form: <GiftForm ref={modelFormRef} />,
         };
       return {
         form: <OtherForm ref={modelFormRef} />,

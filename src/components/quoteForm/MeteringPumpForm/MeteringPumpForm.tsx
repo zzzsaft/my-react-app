@@ -100,15 +100,15 @@ const MeteringPumpForm = forwardRef(
         unit: "kw",
       });
       form.setFieldValue("production", {
-        front: selectedPump?.rotateSpeed.replace("rmp", ""),
+        front: selectedPump?.production.replace("kg/h", ""),
+        value: selectedPump?.production.replace("kg/h", ""),
         rear: NaN,
-        value: selectedPump?.rotateSpeed.replace("rmp", ""),
         unit: "kg/h",
       });
       form.setFieldValue("rotateSpeed", {
-        front: selectedPump?.production.replace("kg/h", ""),
+        front: selectedPump?.rotateSpeed.replace("rmp", ""),
         rear: NaN,
-        value: selectedPump?.production.replace("kg/h", ""),
+        value: selectedPump?.rotateSpeed.replace("rmp", ""),
         unit: "rpm",
       });
     };

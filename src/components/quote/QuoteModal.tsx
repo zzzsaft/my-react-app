@@ -23,7 +23,8 @@ const QuoteModal: React.FC<QuoteModalProps> = ({
   onSubmit,
 }) => {
   const { message } = App.useApp();
-  const { isQuoteDirty, saveQuote, discardQuoteChanges } = useQuoteStore();
+  const { isQuoteDirty, saveQuote, discardQuoteChanges, dirtyQuotes } =
+    useQuoteStore();
   const [form] = Form.useForm();
   const [isFullscreen, setIsFullscreen] = useState(false);
 
@@ -42,6 +43,7 @@ const QuoteModal: React.FC<QuoteModalProps> = ({
 
   const handleCancel = () => {
     const id = initialValues?.id;
+    console.log(dirtyQuotes);
     if (id && isQuoteDirty(id)) {
       Modal.confirm({
         title: "存在未保存的更改，是否暂存？",
