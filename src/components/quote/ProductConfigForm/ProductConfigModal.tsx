@@ -144,7 +144,11 @@ const ProductConfigModal: React.FC<ProductConfigModalProps> = ({
         title={
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <span>{quoteItem?.productCategory?.join("/")}</span>
-            <Button type="link" onClick={() => setImportOpen(true)}>
+            <Button
+              type="link"
+              onClick={() => setImportOpen(true)}
+              disabled={quoteItem?.formType === "OtherForm"}
+            >
               从模版导入
             </Button>
           </div>
