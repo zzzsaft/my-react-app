@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button } from "antd";
 import { useTemplateStore } from "../../store/useTemplateStore";
 import TemplateTable from "../../components/template/TemplateTable";
-import TemplateFormModal from "../../components/template/TemplateFormModal";
+import TemplateCreateModal from "../../components/template/TemplateCreateModal";
 import { useNavigate } from "react-router-dom";
 
 const TemplateListPage: React.FC = () => {
@@ -30,7 +30,7 @@ const TemplateListPage: React.FC = () => {
         loading={loading}
         onDoubleClick={(tpl) => navigate(`/template/${tpl.id}`)}
       />
-      <TemplateFormModal open={open} onClose={() => setOpen(false)} />
+      <TemplateCreateModal open={open} onClose={() => setOpen(false)} />
     </div>
   );
 };
