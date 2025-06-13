@@ -38,6 +38,7 @@ const TemplateCreateModal: React.FC<TemplateCreateModalProps> = ({
       title="创建模版"
       onCancel={onClose}
       width={700}
+      afterClose={() => ref.current?.reset()}
       destroyOnHidden
       forceRender
       footer={[
