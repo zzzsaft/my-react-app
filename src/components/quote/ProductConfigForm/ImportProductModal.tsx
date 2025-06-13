@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal, Tabs, Table, Button } from "antd";
 import { ProductService } from "../../../api/services/product.service";
 import ProductConfigurationForm from "./ProductConfigurationForm";
 import ProductSearchBar from "../../general/ProductSearchBar";
-import { QuoteItem, ProductSearchResult } from "../../../types/types";
+import { QuoteItem, ProductSearchResult, QuoteTemplate } from "../../../types/types";
+import { useTemplateStore } from "../../../store/useTemplateStore";
+import TemplateTable from "../../template/TemplateTable";
 
 interface ImportProductModalProps {
   open: boolean;
@@ -21,7 +23,15 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
   const [mode, setMode] = useState<"template" | "other">("template");
   const [list, setList] = useState<ProductSearchResult[]>([]);
   const [selected, setSelected] = useState<ProductSearchResult>();
+  const [selectedTemplate, setSelectedTemplate] = useState<QuoteTemplate>();
   const [loading, setLoading] = useState(false);
+  const { templates, loading: tplLoading, refreshTemplates } = useTemplateStore();
+
+  useEffect(() => {
+    if (open && mode === "template") {
+      refreshTemplates(formType);
+    }
+  }, [open, mode, formType, refreshTemplates]);
 
   const handleSearch = async (field: "code" | "name", keyword: string) => {
     setLoading(true);
@@ -34,7 +44,12 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
   };
 
   const handleImport = () => {
-    if (selected) {
+    if (mode === "template" && selectedTemplate) {
+      onImport({
+        ...selectedTemplate,
+        config: selectedTemplate.config,
+      } as any);
+    } else if (mode === "other" && selected) {
       onImport(selected.item);
     }
   };
@@ -49,7 +64,12 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
         <Button key="cancel" onClick={onCancel}>
           取消
         </Button>,
-        <Button key="import" type="primary" onClick={handleImport} disabled={!selected}>
+        <Button
+          key="import"
+          type="primary"
+          onClick={handleImport}
+          disabled={mode === "template" ? !selectedTemplate : !selected}
+        >
           导入
         </Button>,
       ]}
@@ -63,7 +83,41 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
           {
             key: "template",
             label: "从模版导入",
-            children: <div>待实现</div>,
+            children: (
+              <div>
+                <div style={{ marginBottom: 16 }}>
+                  <Button
+                    type="primary"
+                    onClick={() => window.open("/template/create", "_blank")}
+                  >
+                    创建模版
+                  </Button>
+                  <Button
+                    style={{ marginLeft: 8 }}
+                    onClick={() => refreshTemplates(formType)}
+                    loading={tplLoading}
+                  >
+                    刷新
+                  </Button>
+                </div>
+                <TemplateTable
+                  templates={templates}
+                  loading={tplLoading}
+                  selectedId={selectedTemplate?.id}
+                  onSelect={setSelectedTemplate}
+                />
+                {selectedTemplate && (
+                  <div style={{ marginTop: 16 }}>
+                    <ProductConfigurationForm
+                      quoteId={0}
+                      quoteItem={selectedTemplate as any}
+                      showPrice={false}
+                      readOnly
+                    />
+                  </div>
+                )}
+              </div>
+            ),
           },
           {
             key: "other",

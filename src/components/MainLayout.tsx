@@ -62,6 +62,10 @@ const MainLayout: React.FC = () => {
       key: "/quote/oa",
       label: "OA报价单",
     },
+    {
+      key: "/template",
+      label: "模版管理",
+    },
     // {
     //   key: "/dashboard",
     //   icon: <SettingOutlined />,
