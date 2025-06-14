@@ -16,7 +16,14 @@ import MeshBeltControlCard from "./MeshBeltControlCard";
 import { ProCard } from "@ant-design/pro-components";
 
 const FilterForm = forwardRef(
-  ({ quoteId, quoteItemId }: { quoteId: number; quoteItemId: number }, ref) => {
+  (
+    {
+      quoteId,
+      quoteItemId,
+      readOnly = false,
+    }: { quoteId: number; quoteItemId: number; readOnly?: boolean },
+    ref
+  ) => {
     const [form] = Form.useForm();
     const filters = useProductStore((state) => state.filter);
     const fetchFilter = useProductStore((state) => state.fetchFilter);
@@ -116,6 +123,7 @@ const FilterForm = forwardRef(
         form={form}
         submitter={false}
         onValuesChange={handleFieldsChange}
+        disabled={readOnly}
       >
         <FilterSelection form={form} filters={filters} />
         <ProCard

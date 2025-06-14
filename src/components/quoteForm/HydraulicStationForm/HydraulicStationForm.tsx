@@ -15,10 +15,18 @@ import { useQuoteStore } from "../../../store/useQuoteStore";
 interface HydraulicStationFormProps {
   quoteId: number;
   quoteItemId: number;
+  readOnly?: boolean;
 }
 
 const HydraulicStationForm = forwardRef(
-  ({ quoteId, quoteItemId }: HydraulicStationFormProps, ref) => {
+  (
+    {
+      quoteId,
+      quoteItemId,
+      readOnly = false,
+    }: HydraulicStationFormProps & { readOnly?: boolean },
+    ref
+  ) => {
     const [form] = Form.useForm();
 
     useImperativeHandle(ref, () => ({
@@ -35,7 +43,7 @@ const HydraulicStationForm = forwardRef(
       : undefined;
 
     return (
-      <ProForm layout="vertical" form={form} submitter={false}>
+      <ProForm layout="vertical" form={form} submitter={false} disabled={readOnly}>
         {linkedName && (
           <Typography.Text
             type="secondary"

@@ -30,8 +30,8 @@ const vison = [
 
 const SmartRegulator = forwardRef<
   PriceFormRef,
-  { quoteId: number; quoteItemId: number }
->(({ quoteId, quoteItemId }, ref) => {
+  { quoteId: number; quoteItemId: number; readOnly?: boolean }
+>(({ quoteId, quoteItemId, readOnly = false }, ref) => {
   const [form] = Form.useForm();
   const [isBundled] = useState<boolean>(true);
   const quoteItems = useQuoteStore
@@ -90,6 +90,7 @@ const SmartRegulator = forwardRef<
         form={form}
         submitter={false}
         onValuesChange={handleValuesChange}
+        disabled={readOnly}
       >
         <Row gutter={16}>
           <Col xs={12} md={8}>

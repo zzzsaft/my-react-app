@@ -157,7 +157,11 @@ const ProductConfigurationForm = forwardRef(
                 label: "价格配置",
                 key: "2",
                 children: (
-                  <PriceForm ref={priceFormRef} onGenerateName={generateName} />
+                  <PriceForm
+                    ref={priceFormRef}
+                    onGenerateName={generateName}
+                    readOnly={readOnly}
+                  />
                 ),
                 forceRender: true,
               });
@@ -165,18 +169,6 @@ const ProductConfigurationForm = forwardRef(
             return arr;
           })()}
         />
-        {readOnly && (
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              zIndex: 10,
-            }}
-          />
-        )}
       </div>
     );
   }
