@@ -10,6 +10,7 @@ interface TemplateTableProps {
   onSelect?: (tpl: QuoteTemplate) => void;
   onDoubleClick?: (tpl: QuoteTemplate) => void;
   showType?: boolean;
+  actionRender?: (tpl: QuoteTemplate) => React.ReactNode;
 }
 
 const TEMPLATE_TYPE_MAP: Record<string, string> = {
@@ -31,6 +32,7 @@ const TemplateTable: React.FC<TemplateTableProps> = ({
   onSelect,
   onDoubleClick,
   showType = true,
+  actionRender,
 }) => {
   const columns = [
     { title: "ID", dataIndex: "id", width: 80 },
@@ -59,6 +61,13 @@ const TemplateTable: React.FC<TemplateTableProps> = ({
       dataIndex: "industries",
       render: (v: string[]) => v?.join("/") || "",
     },
+    actionRender
+      ? {
+          title: "操作",
+          width: 120,
+          render: (_: any, record: QuoteTemplate) => actionRender(record),
+        }
+      : null,
   ].filter(Boolean);
 
   return (
