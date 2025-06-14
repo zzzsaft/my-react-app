@@ -7,8 +7,8 @@ import React, {
 } from "react";
 import { Form, Input } from "antd";
 import type { FormItemProps } from "antd";
-import { intervalInputRules } from "../../util/rules";
-import type { IntervalValue } from "../../types/types";
+import { intervalInputRules } from "@/util/rules";
+import type { IntervalValue } from "@/types/types";
 
 const DELIMITER = "~";
 
@@ -98,7 +98,6 @@ const IntervalInput: React.FC<IntervalInputProps> = forwardRef<
           onChange?.(v);
         }
       } catch (error) {
-        console.log(error);
       }
     };
 

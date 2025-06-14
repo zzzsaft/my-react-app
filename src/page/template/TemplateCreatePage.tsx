@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Button, App } from "antd";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import TemplateCreate, { TemplateCreateRef } from "../../components/template/TemplateCreate";
-import { TemplateService } from "../../api/services/template.service";
-import { useTemplateStore } from "../../store/useTemplateStore";
-import { QuoteTemplate } from "../../types/types";
+import TemplateCreate, { TemplateCreateRef } from "@/components/template/TemplateCreate";
+import { TemplateService } from "@/api/services/template.service";
+import { useTemplateStore } from "@/store/useTemplateStore";
+import { QuoteTemplate } from "@/types/types";
 
 const TemplateCreatePage: React.FC = () => {
   const { id } = useParams<{ id: string }>();

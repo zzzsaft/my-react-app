@@ -13,14 +13,14 @@ import {
   Spin,
 } from "antd";
 import { SearchOutlined, PlusOutlined } from "@ant-design/icons";
-import OpportunityCard from "../../components/OpportunityCard";
+import OpportunityCard from "@/components/OpportunityCard";
 import styles from "./OpportunitySearchPage.module.less";
-import StatusSelector from "../../components/StatusSelector";
-import { DebounceSelect } from "../../components/general/DebounceSelect";
-import { CustomerService } from "../../api/services/customer.service";
+import StatusSelector from "@/components/StatusSelector";
+import { DebounceSelect } from "@/components/general/DebounceSelect";
+import { CustomerService } from "@/api/services/customer.service";
 import { set } from "lodash-es";
-import { OpportunityService } from "../../api/services/opportunity.service";
-import { useQuoteStore } from "../../store/useQuoteStore";
+import { OpportunityService } from "@/api/services/opportunity.service";
+import { useQuoteStore } from "@/store/useQuoteStore";
 
 const { Title, Text } = Typography;
 const { Option } = Select;

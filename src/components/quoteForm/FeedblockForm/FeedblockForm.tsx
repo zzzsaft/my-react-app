@@ -19,15 +19,15 @@ import ProForm, {
 } from "@ant-design/pro-form";
 import TextArea from "antd/es/input/TextArea";
 
-import MaterialSelect from "../../general/MaterialSelect";
-import AutoSlashInput from "../../general/AutoSlashInput";
-import RatioInput from "../../general/RatioInput";
-import LevelInputNumber, { LevelValue } from "../../general/LevelInputNumber";
+import MaterialSelect from "@/general/MaterialSelect";
+import AutoSlashInput from "@/general/AutoSlashInput";
+import RatioInput from "@/general/RatioInput";
+import LevelInputNumber, { LevelValue } from "@/general/LevelInputNumber";
 import ExtruderForm from "../formComponents/ExtruderForm";
 import { PowerInput } from "../formComponents/PowerInput";
 import { HeatingMethodSelect } from "../formComponents/HeatingMethodInput";
 import ProFormListWrapper from "../formComponents/ProFormListWrapper";
-import { CustomSelect } from "../../general/CustomSelect";
+import { CustomSelect } from "@/general/CustomSelect";
 
 interface PriceFormRef {
   form: FormInstance;
@@ -40,7 +40,14 @@ const MATERIAL_OPTIONS = {
 };
 
 const FeedblockForm = forwardRef(
-  ({ quoteId, quoteItemId }: { quoteId: number; quoteItemId: number }, ref) => {
+  (
+    {
+      quoteId,
+      quoteItemId,
+      readOnly = false,
+    }: { quoteId: number; quoteItemId: number; readOnly?: boolean },
+    ref
+  ) => {
     const [form] = Form.useForm();
 
     useImperativeHandle(ref, () => ({
@@ -107,6 +114,7 @@ const FeedblockForm = forwardRef(
           form={form}
           submitter={false}
           onValuesChange={handleFieldsChange}
+          disabled={readOnly}
         >
           <Row gutter={16}>
             <Col xs={12} md={6}>

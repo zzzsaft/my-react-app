@@ -1,8 +1,8 @@
 import React, { useRef, useState } from "react";
 import { Modal, Button } from "antd";
 import TemplateCreate, { TemplateCreateRef } from "./TemplateCreate";
-import { TemplateService } from "../../api/services/template.service";
-import { useTemplateStore } from "../../store/useTemplateStore";
+import { TemplateService } from "@/api/services/template.service";
+import { useTemplateStore } from "@/store/useTemplateStore";
 
 interface TemplateCreateModalProps {
   open: boolean;

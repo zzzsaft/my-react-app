@@ -1,7 +1,7 @@
 import React from "react";
 import { Table } from "antd";
 import MemberAvatar from "../general/MemberAvatar";
-import { QuoteTemplate } from "../../types/types";
+import { QuoteTemplate } from "@/types/types";
 
 interface TemplateTableProps {
   templates: QuoteTemplate[];

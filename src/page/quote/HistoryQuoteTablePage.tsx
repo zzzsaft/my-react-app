@@ -1,7 +1,7 @@
 import React from "react";
 import { Typography } from "antd";
-import QuoteTable from "../../components/quote/QuoteTable";
-import { AddHistoryModal } from "../../components/quote/AddHistoryModal";
+import QuoteTable from "@/components/quote/QuoteTable";
+import { AddHistoryModal } from "@/components/quote/AddHistoryModal";
 
 const HistoryQuoteTablePage: React.FC = () => {
   return (

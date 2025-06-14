@@ -2,11 +2,11 @@ import { Cascader, Spin } from "antd";
 import type { CascaderProps } from "antd";
 import * as _ from "lodash-es";
 import { useEffect, useMemo, useState } from "react";
-import { useQuoteStore } from "../../store/useQuoteStore";
+import { useQuoteStore } from "@/store/useQuoteStore";
 import { SizeType } from "antd/es/config-provider/SizeContext";
 import { camelCase, groupBy, filter, map, isEmpty } from "lodash-es";
-import { ProductCategory } from "../../types/types";
-import { useProductStore } from "../../store/useProductStore";
+import { ProductCategory } from "@/types/types";
+import { useProductStore } from "@/store/useProductStore";
 interface ProductCascaderProps {
   value?: string | string[];
   style?: React.CSSProperties;

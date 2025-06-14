@@ -1,10 +1,10 @@
 import { Modal, Button, Skeleton } from "antd";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { useQuoteStore } from "../../../store/useQuoteStore";
+import { useQuoteStore } from "@/store/useQuoteStore";
 import { FormInstance } from "antd/lib";
 import ProductConfigurationForm from "./ProductConfigurationForm";
 import { CheckOutlined, EditOutlined } from "@ant-design/icons";
-import { QuoteItem } from "../../../types/types";
+import { QuoteItem } from "@/types/types";
 import ImportProductModal from "./ImportProductModal";
 
 interface ProductConfigModalProps {
@@ -67,7 +67,6 @@ const ProductConfigModal: React.FC<ProductConfigModalProps> = ({
 
       formRef.current.priceForm?.setFieldsValue(basicValues);
       formRef.current.modelForm?.setFieldsValue(formValues);
-      console.log(formRef.current.modelForm?.getFieldsValue());
       setLoading(false);
     };
 
@@ -195,14 +194,16 @@ const ProductConfigModal: React.FC<ProductConfigModalProps> = ({
           open={importOpen}
           onCancel={() => setImportOpen(false)}
           onImport={(item) => {
-            if (quoteItem?.id) {
-              onUpdateItem(quoteId, quoteItem.id, {
+            // update current form instead of store so modal stays open
+            if (item.config) {
+              formRef.current?.modelForm?.setFieldsValue(item.config);
+            }
+            if (item.productName) {
+              formRef.current?.priceForm?.setFieldsValue({
                 productName: item.productName,
-                config: item.config,
               });
             }
             setImportOpen(false);
-            setOpen(false);
           }}
           formType={quoteItem?.formType}
         />

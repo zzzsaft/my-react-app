@@ -8,8 +8,8 @@ const widths = [500, 1000, 1500, 2000, 2500, 3000, 3500];
 
 const ThicknessGaugeForm = forwardRef<
   any,
-  { quoteId: number; quoteItemId: number }
->((props, ref) => {
+  { quoteId: number; quoteItemId: number; readOnly?: boolean }
+>(({ readOnly = false }, ref) => {
   const [form] = Form.useForm();
 
   useImperativeHandle(ref, () => ({
@@ -43,6 +43,7 @@ const ThicknessGaugeForm = forwardRef<
       form={form}
       submitter={false}
       onValuesChange={handleValuesChange}
+      disabled={readOnly}
     >
       <Row gutter={16}>
         <Col xs={12} md={6}>

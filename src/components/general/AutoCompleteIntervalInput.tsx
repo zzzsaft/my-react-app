@@ -1,7 +1,7 @@
 import { DefaultOptionType } from "antd/es/select";
 import { IntervalInput } from "./IntervalInput";
 import { useEffect, useState } from "react";
-import type { IntervalValue } from "../../types/types";
+import type { IntervalValue } from "@/types/types";
 import { AutoComplete } from "antd";
 import { IntervalInput1 } from "./IntervalInput1";
 

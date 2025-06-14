@@ -5,7 +5,10 @@ interface OtherFormRef {
   form: FormInstance; // 明确定义暴露的form实例
 }
 
-export const OtherForm = forwardRef<OtherFormRef>((props, ref) => {
+export const OtherForm = forwardRef<
+  OtherFormRef,
+  { readOnly?: boolean }
+>(({ readOnly = false }, ref) => {
   const [form] = Form.useForm();
 
   // 暴露form实例给父组件
@@ -15,7 +18,7 @@ export const OtherForm = forwardRef<OtherFormRef>((props, ref) => {
   // 计算小计``
 
   return (
-    <Form layout={"vertical"} form={form}>
+    <Form layout={"vertical"} form={form} disabled={readOnly}>
       <Form.Item
         name="remark"
         label="规格型号"

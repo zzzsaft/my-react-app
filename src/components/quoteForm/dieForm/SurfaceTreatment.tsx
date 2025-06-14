@@ -3,11 +3,11 @@ import { AutoComplete, Col, Form, Radio, Row } from "antd";
 import {
   autoCompleteIntervalInputRules,
   RadioWithInputRules,
-} from "../../../util/rules";
-import { RadioWithInput } from "../../general/RadioWithInput";
-import { AutoCompleteIntervalInput } from "../../general/AutoCompleteIntervalInput";
+} from "@/util/rules";
+import { RadioWithInput } from "@/general/RadioWithInput";
+import { AutoCompleteIntervalInput } from "@/general/AutoCompleteIntervalInput";
 import TextArea from "antd/es/input/TextArea";
-import { IntervalInput1 } from "../../general/IntervalInput1";
+import { IntervalInput1 } from "@/general/IntervalInput1";
 
 // 常量定义
 const precisionLevelOptions = [

@@ -11,7 +11,7 @@ import { CustomSelect } from "../general/CustomSelect";
 
 import { getFormByCategory } from "../quote/ProductConfigForm/formSelector";
 
-import { QuoteTemplate } from "../../types/types";
+import { QuoteTemplate } from "@/types/types";
 import TextArea from "antd/es/input/TextArea";
 
 export interface TemplateCreateRef {

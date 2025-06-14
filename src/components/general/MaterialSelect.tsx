@@ -1,6 +1,6 @@
 import React from "react";
 import { Select } from "antd";
-import { selectOptions } from "../../util/valueUtil";
+import { selectOptions } from "@/util/valueUtil";
 
 interface MaterialSelectProps {
   id?: string;

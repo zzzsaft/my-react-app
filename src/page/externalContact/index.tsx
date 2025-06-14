@@ -19,12 +19,12 @@ import { UserOutlined, SearchOutlined } from "@ant-design/icons";
 import "./style.less";
 import * as ww from "@wecom/jssdk";
 import Layout, { Content } from "antd/es/layout/layout";
-import { CustomerService } from "../../api/services/customer.service";
-import { DebounceSelect } from "../../components/general/DebounceSelect";
-import { AuthService } from "../../api/services/auth.service";
+import { CustomerService } from "@/api/services/customer.service";
+import { DebounceSelect } from "@/components/general/DebounceSelect";
+import { AuthService } from "@/api/services/auth.service";
 import { values } from "lodash";
-import { useAuthStore } from "../../store/useAuthStore";
-import { getContext, register } from "../../util/wecom";
+import { useAuthStore } from "@/store/useAuthStore";
+import { getContext, register } from "@/util/wecom";
 
 const { Option } = Select;
 
@@ -86,7 +86,6 @@ const ExternalContactBindingPage: React.FC = () => {
           getAgentConfigSignature: AuthService.getAgentSignature,
         });
         const context = await getContext();
-        console.log(context);
         // const context = await ww.getContext();
         if (context.entry == "single_chat_tools") {
           setText(context.entry);
@@ -111,7 +110,6 @@ const ExternalContactBindingPage: React.FC = () => {
       try {
         const context = await ww.getContext();
         // 如果能成功获取到context，说明在企业微信/微信环境中
-        console.log("获取到企业微信/微信环境上下文:", context);
         return true;
       } catch (error) {
         // 获取失败说明不在企业微信/微信环境中
@@ -132,7 +130,6 @@ const ExternalContactBindingPage: React.FC = () => {
 
   const handleSubmit = async (values: any) => {
     try {
-      console.log("提交表单数据:", values);
       const link = (
         await CustomerService.matchCustomer({
           externalUserId: externalId,

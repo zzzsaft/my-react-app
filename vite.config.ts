@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import vitePluginImp from "vite-plugin-imp"; // 按需加载插件
+import { fileURLToPath, URL } from "node:url";
 
 export default defineConfig({
   optimizeDeps: {
@@ -26,6 +27,11 @@ export default defineConfig({
     //   ],
     // }),
   ],
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
+  },
   css: {
     preprocessorOptions: {
       less: {

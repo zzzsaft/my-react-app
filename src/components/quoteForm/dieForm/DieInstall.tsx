@@ -1,8 +1,8 @@
 import { ProCard } from "@ant-design/pro-components";
 import { Col, Form, InputNumber, Radio, Row, Space, Tooltip } from "antd";
-import { RadioWithInputRules } from "../../../util/rules";
-import { CustomSelect } from "../../general/CustomSelect";
-import { RadioWithInput } from "../../general/RadioWithInput";
+import { RadioWithInputRules } from "@/util/rules";
+import { CustomSelect } from "@/general/CustomSelect";
+import { RadioWithInput } from "@/general/RadioWithInput";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 
 // 常量定义

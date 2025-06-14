@@ -186,7 +186,6 @@ export const useQuoteStore = create<QuotesStore>()(
             state.dirtyQuotes[newQuote.id] = false;
           });
         }
-        console.log(newQuote);
         return newQuote;
       } catch (error) {
         set({ loading: { ...get().loading, getQuote: false } });

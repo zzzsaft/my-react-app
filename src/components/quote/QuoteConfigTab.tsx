@@ -17,8 +17,8 @@ import AddressInput from "../general/AddressInput";
 import { CustomSelect } from "../general/CustomSelect";
 import { MoneyInput } from "../general/MoneyInput";
 import QuoteItemsTable from "./QuoteItemsTable";
-import { Quote } from "../../types/types";
-import { selectOptions } from "../../util/valueUtil";
+import { Quote } from "@/types/types";
+import { selectOptions } from "@/util/valueUtil";
 
 const INDUSTRY = {
   新能源及储能: ["动力电池（锂电、氢燃料、钠电）", "光伏新能源"],

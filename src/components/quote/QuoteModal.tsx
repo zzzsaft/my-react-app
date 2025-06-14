@@ -3,8 +3,8 @@ import React, { useEffect, useState } from "react";
 import { Modal, Button, Form, App } from "antd";
 import { FullscreenOutlined, FullscreenExitOutlined } from "@ant-design/icons";
 import QuoteForm from "./QuoteForm";
-import type { Quote } from "../../types/types";
-import { useQuoteStore } from "../../store/useQuoteStore";
+import type { Quote } from "@/types/types";
+import { useQuoteStore } from "@/store/useQuoteStore";
 import dayjs from "dayjs";
 import { Skeleton } from "antd";
 interface QuoteModalProps {
@@ -43,7 +43,6 @@ const QuoteModal: React.FC<QuoteModalProps> = ({
 
   const handleCancel = () => {
     const id = initialValues?.id;
-    console.log(dirtyQuotes);
     if (id && isQuoteDirty(id)) {
       modal.confirm({
         title: "存在未保存的更改，是否暂存？",
