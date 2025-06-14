@@ -60,7 +60,6 @@ export const AutoCompleteInput: React.FC<AutoCompleteInputProps> = ({
             addonAfter={addonAfter}
             value={value}
             onChange={(val) => {
-              console.log(val);
               handleChange(val as any);
             }}
             disabled={disabled}

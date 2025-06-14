@@ -57,7 +57,6 @@ export const ModelOption = () => {
               <Checkbox.Group
                 options={tagsData.map((tag) => ({ label: tag, value: tag }))}
                 onChange={(v) => {
-                  console.log(v);
                 }}
               />
             </Form.Item>

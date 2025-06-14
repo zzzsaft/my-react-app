@@ -67,7 +67,6 @@ const ProductConfigModal: React.FC<ProductConfigModalProps> = ({
 
       formRef.current.priceForm?.setFieldsValue(basicValues);
       formRef.current.modelForm?.setFieldsValue(formValues);
-      console.log(formRef.current.modelForm?.getFieldsValue());
       setLoading(false);
     };
 

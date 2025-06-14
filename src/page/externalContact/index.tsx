@@ -86,7 +86,6 @@ const ExternalContactBindingPage: React.FC = () => {
           getAgentConfigSignature: AuthService.getAgentSignature,
         });
         const context = await getContext();
-        console.log(context);
         // const context = await ww.getContext();
         if (context.entry == "single_chat_tools") {
           setText(context.entry);
@@ -111,7 +110,6 @@ const ExternalContactBindingPage: React.FC = () => {
       try {
         const context = await ww.getContext();
         // 如果能成功获取到context，说明在企业微信/微信环境中
-        console.log("获取到企业微信/微信环境上下文:", context);
         return true;
       } catch (error) {
         // 获取失败说明不在企业微信/微信环境中
@@ -132,7 +130,6 @@ const ExternalContactBindingPage: React.FC = () => {
 
   const handleSubmit = async (values: any) => {
     try {
-      console.log("提交表单数据:", values);
       const link = (
         await CustomerService.matchCustomer({
           externalUserId: externalId,

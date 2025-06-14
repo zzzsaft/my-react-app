@@ -69,7 +69,6 @@ export const useAuthStore = create<AuthState>()(
         try {
           const { token } = await AuthService.loginWithCode(code);
           set({ token });
-          console.log(token);
           const user = await AuthService.getUserInfo();
           set({
             userid: user.userId,
