@@ -11,6 +11,8 @@ import {
 import { useTemplateStore } from "../../../store/useTemplateStore";
 import TemplateTable from "../../template/TemplateTable";
 import TemplateCreateModal from "../../template/TemplateCreateModal";
+import TemplateConfigModal from "../../template/TemplateConfigModal";
+import { QuoteItem } from "../../../types/types";
 
 interface ImportProductModalProps {
   open: boolean;
@@ -34,6 +36,9 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
   const [selectedTemplate, setSelectedTemplate] = useState<QuoteTemplate>();
   const [loading, setLoading] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
+  const [configOpen, setConfigOpen] = useState(false);
+  const [currentTpl, setCurrentTpl] =
+    useState<QuoteTemplate | QuoteItem | null>(null);
   const {
     templates,
     loading: tplLoading,
@@ -135,6 +140,10 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
                     loading={tplLoading}
                     selectedId={selectedTemplate?.id}
                     onSelect={setSelectedTemplate}
+                    onDoubleClick={(tpl) => {
+                      setCurrentTpl(tpl);
+                      setConfigOpen(true);
+                    }}
                     showType={false}
                   />
                   {selectedTemplate && (
@@ -166,6 +175,10 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
                     loading={loading}
                     onRow={(record) => ({
                       onClick: () => setSelected(record),
+                      onDoubleClick: () => {
+                        setCurrentTpl(record.item);
+                        setConfigOpen(true);
+                      },
                       style: {
                         cursor: "pointer",
                         backgroundColor:
@@ -212,6 +225,12 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
         open={createOpen}
         onClose={() => setCreateOpen(false)}
         formType={formType}
+      />
+      <TemplateConfigModal
+        open={configOpen}
+        template={currentTpl}
+        onClose={() => setConfigOpen(false)}
+        readOnly
       />
     </>
   );
