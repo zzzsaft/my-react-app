@@ -189,10 +189,13 @@ const ProductConfigModal: React.FC<ProductConfigModalProps> = ({
         open={importOpen}
         onCancel={() => setImportOpen(false)}
         onImport={(item) => {
-          if (quoteItem?.id) {
-            onUpdateItem(quoteId, quoteItem.id, {
+          // update current form instead of store so modal stays open
+          if (item.config) {
+            formRef.current?.modelForm?.setFieldsValue(item.config);
+          }
+          if (item.productName) {
+            formRef.current?.priceForm?.setFieldsValue({
               productName: item.productName,
-              config: item.config,
             });
           }
           setImportOpen(false);
