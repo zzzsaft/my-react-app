@@ -10,15 +10,15 @@ import {
   Segmented,
   Select,
 } from "antd";
-import { IntervalInputFormItem } from "../../general/IntervalInput";
-import { CustomSelect } from "../../general/CustomSelect";
+import { IntervalInputFormItem } from "@/general/IntervalInput";
+import { CustomSelect } from "@/general/CustomSelect";
 import { useEffect, useState } from "react";
 import ScrewForm from "../formComponents/ScrewForm";
-import AutoSlashInput from "../../general/AutoSlashInput";
-import RatioInput from "../../general/RatioInput";
-import { MATERIAL } from "../../../util/MATERIAL";
-import MaterialSelect from "../../general/MaterialSelect";
-import { useProductStore } from "../../../store/useProductStore";
+import AutoSlashInput from "@/general/AutoSlashInput";
+import RatioInput from "@/general/RatioInput";
+import { MATERIAL } from "@/util/MATERIAL";
+import MaterialSelect from "@/general/MaterialSelect";
+import { useProductStore } from "@/store/useProductStore";
 import ExtruderForm from "../formComponents/ExtruderForm";
 
 export const ModelSelection = () => {

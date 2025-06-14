@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Tabs, Table, Button } from "antd";
-import { ProductService } from "../../../api/services/product.service";
+import { ProductService } from "@/api/services/product.service";
 import ProductConfigurationForm from "./ProductConfigurationForm";
-import ProductSearchBar from "../../general/ProductSearchBar";
+import ProductSearchBar from "@/general/ProductSearchBar";
 import {
   QuoteItem,
   ProductSearchResult,
   QuoteTemplate,
-} from "../../../types/types";
-import { useTemplateStore } from "../../../store/useTemplateStore";
-import TemplateTable from "../../template/TemplateTable";
-import TemplateCreateModal from "../../template/TemplateCreateModal";
+} from "@/types/types";
+import { useTemplateStore } from "@/store/useTemplateStore";
+import TemplateTable from "@/template/TemplateTable";
+import TemplateCreateModal from "@/template/TemplateCreateModal";
 
 interface ImportProductModalProps {
   open: boolean;

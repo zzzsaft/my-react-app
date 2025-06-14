@@ -1,6 +1,6 @@
 import { ProCard } from "@ant-design/pro-components";
 import { Col, Form, Input, Row, Select, FormInstance } from "antd";
-import { FilterProduct } from "../../../types/types";
+import { FilterProduct } from "@/types/types";
 
 interface Props {
   form: FormInstance;

@@ -8,12 +8,12 @@ import { SurfaceTreatment } from "../dieForm/SurfaceTreatment";
 import { SameProduct } from "../dieForm/SameProduct";
 import ProForm from "@ant-design/pro-form";
 import TextArea from "antd/es/input/TextArea";
-import useProductActionModal from "../../../hook/showProductActionModal";
-import { useQuoteStore } from "../../../store/useQuoteStore";
+import useProductActionModal from "@/hook/showProductActionModal";
+import { useQuoteStore } from "@/store/useQuoteStore";
 import { ModelSelection } from "./ModelSelection";
-import { useProductStore } from "../../../store/useProductStore";
+import { useProductStore } from "@/store/useProductStore";
 import { ModelOption } from "./ModelOption";
-import { parseNumber } from "../../../util/valueUtil";
+import { parseNumber } from "@/util/valueUtil";
 interface PriceFormRef {
   form: FormInstance; // 明确定义暴露的form实例
 }

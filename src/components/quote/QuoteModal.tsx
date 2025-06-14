@@ -3,8 +3,8 @@ import React, { useEffect, useState } from "react";
 import { Modal, Button, Form, App } from "antd";
 import { FullscreenOutlined, FullscreenExitOutlined } from "@ant-design/icons";
 import QuoteForm from "./QuoteForm";
-import type { Quote } from "../../types/types";
-import { useQuoteStore } from "../../store/useQuoteStore";
+import type { Quote } from "@/types/types";
+import { useQuoteStore } from "@/store/useQuoteStore";
 import dayjs from "dayjs";
 import { Skeleton } from "antd";
 interface QuoteModalProps {

@@ -4,7 +4,7 @@ import type { SelectProps } from "antd";
 import { useDebounce } from "use-debounce";
 import MemberAvatar from "./MemberAvatar"; // 假设你已经实现了这个组件
 import { pinyin } from "pinyin-pro"; // 用于拼音搜索
-import { useMemberStore } from "../../store/useMemberStore";
+import { useMemberStore } from "@/store/useMemberStore";
 
 const { Text } = Typography;
 

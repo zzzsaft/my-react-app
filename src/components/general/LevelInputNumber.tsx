@@ -1,6 +1,6 @@
 import type { IntervalInputProps } from "./IntervalInput";
 import { IntervalInput } from "./IntervalInput";
-import type { IntervalValue } from "../../types/types";
+import type { IntervalValue } from "@/types/types";
 
 export interface LevelValue {
   level: string;

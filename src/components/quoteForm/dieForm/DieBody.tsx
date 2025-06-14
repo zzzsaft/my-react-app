@@ -1,8 +1,8 @@
 import { ProCard } from "@ant-design/pro-components";
 import { Badge, Col, Form, Radio, Row } from "antd";
-import { CustomSelect } from "../../general/CustomSelect";
-import { AutoCompleteInput } from "../../general/AutoCompleteInput";
-import { MATERIAL_OPTIONS } from "../../../util/MATERIAL";
+import { CustomSelect } from "@/general/CustomSelect";
+import { AutoCompleteInput } from "@/general/AutoCompleteInput";
+import { MATERIAL_OPTIONS } from "@/util/MATERIAL";
 
 // 常量定义
 const UPPER_LIP_OPTIONS = {

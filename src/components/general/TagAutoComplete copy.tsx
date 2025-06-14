@@ -4,7 +4,7 @@ import type { AutoCompleteProps, InputRef } from "antd";
 import { AutoComplete, Flex, Input, Tag, theme } from "antd";
 import { TweenOneGroup } from "rc-tween-one";
 import { SelectProps } from "antd/lib";
-import { selectOptions } from "../../util/valueUtil";
+import { selectOptions } from "@/util/valueUtil";
 
 interface MaterialSelectProps {
   id?: string;

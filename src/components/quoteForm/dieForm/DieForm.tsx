@@ -8,9 +8,9 @@ import { SurfaceTreatment } from "./SurfaceTreatment";
 import { SameProduct } from "./SameProduct";
 import ProForm from "@ant-design/pro-form";
 import TextArea from "antd/es/input/TextArea";
-import useProductActionModal from "../../../hook/showProductActionModal";
-import { useQuoteStore } from "../../../store/useQuoteStore";
-import { LevelValue } from "../../general/LevelInputNumber";
+import useProductActionModal from "@/hook/showProductActionModal";
+import { useQuoteStore } from "@/store/useQuoteStore";
+import { LevelValue } from "@/general/LevelInputNumber";
 interface PriceFormRef {
   form: FormInstance; // 明确定义暴露的form实例
 }

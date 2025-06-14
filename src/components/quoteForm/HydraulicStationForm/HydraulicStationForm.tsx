@@ -10,7 +10,7 @@ import {
 import { forwardRef, useImperativeHandle } from "react";
 import ProForm from "@ant-design/pro-form";
 import { PowerInput } from "../formComponents/PowerInput";
-import { useQuoteStore } from "../../../store/useQuoteStore";
+import { useQuoteStore } from "@/store/useQuoteStore";
 
 interface HydraulicStationFormProps {
   quoteId: number;

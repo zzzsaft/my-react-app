@@ -2,13 +2,13 @@ import { AutoComplete, Col, Form, InputNumber, Radio, Row } from "antd";
 
 import ProForm from "@ant-design/pro-form";
 import { forwardRef, useEffect, useImperativeHandle } from "react";
-import { IntervalInputFormItem } from "../../general/IntervalInput";
-import MaterialSelect from "../../general/MaterialSelect";
+import { IntervalInputFormItem } from "@/general/IntervalInput";
+import MaterialSelect from "@/general/MaterialSelect";
 import { PowerInput } from "../formComponents/PowerInput";
 import { HeatingMethodSelect } from "../formComponents/HeatingMethodInput";
-import { useProductStore } from "../../../store/useProductStore";
-import { useQuoteStore } from "../../../store/useQuoteStore";
-import useProductActionModal from "../../../hook/showProductActionModal";
+import { useProductStore } from "@/store/useProductStore";
+import { useQuoteStore } from "@/store/useQuoteStore";
+import useProductActionModal from "@/hook/showProductActionModal";
 
 import FilterSelection from "./FilterSelection";
 import TextArea from "antd/es/input/TextArea";

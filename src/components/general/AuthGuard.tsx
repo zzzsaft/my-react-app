@@ -1,16 +1,16 @@
 import { JSX, ReactNode, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { message, Spin } from "antd";
-import { useAuthStore } from "../../store/useAuthStore";
+import { useAuthStore } from "@/store/useAuthStore";
 import {
   generateQywxLoginUrl,
   getLocation,
   isInWeChatEnvironment,
   register,
   wwLoginUrl,
-} from "../../util/wecom";
-import { useGeolocation } from "../../hook/useGeolocation";
-import { AuthService } from "../../api/services/auth.service";
+} from "@/util/wecom";
+import { useGeolocation } from "@/hook/useGeolocation";
+import { AuthService } from "@/api/services/auth.service";
 import * as ww from "@wecom/jssdk";
 
 export const AuthGuard: React.FC<{ children: ReactNode }> = ({ children }) => {

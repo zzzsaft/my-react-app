@@ -1,11 +1,11 @@
 import { Button, Typography, App, Tooltip, Dropdown } from "antd";
 import { PlusOutlined, DeleteOutlined, LinkOutlined } from "@ant-design/icons";
-import { useQuoteStore } from "../../store/useQuoteStore";
+import { useQuoteStore } from "@/store/useQuoteStore";
 import ProductCascader from "./ProductCascader";
-import { formatPrice } from "../../util/valueUtil";
-import { isTextSelecting } from "../../util/domUtil";
+import { formatPrice } from "@/util/valueUtil";
+import { isTextSelecting } from "@/util/domUtil";
 import ProductConfigModal from "./ProductConfigForm/ProductConfigModal";
-import { QuoteItem } from "../../types/types";
+import { QuoteItem } from "@/types/types";
 import { useMemo, useState } from "react";
 import SortableTable, { DragHandle } from "../general/SortableTable";
 import { SortableColumn } from "../general/SortableColumn";

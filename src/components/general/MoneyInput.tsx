@@ -1,6 +1,6 @@
 import { InputNumber, InputNumberProps, Select } from "antd";
-import { useQuoteStore } from "../../store/useQuoteStore";
-import { formatPrice } from "../../util/valueUtil";
+import { useQuoteStore } from "@/store/useQuoteStore";
+import { formatPrice } from "@/util/valueUtil";
 interface MoneyInputProps extends Omit<InputNumberProps, "value" | "onChange"> {
   quoteId: number;
   value?: number;

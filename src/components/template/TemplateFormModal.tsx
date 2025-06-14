@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Modal, Button } from "antd";
 import ProductConfigurationForm from "../quote/ProductConfigForm/ProductConfigurationForm";
-import { QuoteTemplate } from "../../types/types";
-import { useTemplateStore } from "../../store/useTemplateStore";
-import { TemplateService } from "../../api/services/template.service";
+import { QuoteTemplate } from "@/types/types";
+import { useTemplateStore } from "@/store/useTemplateStore";
+import { TemplateService } from "@/api/services/template.service";
 
 interface TemplateFormModalProps {
   open: boolean;

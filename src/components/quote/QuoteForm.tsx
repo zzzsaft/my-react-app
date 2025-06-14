@@ -1,13 +1,13 @@
 // components/quote/QuoteForm.tsx
 import React, { useState, useEffect, useRef } from "react";
 import { Form, Button, Tabs, App, Row, Col, Dropdown, MenuProps } from "antd";
-import { Quote, Clause } from "../../types/types";
+import { Quote, Clause } from "@/types/types";
 import QuoteConfigTab from "./QuoteConfigTab";
 import QuoteTermsTab from "./QuoteTermsTab";
 import ContractTab from "./ContractTab";
 import { debounce, throttle } from "lodash-es";
-import { useQuoteStore } from "../../store/useQuoteStore";
-import { CustomerService } from "../../api/services/customer.service";
+import { useQuoteStore } from "@/store/useQuoteStore";
+import { CustomerService } from "@/api/services/customer.service";
 import { DownOutlined } from "@ant-design/icons";
 
 const getDefaultQuoteTerms = (days: number): Clause[] => [

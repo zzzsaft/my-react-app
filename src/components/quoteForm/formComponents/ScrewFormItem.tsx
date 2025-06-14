@@ -1,7 +1,7 @@
 import ProForm from "@ant-design/pro-form";
 import { AutoComplete, Col, Form, InputNumber, Row, Select } from "antd";
 import { DefaultOptionType } from "antd/es/select";
-import { IntervalInput } from "../../general/IntervalInput";
+import { IntervalInput } from "@/general/IntervalInput";
 
 export const ScrewFormItem = ({ items }: { items: string[] }) => {
   return (

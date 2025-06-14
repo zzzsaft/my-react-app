@@ -10,7 +10,7 @@ import {
 } from "antd";
 import { forwardRef, useImperativeHandle } from "react";
 import InputWithButton from "../general/InputWithButton";
-import { formatPrice } from "../../util/valueUtil";
+import { formatPrice } from "@/util/valueUtil";
 interface PriceFormRef {
   form: FormInstance; // 明确定义暴露的form实例
 }

@@ -4,13 +4,13 @@ import {
   ProFormDependency,
 } from "@ant-design/pro-components";
 import { Col, Form, Input, InputNumber, Radio, Row } from "antd";
-import { IntervalInputFormItem } from "../../general/IntervalInput";
-import { CustomSelect } from "../../general/CustomSelect";
+import { IntervalInputFormItem } from "@/general/IntervalInput";
+import { CustomSelect } from "@/general/CustomSelect";
 import ScrewForm from "../formComponents/ScrewForm";
-import AutoSlashInput from "../../general/AutoSlashInput";
+import AutoSlashInput from "@/general/AutoSlashInput";
 import ProFormListWrapper from "../formComponents/ProFormListWrapper";
-import LevelInputNumber, { LevelValue } from "../../general/LevelInputNumber";
-import MaterialSelect from "../../general/MaterialSelect";
+import LevelInputNumber, { LevelValue } from "@/general/LevelInputNumber";
+import MaterialSelect from "@/general/MaterialSelect";
 
 const RUNNER_NUMBER_OPTIONS = {
   流道形式: ["单腔流道", "模内共挤", "分配器共挤", "分配器+模内共挤"],
