@@ -236,7 +236,6 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
     setSubmitLoading(true);
     if (quote?.id) updateQuote(quote.id, { status: "completed" });
     await save();
-    console.log(quote);
     onSubmit();
     setSubmitLoading(false);
   };

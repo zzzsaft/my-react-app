@@ -69,7 +69,6 @@ const Row: React.FC<RowProps> = (props) => {
         onClick={(e) => {
           // 阻止冒泡，避免拖拽干扰
           const target = e.target as Element;
-          console.log(e);
           if (target.closest(".ant-table-row-expand-icon")) {
             e.stopPropagation();
           }

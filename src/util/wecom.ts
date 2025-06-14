@@ -48,7 +48,6 @@ export const wwLogin = (
   onLoginSuccess: ({ code }: { code: string }) => void,
   onLoginFail: (err: any) => void
 ) => {
-  console.log("appid", import.meta.env.VITE_AGENT_ID_LOGIN);
   ww.createWWLoginPanel({
     el,
     params: {

@@ -43,7 +43,6 @@ const QuoteModal: React.FC<QuoteModalProps> = ({
 
   const handleCancel = () => {
     const id = initialValues?.id;
-    console.log(dirtyQuotes);
     if (id && isQuoteDirty(id)) {
       modal.confirm({
         title: "存在未保存的更改，是否暂存？",
