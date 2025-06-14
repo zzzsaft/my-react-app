@@ -8,9 +8,14 @@ import { TemplateService } from "../../api/services/template.service";
 interface TemplateFormModalProps {
   open: boolean;
   onClose: () => void;
+  readOnly?: boolean;
 }
 
-const TemplateFormModal: React.FC<TemplateFormModalProps> = ({ open, onClose }) => {
+const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
+  open,
+  onClose,
+  readOnly = false,
+}) => {
   const [template, setTemplate] = useState<QuoteTemplate | null>(null);
   const [saving, setSaving] = useState(false);
   const refresh = useTemplateStore((s) => s.refreshTemplates);
@@ -45,6 +50,7 @@ const TemplateFormModal: React.FC<TemplateFormModalProps> = ({ open, onClose }) 
         quoteId={0}
         quoteItem={template as any}
         showPrice={false}
+        readOnly={readOnly}
       />
     </Modal>
   );

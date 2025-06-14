@@ -19,7 +19,14 @@ interface PriceFormRef {
 }
 
 const MeteringPumpForm = forwardRef(
-  ({ quoteId, quoteItemId }: { quoteId: number; quoteItemId: number }, ref) => {
+  (
+    {
+      quoteId,
+      quoteItemId,
+      readOnly = false,
+    }: { quoteId: number; quoteItemId: number; readOnly?: boolean },
+    ref
+  ) => {
     const [form] = Form.useForm();
     const optionsRef = useRef<string[]>([]);
     const quoteItems = useQuoteStore
@@ -186,6 +193,7 @@ const MeteringPumpForm = forwardRef(
           form={form}
           submitter={false}
           onValuesChange={handleFieldsChange}
+          disabled={readOnly}
         >
           <ModelSelection />
           <ModelOption />

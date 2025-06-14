@@ -40,7 +40,14 @@ const MATERIAL_OPTIONS = {
 };
 
 const FeedblockForm = forwardRef(
-  ({ quoteId, quoteItemId }: { quoteId: number; quoteItemId: number }, ref) => {
+  (
+    {
+      quoteId,
+      quoteItemId,
+      readOnly = false,
+    }: { quoteId: number; quoteItemId: number; readOnly?: boolean },
+    ref
+  ) => {
     const [form] = Form.useForm();
 
     useImperativeHandle(ref, () => ({
@@ -107,6 +114,7 @@ const FeedblockForm = forwardRef(
           form={form}
           submitter={false}
           onValuesChange={handleFieldsChange}
+          disabled={readOnly}
         >
           <Row gutter={16}>
             <Col xs={12} md={6}>

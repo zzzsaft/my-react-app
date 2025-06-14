@@ -16,7 +16,14 @@ interface PriceFormRef {
 }
 
 const DieForm = forwardRef(
-  ({ quoteId, quoteItemId }: { quoteId: number; quoteItemId: number }, ref) => {
+  (
+    {
+      quoteId,
+      quoteItemId,
+      readOnly = false,
+    }: { quoteId: number; quoteItemId: number; readOnly?: boolean },
+    ref
+  ) => {
     const [form] = Form.useForm();
     const quoteItems = useQuoteStore
       .getState()
@@ -171,6 +178,7 @@ const DieForm = forwardRef(
           form={form}
           submitter={false}
           onValuesChange={handleFieldsChange}
+          disabled={readOnly}
         >
           <SameProduct />
           <Form.Item noStyle dependencies={["hasCart"]}>

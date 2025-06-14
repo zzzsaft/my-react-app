@@ -17,6 +17,7 @@ interface PriceFormRef {
 
 interface PriceFormProps {
   onGenerateName?: () => string | undefined;
+  readOnly?: boolean;
 }
 
 const brandOption = [
@@ -26,7 +27,7 @@ const brandOption = [
 ];
 
 const PriceForm = forwardRef<PriceFormRef, PriceFormProps>(
-  ({ onGenerateName }, ref) => {
+  ({ onGenerateName, readOnly = false }, ref) => {
     const [form] = Form.useForm();
     // 暴露form实例给父组件
     useImperativeHandle(ref, () => ({
@@ -59,6 +60,7 @@ const PriceForm = forwardRef<PriceFormRef, PriceFormProps>(
         // preserve={false}
         form={form}
         onValuesChange={handleValuesChange}
+        disabled={readOnly}
       >
         <Row gutter={20}>
           <Col xs={12} sm={12}>
@@ -71,6 +73,8 @@ const PriceForm = forwardRef<PriceFormRef, PriceFormProps>(
                 style={{ width: "100%" }}
                 buttonText="自动生成名称"
                 onButtonClick={handleGenerateName}
+                disabled={readOnly}
+                buttonProps={{ disabled: readOnly }}
               />
             </Form.Item>
           </Col>

@@ -39,6 +39,7 @@ export function getFormByCategory(
           quoteItemId={quoteItemId}
           quoteId={quoteId}
           ref={modelFormRef}
+          readOnly={readOnly}
         />
       ),
       formType,
@@ -50,6 +51,7 @@ export function getFormByCategory(
           ref={modelFormRef}
           quoteId={quoteId}
           quoteItemId={quoteItemId}
+          readOnly={readOnly}
         />
       ),
       formType,
@@ -61,6 +63,7 @@ export function getFormByCategory(
           ref={modelFormRef}
           quoteId={quoteId}
           quoteItemId={quoteItemId}
+          readOnly={readOnly}
         />
       ),
       formType,
@@ -72,6 +75,7 @@ export function getFormByCategory(
           ref={modelFormRef}
           quoteId={quoteId}
           quoteItemId={quoteItemId}
+          readOnly={readOnly}
         />
       ),
       formType,
@@ -83,6 +87,7 @@ export function getFormByCategory(
           ref={modelFormRef}
           quoteId={quoteId}
           quoteItemId={quoteItemId}
+          readOnly={readOnly}
         />
       ),
       formType,
@@ -94,6 +99,7 @@ export function getFormByCategory(
           ref={modelFormRef}
           quoteId={quoteId}
           quoteItemId={quoteItemId}
+          readOnly={readOnly}
         />
       ),
       formType,
@@ -105,11 +111,12 @@ export function getFormByCategory(
           ref={modelFormRef}
           quoteId={quoteId}
           quoteItemId={quoteItemId}
+          readOnly={readOnly}
         />
       ),
       formType,
     };
   if (formType === "PartsForm")
     return { form: <PartsForm ref={modelFormRef} readOnly={readOnly} />, formType };
-  return { form: <OtherForm ref={modelFormRef} />, formType };
+  return { form: <OtherForm ref={modelFormRef} readOnly={readOnly} />, formType };
 }
