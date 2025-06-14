@@ -19,15 +19,15 @@ import ProForm, {
 } from "@ant-design/pro-form";
 import TextArea from "antd/es/input/TextArea";
 
-import MaterialSelect from "../../general/MaterialSelect";
-import AutoSlashInput from "../../general/AutoSlashInput";
-import RatioInput from "../../general/RatioInput";
-import LevelInputNumber, { LevelValue } from "../../general/LevelInputNumber";
+import MaterialSelect from "@/general/MaterialSelect";
+import AutoSlashInput from "@/general/AutoSlashInput";
+import RatioInput from "@/general/RatioInput";
+import LevelInputNumber, { LevelValue } from "@/general/LevelInputNumber";
 import ExtruderForm from "../formComponents/ExtruderForm";
 import { PowerInput } from "../formComponents/PowerInput";
 import { HeatingMethodSelect } from "../formComponents/HeatingMethodInput";
 import ProFormListWrapper from "../formComponents/ProFormListWrapper";
-import { CustomSelect } from "../../general/CustomSelect";
+import { CustomSelect } from "@/general/CustomSelect";
 
 interface PriceFormRef {
   form: FormInstance;

@@ -1,12 +1,12 @@
 // pages/QuoteFormPage.tsx
 import React, { useEffect, useState } from "react";
 import { Button, App, Modal } from "antd";
-import { useQuoteStore } from "../../store/useQuoteStore";
+import { useQuoteStore } from "@/store/useQuoteStore";
 import { useNavigate, useParams } from "react-router-dom";
 import dayjs from "dayjs";
 import { debounce, throttle } from "lodash-es";
 import { Form } from "antd";
-import QuoteForm from "../../components/quote/QuoteForm";
+import QuoteForm from "@/components/quote/QuoteForm";
 
 const QuoteFormPage = () => {
   const { id } = useParams<{ id: string }>();

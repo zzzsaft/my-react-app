@@ -10,7 +10,7 @@ import {
 } from "antd";
 import ProForm, { ProFormList, ProFormDependency } from "@ant-design/pro-form";
 import { forwardRef, useImperativeHandle } from "react";
-import { formatPrice } from "../../util/valueUtil";
+import { formatPrice } from "@/util/valueUtil";
 
 interface PartFormRef {
   form: FormInstance;

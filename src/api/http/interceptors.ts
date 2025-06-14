@@ -1,11 +1,11 @@
 import { AxiosInstance } from "axios";
-// import { useAuthStore } from "../../store/auth";
+// import { useAuthStore } from "@/store/auth";
 // import { useAuthStore } from '@/stores/auth'; // 或从context获取
 
 export const setupInterceptors = (instance: AxiosInstance) => {
   // 请求拦截
   instance.interceptors.request.use(async (config) => {
-    const { useAuthStore } = await import("../../store/useAuthStore");
+    const { useAuthStore } = await import("@/store/useAuthStore");
     const token = useAuthStore.getState().token;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;

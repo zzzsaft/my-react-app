@@ -19,12 +19,12 @@ import { UserOutlined, SearchOutlined } from "@ant-design/icons";
 import "./style.less";
 import * as ww from "@wecom/jssdk";
 import Layout, { Content } from "antd/es/layout/layout";
-import { CustomerService } from "../../api/services/customer.service";
-import { DebounceSelect } from "../../components/general/DebounceSelect";
-import { AuthService } from "../../api/services/auth.service";
+import { CustomerService } from "@/api/services/customer.service";
+import { DebounceSelect } from "@/components/general/DebounceSelect";
+import { AuthService } from "@/api/services/auth.service";
 import { values } from "lodash";
-import { useAuthStore } from "../../store/useAuthStore";
-import { getContext, register } from "../../util/wecom";
+import { useAuthStore } from "@/store/useAuthStore";
+import { getContext, register } from "@/util/wecom";
 
 const { Option } = Select;
 

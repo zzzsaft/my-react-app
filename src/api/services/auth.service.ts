@@ -1,5 +1,5 @@
 // import type { LoginParams, UserInfo } from '../types/auth.d';
-import { Position } from "../../types/types";
+import { Position } from "@/types/types";
 import { apiClient } from "../http/client";
 
 export const AuthService = {

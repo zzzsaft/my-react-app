@@ -1,5 +1,5 @@
 import { apiClient } from "../http/client";
-import { ProductSearchResult } from "../../types/types";
+import { ProductSearchResult } from "@/types/types";
 
 export const ProductService = {
   async searchProducts(

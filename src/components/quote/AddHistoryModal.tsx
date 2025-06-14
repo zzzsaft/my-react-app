@@ -1,7 +1,7 @@
 import { Modal, Input, DatePicker, Form, Button, Row, Col, App } from "antd";
-import { CustomerService } from "../../api/services/customer.service";
+import { CustomerService } from "@/api/services/customer.service";
 import CompanySearchSelect from "../general/CompanySearchSelect";
-import { useQuoteStore } from "../../store/useQuoteStore";
+import { useQuoteStore } from "@/store/useQuoteStore";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import MemberSelect from "../general/MemberSelect";

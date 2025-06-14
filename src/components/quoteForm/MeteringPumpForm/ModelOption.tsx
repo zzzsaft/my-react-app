@@ -13,19 +13,19 @@ import {
   Select,
   Tag,
 } from "antd";
-import { IntervalInputFormItem } from "../../general/IntervalInput";
-import { CustomSelect } from "../../general/CustomSelect";
+import { IntervalInputFormItem } from "@/general/IntervalInput";
+import { CustomSelect } from "@/general/CustomSelect";
 import { useEffect, useState } from "react";
 import ScrewForm from "../formComponents/ScrewForm";
-import AutoSlashInput from "../../general/AutoSlashInput";
-import RatioInput from "../../general/RatioInput";
-import { MATERIAL } from "../../../util/MATERIAL";
-import { useProductStore } from "../../../store/useProductStore";
+import AutoSlashInput from "@/general/AutoSlashInput";
+import RatioInput from "@/general/RatioInput";
+import { MATERIAL } from "@/util/MATERIAL";
+import { useProductStore } from "@/store/useProductStore";
 import ExtruderForm from "../formComponents/ExtruderForm";
-import { CheckableTagGroup } from "../../general/CheckableTagGroup";
+import { CheckableTagGroup } from "@/general/CheckableTagGroup";
 import { HeatingMethodSelect } from "../formComponents/HeatingMethodInput";
 import { PowerInput } from "../formComponents/PowerInput";
-import { inputRule } from "../../../util/rules";
+import { inputRule } from "@/util/rules";
 
 const tagsData = ["泵体", "传动系统", "控制系统"];
 export const ModelOption = () => {

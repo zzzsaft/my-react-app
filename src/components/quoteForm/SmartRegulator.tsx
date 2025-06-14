@@ -1,13 +1,13 @@
 import { Col, Form, FormInstance, Input, Radio, Row } from "antd";
 import { forwardRef, useImperativeHandle, useState } from "react";
-import useProductActionModal from "../../hook/showProductActionModal";
-import { useQuoteStore } from "../../store/useQuoteStore";
+import useProductActionModal from "@/hook/showProductActionModal";
+import { useQuoteStore } from "@/store/useQuoteStore";
 
 import TextArea from "antd/es/input/TextArea";
 import ProForm from "@ant-design/pro-form";
 import CustomRadioGroup from "../general/CustomRadioGroup";
 import { TooltipLabel } from "../general/TooltipLabel";
-import { RadioWithInputRules } from "../../util/rules";
+import { RadioWithInputRules } from "@/util/rules";
 interface PriceFormRef {
   form: FormInstance; // 明确定义暴露的form实例
 }

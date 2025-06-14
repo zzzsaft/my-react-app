@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "antd";
-import { useTemplateStore } from "../../store/useTemplateStore";
-import TemplateTable from "../../components/template/TemplateTable";
-import TemplateCreateModal from "../../components/template/TemplateCreateModal";
+import { useTemplateStore } from "@/store/useTemplateStore";
+import TemplateTable from "@/components/template/TemplateTable";
+import TemplateCreateModal from "@/components/template/TemplateCreateModal";
 
 const TemplateListPage: React.FC = () => {
   const { templates, loading, refreshTemplates, fetchTemplates } = useTemplateStore();

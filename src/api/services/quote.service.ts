@@ -1,7 +1,7 @@
 // import type { LoginParams, UserInfo } from '../types/auth.d';
 import { redirect } from "react-router-dom";
 import { apiClient } from "../http/client";
-import { Quote, QuoteItem } from "../../types/types";
+import { Quote, QuoteItem } from "@/types/types";
 import axios from "axios";
 
 export const QuoteService = {

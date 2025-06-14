@@ -1,7 +1,7 @@
 import React from "react";
 import { Form, Switch, Button } from "antd";
 import TermsTable from "./TermsTable";
-import { Clause } from "../../types/types";
+import { Clause } from "@/types/types";
 
 interface ContractTabProps {
   value: Clause[];

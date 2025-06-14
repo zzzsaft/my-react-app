@@ -1,10 +1,10 @@
 import { Modal, Button, Skeleton } from "antd";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { useQuoteStore } from "../../../store/useQuoteStore";
+import { useQuoteStore } from "@/store/useQuoteStore";
 import { FormInstance } from "antd/lib";
 import ProductConfigurationForm from "./ProductConfigurationForm";
 import { CheckOutlined, EditOutlined } from "@ant-design/icons";
-import { QuoteItem } from "../../../types/types";
+import { QuoteItem } from "@/types/types";
 import ImportProductModal from "./ImportProductModal";
 
 interface ProductConfigModalProps {

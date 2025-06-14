@@ -7,11 +7,11 @@ import {
   useRef,
   useState,
 } from "react";
-import PriceForm from "../../quoteForm/PriceForm";
-import { QuoteItem, QuoteTemplate } from "../../../types/types";
+import PriceForm from "@/quoteForm/PriceForm";
+import { QuoteItem, QuoteTemplate } from "@/types/types";
 
 import { getFormByCategory, ModelFormRef } from "./formSelector";
-import { useQuoteStore } from "../../../store/useQuoteStore";
+import { useQuoteStore } from "@/store/useQuoteStore";
 
 interface ProductConfigurationFormProps {
   quoteItem?: QuoteItem;
