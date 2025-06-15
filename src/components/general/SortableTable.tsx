@@ -1,5 +1,5 @@
 // SortableTable.tsx
-import React, { useContext, useMemo } from "react";
+import React, { useContext, useMemo, useState, useEffect } from "react";
 import { HolderOutlined } from "@ant-design/icons";
 import type { DragEndEvent, UniqueIdentifier } from "@dnd-kit/core";
 import { DndContext } from "@dnd-kit/core";
@@ -13,6 +13,9 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Button, Table, TableProps } from "antd";
+import type { ColumnsType } from "antd/es/table";
+import { Resizable } from "react-resizable";
+import "react-resizable/css/styles.css";
 
 interface RowContextProps {
   setActivatorNodeRef?: (element: HTMLElement | null) => void;
@@ -82,6 +85,39 @@ const Row: React.FC<RowProps> = (props) => {
   );
 };
 
+interface ResizableTitleProps
+  extends React.HTMLAttributes<HTMLTableCellElement> {
+  width?: number;
+  onResize?: (e: React.SyntheticEvent, data: { size: { width: number } }) => void;
+}
+
+const ResizableTitle: React.FC<ResizableTitleProps> = ({
+  onResize,
+  width,
+  ...restProps
+}) => {
+  if (!width) {
+    return <th {...restProps} />;
+  }
+
+  return (
+    <Resizable
+      width={width}
+      height={0}
+      handle={
+        <span
+          className="react-resizable-handle"
+          onClick={(e) => e.stopPropagation()}
+        />
+      }
+      onResize={onResize}
+      draggableOpts={{ enableUserSelectHack: false }}
+    >
+      <th {...restProps} />
+    </Resizable>
+  );
+};
+
 interface SortableTableProps<T extends { id: UniqueIdentifier; index?: number }>
   extends TableProps<T> {
   onDragEnd?: (data: T[]) => void;
@@ -102,6 +138,41 @@ export function SortableTable<
   rowKey = "id", // 默认使用 'id'
   ...props
 }: SortableTableProps<T>) {
+  const { columns = [], ...rest } = props;
+
+  const [colState, setColState] = useState<ColumnsType<T>>(
+    (columns as ColumnsType<T>) ?? []
+  );
+
+  useEffect(() => {
+    setColState((prev) =>
+      (columns as ColumnsType<T>).map((col, index) => ({
+        ...col,
+        width: prev[index]?.width ?? (col as any).width,
+      }))
+    );
+  }, [columns]);
+
+  const handleResizeColumn =
+    (index: number) => (_: any, { size }: { size: { width: number } }) => {
+      setColState((cols) => {
+        const next = [...cols];
+        next[index] = { ...next[index], width: size.width };
+        return next;
+      });
+    };
+
+  const mergedColumns = useMemo(
+    () =>
+      colState.map((col, index) => ({
+        ...col,
+        onHeaderCell: (column: any) => ({
+          width: column.width,
+          onResize: handleResizeColumn(index),
+        }),
+      })),
+    [colState]
+  );
   const handleDragEnd = ({ active, over }: DragEndEvent) => {
     if (!over || active.id === over.id) return;
     const activeItem = dataSource.find(
@@ -145,10 +216,14 @@ export function SortableTable<
         strategy={verticalListSortingStrategy}
       >
         <Table<T>
-          {...props}
+          {...rest}
+          columns={mergedColumns}
           dataSource={dataSource}
           rowKey={rowKey}
           components={{
+            header: {
+              cell: ResizableTitle,
+            },
             body: {
               row: Row,
             },
