@@ -126,6 +126,7 @@ interface SortableTableProps<T extends { id: UniqueIdentifier; index?: number }>
   onDragEnd?: (data: T[]) => void;
   sortable?: boolean;
   rowKey?: keyof T; // 改为可选，默认使用 'id'
+  hiddenColumns?: string[];
 }
 
 export function SortableTable<
@@ -139,6 +140,7 @@ export function SortableTable<
   onDragEnd,
   sortable = true,
   rowKey = "id", // 默认使用 'id'
+  hiddenColumns = [],
   ...props
 }: SortableTableProps<T>) {
   const { columns = [], ...rest } = props;
@@ -156,6 +158,11 @@ export function SortableTable<
     );
   }, [columns]);
 
+  const visibleColumns = useMemo(
+    () => colState.filter((c) => !hiddenColumns.includes(String(c.key))),
+    [colState, hiddenColumns]
+  );
+
   const handleResizeColumn =
     (index: number) =>
     (_: any, { size }: { size: { width: number } }) => {
@@ -168,7 +175,7 @@ export function SortableTable<
 
   const mergedColumns = useMemo(
     () =>
-      colState.map((col, index) => ({
+      visibleColumns.map((col, index) => ({
         ...col,
         onHeaderCell: (column: any) =>
           ({
@@ -176,7 +183,7 @@ export function SortableTable<
             onResize: handleResizeColumn(index),
           } as ResizableTitleProps),
       })) as ColumnsType<T>,
-    [colState]
+    [colState,visibleColumns]
   );
   const handleDragEnd = ({ active, over }: DragEndEvent) => {
     if (!over || active.id === over.id) return;

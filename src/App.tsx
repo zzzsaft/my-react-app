@@ -19,6 +19,7 @@ import MainLayout from "./components/MainLayout";
 import JdyRedirect from "./page/JdyRedirect";
 import HistoryQuoteTablePage from "./page/quote/HistoryQuoteTablePage";
 import OAQuoteTablePage from "./page/quote/OAQuoteTablePage";
+import TodoQuoteTablePage from "./page/quote/TodoQuoteTablePage";
 import QuoteFormPage from "./page/quote/QuoteFormPage";
 import TemplateListPage from "./page/template/TemplateListPage";
 import { NoPermissionPage } from "./page/NoPermissionPage";
@@ -40,6 +41,7 @@ const App: React.FC = () => {
                 <Route index element={<HistoryQuoteTablePage />} />
                 <Route path="history" element={<HistoryQuoteTablePage />} />
                 <Route path="oa" element={<OAQuoteTablePage />} />
+                <Route path="todo" element={<TodoQuoteTablePage />} />
                 <Route path=":id" element={<QuoteFormPage />} />
               </Route>
               <Route path="template" element={<Outlet />}> 

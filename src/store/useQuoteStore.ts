@@ -63,6 +63,8 @@ interface QuotesStore {
     type?: string;
     quoteName?: string;
     customerName?: string;
+    status?: string;
+    approvalNode?: string;
     sorters?: { field: string; order: string }[];
   }) => Promise<void>;
   fetchQuote: (quoteId: number) => Promise<Quote>;

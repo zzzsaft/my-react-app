@@ -84,7 +84,7 @@ export interface Quote {
   contractPdf?: string; // 合同打印链接
   configPdf?: string; // 配置表打印链接
   items: QuoteItem[];
-  status: "draft" | "completed" | "locked";
+  status: "draft" | "checking" | "completed" | "locked";
 }
 
 export interface QuoteItem {
