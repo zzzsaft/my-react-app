@@ -37,13 +37,15 @@ const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
       title="创建模版"
       onCancel={onClose}
       footer={[
-        <Button key="cancel" onClick={onClose}>取消</Button>,
+        <Button key="cancel" onClick={onClose}>
+          取消
+        </Button>,
         <Button key="ok" type="primary" onClick={handleOk} loading={saving}>
           保存
         </Button>,
       ]}
       width={800}
-      destroyOnClose
+      destroyOnHidden
       forceRender
     >
       <ProductConfigurationForm

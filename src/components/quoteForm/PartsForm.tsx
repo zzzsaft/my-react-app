@@ -47,10 +47,8 @@ const PartForm = forwardRef<PartFormRef, PartFormProps>(
               required: true,
               message: "请至少输入一个配件",
               validator: (_, value) => {
-                if (value.length == 0) {
-                  return Promise.reject(
-                    new Error("制品厚度和模唇开口至少要填一个")
-                  );
+                if (!value || value.length == 0) {
+                  return Promise.reject(new Error("请至少输入一个配件"));
                 }
                 return Promise.resolve();
               },
