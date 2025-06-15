@@ -7,11 +7,11 @@ import {
   useRef,
   useState,
 } from "react";
-import PriceForm from "@/quoteForm/PriceForm";
 import { QuoteItem, QuoteTemplate } from "@/types/types";
 
 import { getFormByCategory, ModelFormRef } from "./formSelector";
 import { useQuoteStore } from "@/store/useQuoteStore";
+import PriceForm from "@/components/quoteForm/PriceForm";
 
 interface ProductConfigurationFormProps {
   quoteItem?: QuoteItem;
@@ -165,6 +165,18 @@ const ProductConfigurationForm = forwardRef(
             return arr;
           })()}
         />
+        {readOnly && (
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              zIndex: 10,
+            }}
+          />
+        )}
       </div>
     );
   }

@@ -2,8 +2,7 @@ import { AutoComplete, Col, Form, InputNumber, Radio, Row } from "antd";
 
 import ProForm from "@ant-design/pro-form";
 import { forwardRef, useEffect, useImperativeHandle } from "react";
-import { IntervalInputFormItem } from "@/general/IntervalInput";
-import MaterialSelect from "@/general/MaterialSelect";
+
 import { PowerInput } from "../formComponents/PowerInput";
 import { HeatingMethodSelect } from "../formComponents/HeatingMethodInput";
 import { useProductStore } from "@/store/useProductStore";
@@ -14,6 +13,8 @@ import FilterSelection from "./FilterSelection";
 import TextArea from "antd/es/input/TextArea";
 import MeshBeltControlCard from "./MeshBeltControlCard";
 import { ProCard } from "@ant-design/pro-components";
+import MaterialSelect from "@/components/general/MaterialSelect";
+import { IntervalInputFormItem } from "@/components/general/IntervalInput";
 
 const FilterForm = forwardRef(
   (

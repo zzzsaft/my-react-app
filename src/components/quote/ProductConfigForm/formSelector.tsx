@@ -1,13 +1,13 @@
+import DieForm from "@/components/quoteForm/dieForm/DieForm";
+import FeedblockForm from "@/components/quoteForm/FeedblockForm/FeedblockForm";
+import FilterForm from "@/components/quoteForm/FilterForm/FilterForm";
+import HydraulicStationForm from "@/components/quoteForm/HydraulicStationForm/HydraulicStationForm";
+import MeteringPumpForm from "@/components/quoteForm/MeteringPumpForm/MeteringPumpForm";
+import { OtherForm } from "@/components/quoteForm/OtherForm";
+import PartsForm from "@/components/quoteForm/PartsForm";
+import SmartRegulator from "@/components/quoteForm/SmartRegulator";
+import ThicknessGaugeForm from "@/components/quoteForm/ThicknessGaugeForm/ThicknessGaugeForm";
 import React, { RefObject } from "react";
-import DieForm from "@/quoteForm/dieForm/DieForm";
-import SmartRegulator from "@/quoteForm/SmartRegulator";
-import MeteringPumpForm from "@/quoteForm/MeteringPumpForm/MeteringPumpForm";
-import FeedblockForm from "@/quoteForm/FeedblockForm/FeedblockForm";
-import FilterForm from "@/quoteForm/FilterForm/FilterForm";
-import ThicknessGaugeForm from "@/quoteForm/ThicknessGaugeForm/ThicknessGaugeForm";
-import HydraulicStationForm from "@/quoteForm/HydraulicStationForm/HydraulicStationForm";
-import PartsForm from "@/quoteForm/PartsForm";
-import { OtherForm } from "@/quoteForm/OtherForm";
 
 export type ModelFormRef = RefObject<{ form: any } | null>;
 
@@ -117,6 +117,12 @@ export function getFormByCategory(
       formType,
     };
   if (formType === "PartsForm")
-    return { form: <PartsForm ref={modelFormRef} readOnly={readOnly} />, formType };
-  return { form: <OtherForm ref={modelFormRef} readOnly={readOnly} />, formType };
+    return {
+      form: <PartsForm ref={modelFormRef} readOnly={readOnly} />,
+      formType,
+    };
+  return {
+    form: <OtherForm ref={modelFormRef} readOnly={readOnly} />,
+    formType,
+  };
 }

@@ -29,9 +29,13 @@ const PartForm = forwardRef<PartFormRef, PartFormProps>(
     }));
 
     return (
-      <ProForm layout="vertical" form={form} submitter={false}>
+      <ProForm
+        layout="vertical"
+        form={form}
+        submitter={false}
+        readonly={readOnly}
+      >
         <ProFormList
-          readonly={readOnly}
           name="parts"
           label="配件明细"
           creatorButtonProps={{ creatorButtonText: "新增物料" }}
@@ -60,6 +64,7 @@ const PartForm = forwardRef<PartFormRef, PartFormProps>(
                   name={"name"}
                   label="名称"
                   rules={[{ required: true, message: "请输入物料名称" }]}
+                  readonly={readOnly}
                 >
                   <AutoComplete
                     options={[]}

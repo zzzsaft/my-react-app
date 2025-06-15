@@ -98,6 +98,7 @@ const IntervalInput: React.FC<IntervalInputProps> = forwardRef<
           onChange?.(v);
         }
       } catch (error) {
+        console.log(error);
       }
     };
 

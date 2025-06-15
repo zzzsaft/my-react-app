@@ -13,16 +13,11 @@ import {
   Select,
   Tag,
 } from "antd";
-import { IntervalInputFormItem } from "@/general/IntervalInput";
-import { CustomSelect } from "@/general/CustomSelect";
 import { useEffect, useState } from "react";
 import ScrewForm from "../formComponents/ScrewForm";
-import AutoSlashInput from "@/general/AutoSlashInput";
-import RatioInput from "@/general/RatioInput";
 import { MATERIAL } from "@/util/MATERIAL";
 import { useProductStore } from "@/store/useProductStore";
 import ExtruderForm from "../formComponents/ExtruderForm";
-import { CheckableTagGroup } from "@/general/CheckableTagGroup";
 import { HeatingMethodSelect } from "../formComponents/HeatingMethodInput";
 import { PowerInput } from "../formComponents/PowerInput";
 import { inputRule } from "@/util/rules";
@@ -56,8 +51,7 @@ export const ModelOption = () => {
             >
               <Checkbox.Group
                 options={tagsData.map((tag) => ({ label: tag, value: tag }))}
-                onChange={(v) => {
-                }}
+                onChange={(v) => {}}
               />
             </Form.Item>
           </Col>

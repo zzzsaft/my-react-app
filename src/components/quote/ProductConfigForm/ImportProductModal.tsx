@@ -2,15 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Modal, Tabs, Table, Button } from "antd";
 import { ProductService } from "@/api/services/product.service";
 import ProductConfigurationForm from "./ProductConfigurationForm";
-import ProductSearchBar from "@/general/ProductSearchBar";
-import {
-  QuoteItem,
-  ProductSearchResult,
-  QuoteTemplate,
-} from "@/types/types";
+import { QuoteItem, ProductSearchResult, QuoteTemplate } from "@/types/types";
 import { useTemplateStore } from "@/store/useTemplateStore";
-import TemplateTable from "@/template/TemplateTable";
-import TemplateCreateModal from "@/template/TemplateCreateModal";
+import TemplateCreateModal from "@/components/template/TemplateCreateModal";
+import ProductSearchBar from "@/components/general/ProductSearchBar";
+import TemplateTable from "@/components/template/TemplateTable";
 
 interface ImportProductModalProps {
   open: boolean;
@@ -144,7 +140,7 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
                         quoteItem={selectedTemplate as any}
                         formType={selectedTemplate.templateType}
                         showPrice={false}
-                        readOnly
+                        readOnly={true}
                         quoteTemplate={selectedTemplate}
                       />
                     </div>
@@ -198,7 +194,7 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
                         quoteId={0}
                         quoteItem={selected.item}
                         showPrice={false}
-                        readOnly
+                        readOnly={true}
                       />
                     </div>
                   )}
