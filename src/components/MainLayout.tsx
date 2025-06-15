@@ -63,6 +63,10 @@ const MainLayout: React.FC = () => {
       label: "OA报价单",
     },
     {
+      key: "/quote/todo",
+      label: "代办任务",
+    },
+    {
       key: "/template",
       label: "模版管理",
     },

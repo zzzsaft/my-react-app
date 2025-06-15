@@ -9,6 +9,7 @@ import { debounce, throttle } from "lodash-es";
 import { useQuoteStore } from "@/store/useQuoteStore";
 import { CustomerService } from "@/api/services/customer.service";
 import { DownOutlined } from "@ant-design/icons";
+import { useAuthStore } from "@/store/useAuthStore";
 
 const getDefaultQuoteTerms = (days: number): Clause[] => [
   {
@@ -234,7 +235,16 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
 
   const onFinish = async () => {
     setSubmitLoading(true);
-    if (quote?.id) updateQuote(quote.id, { status: "completed" });
+    if (quote?.id) {
+      const userId = useAuthStore.getState().userid?.id;
+      const isManager =
+        userId === quote.projectManagerId || userId === quote.chargerId;
+      if (quote.status === "checking" && isManager) {
+        updateQuote(quote.id, { status: "completed" });
+      } else if (quote.status === "draft") {
+        updateQuote(quote.id, { status: "checking" });
+      }
+    }
     await save();
     onSubmit();
     setSubmitLoading(false);
@@ -293,6 +303,12 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
     }
     scheduleAutoSave();
   }, 100);
+
+  const userId = useAuthStore.getState().userid?.id;
+  const isManager =
+    userId === quote?.projectManagerId || userId === quote?.chargerId;
+  const submitLabel =
+    quote?.status === "checking" && isManager ? "已检查" : "提交";
 
   return (
     <Form
@@ -376,7 +392,7 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
             htmlType="submit"
             loading={loading && submitLoading}
           >
-            提交
+            {submitLabel}
           </Button>
           <Button
             style={{ marginLeft: 8 }}

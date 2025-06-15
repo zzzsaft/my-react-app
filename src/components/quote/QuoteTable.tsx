@@ -19,6 +19,8 @@ import { isTextSelecting } from "@/util/domUtil";
 
 interface QuoteTableProps {
   type: string; // 'history' | 'oa'
+  status?: string;
+  approvalNode?: string;
 }
 
 interface QuoteTableItem {
@@ -29,6 +31,8 @@ interface QuoteTableItem {
   quoteTime: Date;
   status: string;
   flowState: string;
+  currentApprovalNode: string;
+  currentApprover: string;
   chargerId: string;
   salesSupportId: string;
   quoteName: string;
@@ -37,7 +41,7 @@ interface QuoteTableItem {
   createdAt: string;
 }
 
-const QuoteTable: React.FC<QuoteTableProps> = ({ type }) => {
+const QuoteTable: React.FC<QuoteTableProps> = ({ type, status, approvalNode }) => {
   const { quotes, total, loading, fetchQuotes, fetchQuote } = useQuoteStore();
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedQuote, setSelectedQuote] = useState<any>();
@@ -61,11 +65,21 @@ const QuoteTable: React.FC<QuoteTableProps> = ({ type }) => {
       type,
       quoteName: values.quoteName,
       customerName: values.customerName,
+      status,
+      approvalNode,
       sorters: sorters
         .filter((s) => s.order)
         .map((s) => ({ field: s.field as string, order: s.order as string })),
     });
-  }, [fetchQuotes, pagination.current, pagination.pageSize, sorters, type]);
+  }, [
+    fetchQuotes,
+    pagination.current,
+    pagination.pageSize,
+    sorters,
+    type,
+    status,
+    approvalNode,
+  ]);
 
   const handleSearch = () => {
     const values = searchForm.getFieldsValue();
@@ -76,6 +90,8 @@ const QuoteTable: React.FC<QuoteTableProps> = ({ type }) => {
       type,
       quoteName: values.quoteName,
       customerName: values.customerName,
+      status,
+      approvalNode,
       sorters: sorters
         .filter((s) => s.order)
         .map((s) => ({ field: s.field as string, order: s.order as string })),
@@ -97,6 +113,8 @@ const QuoteTable: React.FC<QuoteTableProps> = ({ type }) => {
       type,
       quoteName: values.quoteName,
       customerName: values.customerName,
+      status,
+      approvalNode,
       sorters: sorterArr
         .filter((s) => s.order)
         .map((s) => ({ field: s.field as string, order: s.order as string })),
@@ -174,6 +192,9 @@ const QuoteTable: React.FC<QuoteTableProps> = ({ type }) => {
           case "draft":
             color = "orange";
             break;
+          case "checking":
+            color = "blue";
+            break;
           case "completed":
             color = "green";
             break;
@@ -187,6 +208,8 @@ const QuoteTable: React.FC<QuoteTableProps> = ({ type }) => {
           <Tag color={color}>
             {status === "draft"
               ? "草稿"
+              : status === "checking"
+              ? "检查中"
               : status === "completed"
               ? "已完成"
               : "已锁定"}
@@ -207,6 +230,19 @@ const QuoteTable: React.FC<QuoteTableProps> = ({ type }) => {
                 {flowState || "未审批"}
               </Tag>
             ),
+          },
+          {
+            title: "当前节点",
+            dataIndex: "currentApprovalNode",
+            key: "currentApprovalNode",
+            width: 120,
+          },
+          {
+            title: "当前审批人",
+            dataIndex: "currentApprover",
+            key: "currentApprover",
+            width: 120,
+            render: (id: string) => (id && <MemberAvatar id={id} />) || "-",
           },
         ]),
     {
@@ -255,6 +291,8 @@ const QuoteTable: React.FC<QuoteTableProps> = ({ type }) => {
         createdAt: (quote as any).createdAt ?? "",
         status: quote.status,
         flowState: quote.flowState,
+        currentApprovalNode: quote.currentApprovalNode,
+        currentApprover: quote.currentApprover,
         chargerId: quote.chargerId,
         salesSupportId: quote.salesSupportId,
         quoteName: quote.quoteName,
