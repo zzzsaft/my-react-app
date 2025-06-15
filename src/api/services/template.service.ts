@@ -1,5 +1,5 @@
 import { apiClient } from "../http/client";
-import { QuoteTemplate } from "../../types/types";
+import { QuoteTemplate } from "@/types/types";
 
 export const TemplateService = {
   async getTemplates(params?: { formType?: string }) {

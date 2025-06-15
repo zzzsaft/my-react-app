@@ -1,7 +1,7 @@
 import React from "react";
 import { Table } from "antd";
 import MemberAvatar from "../general/MemberAvatar";
-import { QuoteTemplate } from "../../types/types";
+import { QuoteTemplate } from "@/types/types";
 
 interface TemplateTableProps {
   templates: QuoteTemplate[];
@@ -21,7 +21,7 @@ const TEMPLATE_TYPE_MAP: Record<string, string> = {
   FilterForm: "过滤器",
   ThicknessGaugeForm: "测厚仪",
   HydraulicStationForm: "液压站",
-  PartsForm: "赠品",
+  PartsForm: "小配件",
   OtherForm: "其他",
 };
 

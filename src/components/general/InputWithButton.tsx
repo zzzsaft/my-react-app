@@ -14,6 +14,8 @@ export interface InputWithButtonProps
   buttonProps?: ButtonProps;
   /** Click handler for the button */
   onButtonClick?: () => void;
+  /** Disable both input and button */
+  disabled?: boolean;
 }
 
 const InputWithButton: React.FC<InputWithButtonProps> = ({
@@ -22,6 +24,7 @@ const InputWithButton: React.FC<InputWithButtonProps> = ({
   buttonText = "Submit",
   buttonProps,
   onButtonClick,
+  disabled = false,
   ...inputProps
 }) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,8 +33,18 @@ const InputWithButton: React.FC<InputWithButtonProps> = ({
 
   return (
     <Space.Compact style={{ width: "100%" }}>
-      <Input value={value} onChange={handleChange} {...inputProps} />
-      <Button type="primary" onClick={onButtonClick} {...buttonProps}>
+      <Input
+        value={value}
+        onChange={handleChange}
+        disabled={disabled}
+        {...inputProps}
+      />
+      <Button
+        type="primary"
+        onClick={onButtonClick}
+        disabled={disabled}
+        {...buttonProps}
+      >
         {buttonText}
       </Button>
     </Space.Compact>

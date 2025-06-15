@@ -1,10 +1,10 @@
 import { isMobile } from "react-device-detect"; // 使用设备检测库
 import * as _ from "lodash";
-import { useQuoteStore } from "../../store/useQuoteStore";
+import { useQuoteStore } from "@/store/useQuoteStore";
 import DesktopQuoteItemsTable from "./DesktopQuoteItemsTable";
-import { QuoteItem } from "../../types/types";
+import { QuoteItem } from "@/types/types";
 import { App } from "antd";
-import useProductActionModal from "../../hook/showProductActionModal";
+import useProductActionModal from "@/hook/showProductActionModal";
 interface QuoteItemsTableProps {
   quoteId: number;
   id?: string;

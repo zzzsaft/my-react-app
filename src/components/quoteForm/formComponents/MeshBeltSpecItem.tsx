@@ -1,6 +1,6 @@
+import { AutoCompleteInput } from "@/components/general/AutoCompleteInput";
 import ProForm from "@ant-design/pro-form";
 import { Row, Col, InputNumber, Layout } from "antd";
-import { AutoCompleteInput } from "../../general/AutoCompleteInput";
 
 const MeshBeltSpecItem: React.FC = () => {
   return (

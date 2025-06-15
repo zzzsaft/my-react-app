@@ -10,8 +10,8 @@ import { Table, Tag, Form, Input } from "antd";
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
 import MemberAvatar from "../general/MemberAvatar";
 import QuoteModal from "./QuoteModal";
-import { useQuoteStore } from "../../store/useQuoteStore";
-import { isTextSelecting } from "../../util/domUtil";
+import { useQuoteStore } from "@/store/useQuoteStore";
+import { isTextSelecting } from "@/util/domUtil";
 
 interface QuoteTableProps {
   type: string; // 'history' | 'oa'

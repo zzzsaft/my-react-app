@@ -1,10 +1,10 @@
 import { Modal, Button, Skeleton } from "antd";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { useQuoteStore } from "../../../store/useQuoteStore";
+import { useQuoteStore } from "@/store/useQuoteStore";
 import { FormInstance } from "antd/lib";
 import ProductConfigurationForm from "./ProductConfigurationForm";
 import { CheckOutlined, EditOutlined } from "@ant-design/icons";
-import { QuoteItem } from "../../../types/types";
+import { QuoteItem } from "@/types/types";
 import ImportProductModal from "./ImportProductModal";
 
 interface ProductConfigModalProps {
@@ -67,7 +67,6 @@ const ProductConfigModal: React.FC<ProductConfigModalProps> = ({
 
       formRef.current.priceForm?.setFieldsValue(basicValues);
       formRef.current.modelForm?.setFieldsValue(formValues);
-      console.log(formRef.current.modelForm?.getFieldsValue());
       setLoading(false);
     };
 
@@ -142,7 +141,13 @@ const ProductConfigModal: React.FC<ProductConfigModalProps> = ({
       <Modal
         style={{ overflow: "auto" }}
         title={
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
             <span>{quoteItem?.productCategory?.join("/")}</span>
             <Button
               type="link"
@@ -177,28 +182,31 @@ const ProductConfigModal: React.FC<ProductConfigModalProps> = ({
             <Skeleton active paragraph={{ rows: 8 }} />
           </div>
         )}
-      <ProductConfigurationForm
-        quoteId={quoteId}
-        quoteItem={quoteItem}
-        ref={formRef}
-        style={{ display: loading ? "none" : "block" }}
-        material={material}
-        finalProduct={finalProduct}
-      />
-      <ImportProductModal
-        open={importOpen}
-        onCancel={() => setImportOpen(false)}
-        onImport={(item) => {
-          if (quoteItem?.id) {
-            onUpdateItem(quoteId, quoteItem.id, {
-              productName: item.productName,
-              config: item.config,
-            });
-          }
-          setImportOpen(false);
-        }}
-        formType={quoteItem?.formType}
-      />
+        <ProductConfigurationForm
+          quoteId={quoteId}
+          quoteItem={quoteItem}
+          ref={formRef}
+          style={{ display: loading ? "none" : "block" }}
+          material={material}
+          finalProduct={finalProduct}
+        />
+        <ImportProductModal
+          open={importOpen}
+          onCancel={() => setImportOpen(false)}
+          onImport={(item) => {
+            // update current form instead of store so modal stays open
+            if (item.config) {
+              formRef.current?.modelForm?.setFieldsValue(item.config);
+            }
+            if (item.productName) {
+              formRef.current?.priceForm?.setFieldsValue({
+                productName: item.productName,
+              });
+            }
+            setImportOpen(false);
+          }}
+          formType={quoteItem?.formType}
+        />
       </Modal>
     </>
   );

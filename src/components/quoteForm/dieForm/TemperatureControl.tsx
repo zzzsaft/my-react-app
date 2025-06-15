@@ -9,11 +9,11 @@ import {
   Radio,
   Row,
 } from "antd";
-import { powerInputRules } from "../../../util/rules";
+import { powerInputRules } from "@/util/rules";
 import { PowerInput } from "../formComponents/PowerInput";
 import { HeatingMethodSelect } from "../formComponents/HeatingMethodInput";
-import { TooltipLabel } from "../../general/TooltipLabel";
 import { useState } from "react";
+import { TooltipLabel } from "@/components/general/TooltipLabel";
 
 export const TemperatureControl = () => {
   const [hasGlassThermocouple, setHasGlassThermocouple] =

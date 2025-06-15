@@ -1,7 +1,10 @@
 import React from "react";
 import { Select, Space, Form } from "antd";
 import type { SelectProps, FormItemProps } from "antd";
-import { IntervalInput, IntervalInputProps } from "../../general/IntervalInput"; // 假设IntervalInput已实现
+import {
+  IntervalInput,
+  IntervalInputProps,
+} from "@/components/general/IntervalInput";
 
 const { Option } = Select;
 

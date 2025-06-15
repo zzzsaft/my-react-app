@@ -1,7 +1,7 @@
 // import type { LoginParams, UserInfo } from '../types/auth.d';
 import { redirect } from "react-router-dom";
 import { apiClient } from "../http/client";
-import { Quote, QuoteItem } from "../../types/types";
+import { Quote, QuoteItem } from "@/types/types";
 import axios from "axios";
 
 export const QuoteService = {
@@ -65,10 +65,7 @@ export const QuoteService = {
     return quote.data;
   },
   async executePrint(quote: Quote) {
-    const result = await axios.post(
-      "http://local.jc-times.com:777/Contract/Execute",
-      { ...quote }
-    );
+    const result = await apiClient.post("/contract/execute", { ...quote });
     const data = result.data as {
       productQuotation: string;
       productPurchase: string;

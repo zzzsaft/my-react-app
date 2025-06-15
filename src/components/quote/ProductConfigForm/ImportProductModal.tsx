@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Tabs, Table, Button } from "antd";
-import { ProductService } from "../../../api/services/product.service";
+import { ProductService } from "@/api/services/product.service";
 import ProductConfigurationForm from "./ProductConfigurationForm";
 import ProductSearchBar from "../../general/ProductSearchBar";
 import {
@@ -74,7 +74,7 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
   const handleImport = () => {
     if (mode === "template" && selectedTemplate) {
       onImport({
-        // ...selectedTemplate,
+        ...selectedTemplate,
         config: selectedTemplate.config,
       } as any);
     } else if (mode === "other" && selected) {
@@ -153,7 +153,7 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
                         quoteItem={selectedTemplate as any}
                         formType={selectedTemplate.templateType}
                         showPrice={false}
-                        readOnly
+                        readOnly={true}
                         quoteTemplate={selectedTemplate}
                       />
                     </div>
@@ -211,7 +211,7 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
                         quoteId={0}
                         quoteItem={selected.item}
                         showPrice={false}
-                        readOnly
+                        readOnly={true}
                       />
                     </div>
                   )}

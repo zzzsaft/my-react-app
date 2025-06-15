@@ -8,15 +8,22 @@ import { SurfaceTreatment } from "./SurfaceTreatment";
 import { SameProduct } from "./SameProduct";
 import ProForm from "@ant-design/pro-form";
 import TextArea from "antd/es/input/TextArea";
-import useProductActionModal from "../../../hook/showProductActionModal";
-import { useQuoteStore } from "../../../store/useQuoteStore";
-import { LevelValue } from "../../general/LevelInputNumber";
+import useProductActionModal from "@/hook/showProductActionModal";
+import { useQuoteStore } from "@/store/useQuoteStore";
+import { LevelValue } from "@/components/general/LevelInputNumber";
 interface PriceFormRef {
   form: FormInstance; // 明确定义暴露的form实例
 }
 
 const DieForm = forwardRef(
-  ({ quoteId, quoteItemId }: { quoteId: number; quoteItemId: number }, ref) => {
+  (
+    {
+      quoteId,
+      quoteItemId,
+      readOnly = false,
+    }: { quoteId: number; quoteItemId: number; readOnly?: boolean },
+    ref
+  ) => {
     const [form] = Form.useForm();
     const quoteItems = useQuoteStore
       .getState()
@@ -171,6 +178,7 @@ const DieForm = forwardRef(
           form={form}
           submitter={false}
           onValuesChange={handleFieldsChange}
+          disabled={readOnly}
         >
           <SameProduct />
           <Form.Item noStyle dependencies={["hasCart"]}>

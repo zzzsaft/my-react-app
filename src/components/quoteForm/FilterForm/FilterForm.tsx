@@ -2,21 +2,29 @@ import { AutoComplete, Col, Form, InputNumber, Radio, Row } from "antd";
 
 import ProForm from "@ant-design/pro-form";
 import { forwardRef, useEffect, useImperativeHandle } from "react";
-import { IntervalInputFormItem } from "../../general/IntervalInput";
-import MaterialSelect from "../../general/MaterialSelect";
+
 import { PowerInput } from "../formComponents/PowerInput";
 import { HeatingMethodSelect } from "../formComponents/HeatingMethodInput";
-import { useProductStore } from "../../../store/useProductStore";
-import { useQuoteStore } from "../../../store/useQuoteStore";
-import useProductActionModal from "../../../hook/showProductActionModal";
+import { useProductStore } from "@/store/useProductStore";
+import { useQuoteStore } from "@/store/useQuoteStore";
+import useProductActionModal from "@/hook/showProductActionModal";
 
 import FilterSelection from "./FilterSelection";
 import TextArea from "antd/es/input/TextArea";
 import MeshBeltControlCard from "./MeshBeltControlCard";
 import { ProCard } from "@ant-design/pro-components";
+import MaterialSelect from "@/components/general/MaterialSelect";
+import { IntervalInputFormItem } from "@/components/general/IntervalInput";
 
 const FilterForm = forwardRef(
-  ({ quoteId, quoteItemId }: { quoteId: number; quoteItemId: number }, ref) => {
+  (
+    {
+      quoteId,
+      quoteItemId,
+      readOnly = false,
+    }: { quoteId: number; quoteItemId: number; readOnly?: boolean },
+    ref
+  ) => {
     const [form] = Form.useForm();
     const filters = useProductStore((state) => state.filter);
     const fetchFilter = useProductStore((state) => state.fetchFilter);
@@ -116,6 +124,7 @@ const FilterForm = forwardRef(
         form={form}
         submitter={false}
         onValuesChange={handleFieldsChange}
+        disabled={readOnly}
       >
         <FilterSelection form={form} filters={filters} />
         <ProCard

@@ -1,7 +1,7 @@
+import { IntervalInput } from "@/components/general/IntervalInput";
 import ProForm from "@ant-design/pro-form";
 import { AutoComplete, Col, Form, InputNumber, Row, Select } from "antd";
 import { DefaultOptionType } from "antd/es/select";
-import { IntervalInput } from "../../general/IntervalInput";
 
 export const ExtruderFormItem = ({ items }: { items: string[] }) => {
   return (

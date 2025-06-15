@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button, Input } from "antd";
 import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import SortableTable, { DragHandle } from "../general/SortableTable";
-import { Clause } from "../../types/types";
+import { Clause } from "@/types/types";
 
 interface TermsTableProps {
   value: Clause[];

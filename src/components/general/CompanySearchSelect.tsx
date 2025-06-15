@@ -3,8 +3,8 @@ import { Select, Spin } from "antd";
 import type { SelectProps } from "antd";
 import { useDebounce } from "use-debounce";
 import { SearchOutlined } from "@ant-design/icons";
-import { CompanyOption } from "../../types/types";
-import { CustomerService } from "../../api/services/customer.service";
+import { CompanyOption } from "@/types/types";
+import { CustomerService } from "@/api/services/customer.service";
 
 interface CompanySearchSelectProps {
   value?: CompanyOption | string;
