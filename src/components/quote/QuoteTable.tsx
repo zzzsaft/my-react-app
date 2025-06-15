@@ -7,7 +7,11 @@ import React, {
 } from "react";
 import dayjs from "dayjs";
 import { Table, Tag, Form, Input } from "antd";
-import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
+import type {
+  ColumnsType,
+  TablePaginationConfig,
+  SorterResult,
+} from "antd/es/table";
 import MemberAvatar from "../general/MemberAvatar";
 import QuoteModal from "./QuoteModal";
 import { useQuoteStore } from "@/store/useQuoteStore";
@@ -42,6 +46,7 @@ const QuoteTable: React.FC<QuoteTableProps> = ({ type }) => {
     current: 1,
     pageSize: 20,
   });
+  const [sorters, setSorters] = useState<SorterResult<QuoteTableItem>[]>([]);
   const lastClickTime = useRef(0);
 
   useEffect(() => {
@@ -49,12 +54,18 @@ const QuoteTable: React.FC<QuoteTableProps> = ({ type }) => {
   }, [total]);
 
   useEffect(() => {
+    const values = searchForm.getFieldsValue();
     fetchQuotes({
       page: pagination.current,
       pageSize: pagination.pageSize,
       type,
+      quoteName: values.quoteName,
+      customerName: values.customerName,
+      sorters: sorters
+        .filter((s) => s.order)
+        .map((s) => ({ field: s.field as string, order: s.order as string })),
     });
-  }, [fetchQuotes, pagination.current, pagination.pageSize, type]);
+  }, [fetchQuotes, pagination.current, pagination.pageSize, sorters, type]);
 
   const handleSearch = () => {
     const values = searchForm.getFieldsValue();
@@ -65,11 +76,20 @@ const QuoteTable: React.FC<QuoteTableProps> = ({ type }) => {
       type,
       quoteName: values.quoteName,
       customerName: values.customerName,
+      sorters: sorters
+        .filter((s) => s.order)
+        .map((s) => ({ field: s.field as string, order: s.order as string })),
     });
   };
 
-  const handleTableChange = (p: TablePaginationConfig) => {
+  const handleTableChange = (
+    p: TablePaginationConfig,
+    _filters: any,
+    sorter: SorterResult<QuoteTableItem> | SorterResult<QuoteTableItem>[]
+  ) => {
     setPagination(p);
+    const sorterArr = Array.isArray(sorter) ? sorter : [sorter];
+    setSorters(sorterArr as SorterResult<QuoteTableItem>[]);
     const values = searchForm.getFieldsValue();
     fetchQuotes({
       page: p.current,
@@ -77,6 +97,9 @@ const QuoteTable: React.FC<QuoteTableProps> = ({ type }) => {
       type,
       quoteName: values.quoteName,
       customerName: values.customerName,
+      sorters: sorterArr
+        .filter((s) => s.order)
+        .map((s) => ({ field: s.field as string, order: s.order as string })),
     });
   };
 
@@ -101,14 +124,14 @@ const QuoteTable: React.FC<QuoteTableProps> = ({ type }) => {
       dataIndex: "quoteId",
       key: "quoteId",
       width: 80,
-      sorter: (a, b) => a.quoteId.localeCompare(b.quoteId),
+      sorter: { multiple: 1 },
     },
     {
       title: "订单编号",
       dataIndex: "orderId",
       key: "orderId",
       width: 80,
-      sorter: (a, b) => (a.orderId || "").localeCompare(b.orderId || ""),
+      sorter: { multiple: 2 },
     },
     {
       title: "报价名称",
@@ -122,15 +145,14 @@ const QuoteTable: React.FC<QuoteTableProps> = ({ type }) => {
       dataIndex: "customerName",
       key: "customerName",
       width: 150,
-      sorter: (a, b) => a.customerName.localeCompare(b.customerName),
+      sorter: { multiple: 3 },
     },
     {
       title: "报价日期",
       dataIndex: "quoteTime",
       key: "quoteTime",
       width: 120,
-      sorter: (a, b) =>
-        new Date(a.quoteTime).getTime() - new Date(b.quoteTime).getTime(),
+      sorter: { multiple: 4 },
       render: (date: Date) => new Date(date).toLocaleDateString(),
     },
     {
@@ -138,8 +160,7 @@ const QuoteTable: React.FC<QuoteTableProps> = ({ type }) => {
       dataIndex: "createdAt",
       key: "createdAt",
       width: 180,
-      sorter: (a, b) =>
-        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+      sorter: { multiple: 5 },
       render: (date: string) => dayjs(date).format("YYYY-MM-DD HH:mm:ss"),
     },
     {
@@ -217,7 +238,7 @@ const QuoteTable: React.FC<QuoteTableProps> = ({ type }) => {
       dataIndex: "creatorId",
       key: "creatorId",
       width: 120,
-      sorter: (a, b) => a.creatorId.localeCompare(b.creatorId),
+      sorter: { multiple: 6 },
       render: (creatorId: string) =>
         (creatorId && <MemberAvatar id={creatorId} />) || "-",
     },

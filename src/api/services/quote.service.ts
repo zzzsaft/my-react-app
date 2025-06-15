@@ -52,9 +52,14 @@ export const QuoteService = {
     type?: string;
     quoteName?: string;
     customerName?: string;
+    sorters?: { field: string; order: string }[];
   }) {
+    const { sorters, ...rest } = params || {};
+    const sortParam = sorters
+      ?.map((s) => `${s.field}:${s.order}`)
+      .join(",");
     const quote = await apiClient.get("/quote/get", {
-      params,
+      params: { ...rest, sort: sortParam },
     });
     return quote.data as { list: Quote[]; total: number };
   },
