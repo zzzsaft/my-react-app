@@ -86,9 +86,12 @@ const Row: React.FC<RowProps> = (props) => {
 };
 
 interface ResizableTitleProps
-  extends React.HTMLAttributes<HTMLTableCellElement> {
+  extends Omit<React.HTMLAttributes<HTMLTableCellElement>, "onResize"> {
   width?: number;
-  onResize?: (e: React.SyntheticEvent, data: { size: { width: number } }) => void;
+  onResize?: (
+    e: React.SyntheticEvent,
+    data: { size: { width: number } }
+  ) => void;
 }
 
 const ResizableTitle: React.FC<ResizableTitleProps> = ({
@@ -154,7 +157,8 @@ export function SortableTable<
   }, [columns]);
 
   const handleResizeColumn =
-    (index: number) => (_: any, { size }: { size: { width: number } }) => {
+    (index: number) =>
+    (_: any, { size }: { size: { width: number } }) => {
       setColState((cols) => {
         const next = [...cols];
         next[index] = { ...next[index], width: size.width };
@@ -166,11 +170,12 @@ export function SortableTable<
     () =>
       colState.map((col, index) => ({
         ...col,
-        onHeaderCell: (column: any) => ({
-          width: column.width,
-          onResize: handleResizeColumn(index),
-        }),
-      })),
+        onHeaderCell: (column: any) =>
+          ({
+            width: column.width,
+            onResize: handleResizeColumn(index),
+          } as ResizableTitleProps),
+      })) as ColumnsType<T>,
     [colState]
   );
   const handleDragEnd = ({ active, over }: DragEndEvent) => {

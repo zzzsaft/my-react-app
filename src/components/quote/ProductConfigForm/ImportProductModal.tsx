@@ -12,7 +12,6 @@ import { useTemplateStore } from "../../../store/useTemplateStore";
 import TemplateTable from "../../template/TemplateTable";
 import TemplateCreateModal from "../../template/TemplateCreateModal";
 import TemplateConfigModal from "../../template/TemplateConfigModal";
-import { QuoteItem } from "../../../types/types";
 
 interface ImportProductModalProps {
   open: boolean;
@@ -37,8 +36,9 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
   const [loading, setLoading] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
   const [configOpen, setConfigOpen] = useState(false);
-  const [currentTpl, setCurrentTpl] =
-    useState<QuoteTemplate | QuoteItem | null>(null);
+  const [currentTpl, setCurrentTpl] = useState<
+    QuoteTemplate | QuoteItem | null
+  >(null);
   const {
     templates,
     loading: tplLoading,
@@ -141,12 +141,13 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
                     selectedId={selectedTemplate?.id}
                     onSelect={setSelectedTemplate}
                     onDoubleClick={(tpl) => {
+                      console.log(tpl);
                       setCurrentTpl(tpl);
                       setConfigOpen(true);
                     }}
                     showType={false}
                   />
-                  {selectedTemplate && (
+                  {/* {selectedTemplate && (
                     <div style={{ marginTop: 16 }}>
                       <ProductConfigurationForm
                         quoteId={0}
@@ -157,7 +158,7 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
                         quoteTemplate={selectedTemplate}
                       />
                     </div>
-                  )}
+                  )} */}
                 </div>
               ),
             },

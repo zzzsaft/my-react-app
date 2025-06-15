@@ -13,8 +13,10 @@ interface TemplateConfigModalProps {
   onClose: () => void;
 }
 
-const isQuoteTemplate = (tpl: QuoteTemplate | QuoteItem): tpl is QuoteTemplate => {
-  return (tpl as QuoteTemplate).creatorId !== undefined;
+const isQuoteTemplate = (
+  tpl: QuoteTemplate | QuoteItem
+): tpl is QuoteTemplate => {
+  return (tpl as QuoteTemplate)?.creatorId !== undefined;
 };
 
 const TemplateConfigModal: React.FC<TemplateConfigModalProps> = ({
@@ -45,7 +47,7 @@ const TemplateConfigModal: React.FC<TemplateConfigModalProps> = ({
       open={open}
       width={800}
       onCancel={onClose}
-      destroyOnClose
+      destroyOnHidden
       forceRender
       footer={
         readOnly
@@ -68,11 +70,15 @@ const TemplateConfigModal: React.FC<TemplateConfigModalProps> = ({
       <ProductConfigurationForm
         quoteId={0}
         quoteItem={template as any}
-        formType={(template as any)?.templateType || (template as any)?.formType}
+        formType={
+          (template as any)?.templateType || (template as any)?.formType
+        }
         showPrice={false}
         readOnly={readOnly}
         ref={readOnly ? undefined : (formRef as any)}
-        quoteTemplate={isQuoteTemplate(template as any) ? (template as any) : undefined}
+        quoteTemplate={
+          isQuoteTemplate(template as any) ? (template as any) : undefined
+        }
       />
     </Modal>
   );
