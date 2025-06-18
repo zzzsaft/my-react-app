@@ -7,7 +7,7 @@ const TodoQuoteTablePage: React.FC = () => {
     <>
       <Typography.Title level={3}>代办任务</Typography.Title>
       <QuoteTable type="history" status="checking" />
-      <QuoteTable type="oa" approvalNode="项目支持,报价单" />
+      {/* <QuoteTable type="oa" approvalNode="项目支持,报价单" /> */}
     </>
   );
 };

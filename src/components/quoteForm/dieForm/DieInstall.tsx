@@ -202,6 +202,7 @@ export const DieInstall = () => {
             <Radio.Group>
               <Radio value="插头">插头</Radio>
               <Radio value="金属软线">金属软线</Radio>
+              <Radio value="无">无</Radio>
             </Radio.Group>
           </Form.Item>
         </Col>

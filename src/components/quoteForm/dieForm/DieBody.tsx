@@ -18,6 +18,7 @@ const LOWER_LIP_OPTIONS = {
 const WIDTH_ADJUSTMENT_OPTIONS = {
   无挡块: ["不可调节"],
   外挡: [
+    "外挡（技术设计）",
     "开槽外挡",
     "挂钩外挡",
     "手动丝杆外挡",
