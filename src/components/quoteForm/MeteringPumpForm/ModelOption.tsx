@@ -186,15 +186,21 @@ export const ModelOption = () => {
                         />
                       </Form.Item>
                     </Col>
-                    <Col xs={24} md={12}>
-                      <Form.Item
-                        label="泵体加热电压"
-                        name="pumpHeatingVoltage"
-                        rules={[{ required: true, message: "请选择加热方式" }]}
-                      >
-                        <PowerInput />
-                      </Form.Item>
-                    </Col>
+                    <Form.Item noStyle dependencies={["pumpHeatingType"]}>
+                      {({ getFieldValue }) =>
+                        !getFieldValue("pumpHeatingType")?.includes("油加温") ? (
+                          <Col xs={24} md={12}>
+                            <Form.Item
+                              label="泵体加热电压"
+                              name="pumpHeatingVoltage"
+                              rules={[{ required: true, message: "请选择加热方式" }]}
+                            >
+                              <PowerInput />
+                            </Form.Item>
+                          </Col>
+                        ) : null
+                      }
+                    </Form.Item>
                     <Col xs={12} md={12}>
                       <Form.Item
                         label="紧固件（螺丝）"

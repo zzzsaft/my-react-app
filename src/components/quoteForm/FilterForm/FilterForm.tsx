@@ -152,15 +152,21 @@ const FilterForm = forwardRef(
                 unit="℃"
               />
             </Col>
-            <Col xs={24} md={12}>
-              <Form.Item
-                label="电压"
-                name="voltage"
-                rules={[{ required: true, message: "请选择电压" }]}
-              >
-                <PowerInput />
-              </Form.Item>
-            </Col>
+            <Form.Item noStyle dependencies={["heatingMethod"]}>
+              {({ getFieldValue }) =>
+                !getFieldValue("heatingMethod")?.includes("油加温") ? (
+                  <Col xs={24} md={12}>
+                    <Form.Item
+                      label="电压"
+                      name="voltage"
+                      rules={[{ required: true, message: "请选择电压" }]}
+                    >
+                      <PowerInput />
+                    </Form.Item>
+                  </Col>
+                ) : null
+              }
+            </Form.Item>
             <Col xs={12} md={6}>
               <Form.Item label="过滤器功率" name="power">
                 <InputNumber

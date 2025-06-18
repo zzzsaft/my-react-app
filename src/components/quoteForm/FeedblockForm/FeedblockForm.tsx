@@ -303,15 +303,21 @@ const FeedblockForm = forwardRef(
                 <HeatingMethodSelect multiple />
               </Form.Item>
             </Col>
-            <Col xs={24} md={12}>
-              <Form.Item
-                name="power"
-                label="电压"
-                rules={[{ required: true, message: "请输入电压" }]}
-              >
-                <PowerInput />
-              </Form.Item>
-            </Col>
+            <Form.Item noStyle dependencies={["heatingMethod"]}>
+              {({ getFieldValue }) =>
+                !getFieldValue("heatingMethod")?.includes("油加温") ? (
+                  <Col xs={24} md={12}>
+                    <Form.Item
+                      name="power"
+                      label="电压"
+                      rules={[{ required: true, message: "请输入电压" }]}
+                    >
+                      <PowerInput />
+                    </Form.Item>
+                  </Col>
+                ) : null
+              }
+            </Form.Item>
             <Col xs={12} md={6}>
               <Form.Item
                 name="heatingPower"
