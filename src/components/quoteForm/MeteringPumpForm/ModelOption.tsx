@@ -20,6 +20,7 @@ import { useProductStore } from "@/store/useProductStore";
 import ExtruderForm from "../formComponents/ExtruderForm";
 import { HeatingMethodSelect } from "../formComponents/HeatingMethodInput";
 import { PowerInput } from "../formComponents/PowerInput";
+import PowerFormItem from "../formComponents/PowerFormItem";
 import { inputRule } from "@/util/rules";
 
 const tagsData = ["泵体", "传动系统", "控制系统"];
@@ -186,15 +187,12 @@ export const ModelOption = () => {
                         />
                       </Form.Item>
                     </Col>
-                    <Col xs={24} md={12}>
-                      <Form.Item
-                        label="泵体加热电压"
-                        name="pumpHeatingVoltage"
-                        rules={[{ required: true, message: "请选择加热方式" }]}
-                      >
-                        <PowerInput />
-                      </Form.Item>
-                    </Col>
+                    <PowerFormItem
+                      dependencyName="pumpHeatingType"
+                      name="pumpHeatingVoltage"
+                      label="泵体加热电压"
+                      rules={[{ required: true, message: "请选择加热方式" }]}
+                    />
                     <Col xs={12} md={12}>
                       <Form.Item
                         label="紧固件（螺丝）"
