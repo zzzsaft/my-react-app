@@ -167,6 +167,20 @@ const DieForm = forwardRef(
       if (!result.result) form.setFieldValue("thicknessGauge", true);
     };
 
+    const handleLipCount = (value: number) => {
+      const count = value ?? 1;
+      if (count <= 1) {
+        form.setFieldValue("lipThicknessRange", []);
+        return;
+      }
+      const list = (form.getFieldValue("lipThicknessRange") || []) as any[];
+      const next = Array.from({ length: count }, () => ({}));
+      form.setFieldValue(
+        "lipThicknessRange",
+        list.slice(0, count).concat(next.slice(list.length))
+      );
+    };
+
     const fieldHandlers: Record<string, (value: any) => void | Promise<void>> =
       {
         dieWidth: handleDieWidth,
@@ -177,6 +191,7 @@ const DieForm = forwardRef(
         smartRegulator: handleSmartRegulator,
         haveThermalInsulation: handleThermalInsulation,
         thicknessGauge: handleThicknessGauge,
+        lipCount: handleLipCount,
       };
 
     const handleFieldsChange = async (changedFields: any) => {
