@@ -74,11 +74,21 @@ export const TemperatureControl = () => {
             ) : null;
           }}
         </Form.Item>
-        <Col xs={24} sm={12}>
-          <Form.Item name="powerInput" label="加热电压" rules={powerInputRules}>
-            <PowerInput />
-          </Form.Item>
-        </Col>
+        <Form.Item noStyle dependencies={["heatingMethod"]}>
+          {({ getFieldValue }) =>
+            !getFieldValue("heatingMethod")?.includes("油加温") ? (
+              <Col xs={24} sm={12}>
+                <Form.Item
+                  name="powerInput"
+                  label="加热电压"
+                  rules={powerInputRules}
+                >
+                  <PowerInput />
+                </Form.Item>
+              </Col>
+            ) : null
+          }
+        </Form.Item>
         <Col xs={12} sm={12}>
           <Form.Item
             name="每区电压"
