@@ -11,6 +11,7 @@ import {
 } from "antd";
 import { powerInputRules } from "@/util/rules";
 import { PowerInput } from "../formComponents/PowerInput";
+import PowerFormItem from "../formComponents/PowerFormItem";
 import { HeatingMethodSelect } from "../formComponents/HeatingMethodInput";
 import { useState } from "react";
 import { TooltipLabel } from "@/components/general/TooltipLabel";
@@ -74,21 +75,13 @@ export const TemperatureControl = () => {
             ) : null;
           }}
         </Form.Item>
-        <Form.Item noStyle dependencies={["heatingMethod"]}>
-          {({ getFieldValue }) =>
-            !getFieldValue("heatingMethod")?.includes("油加温") ? (
-              <Col xs={24} sm={12}>
-                <Form.Item
-                  name="powerInput"
-                  label="加热电压"
-                  rules={powerInputRules}
-                >
-                  <PowerInput />
-                </Form.Item>
-              </Col>
-            ) : null
-          }
-        </Form.Item>
+        <PowerFormItem
+          dependencyName="heatingMethod"
+          name="powerInput"
+          label="加热电压"
+          rules={powerInputRules}
+          colProps={{ xs: 24, sm: 12 }}
+        />
         <Col xs={12} sm={12}>
           <Form.Item
             name="每区电压"

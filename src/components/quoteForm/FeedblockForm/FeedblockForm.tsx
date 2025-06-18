@@ -27,6 +27,7 @@ import LevelInputNumber, {
 } from "@/components/general/LevelInputNumber";
 import ExtruderForm from "../formComponents/ExtruderForm";
 import { PowerInput } from "../formComponents/PowerInput";
+import PowerFormItem from "../formComponents/PowerFormItem";
 import { HeatingMethodSelect } from "../formComponents/HeatingMethodInput";
 import ProFormListWrapper from "../formComponents/ProFormListWrapper";
 import { CustomSelect } from "@/components/general/CustomSelect";
@@ -303,21 +304,12 @@ const FeedblockForm = forwardRef(
                 <HeatingMethodSelect multiple />
               </Form.Item>
             </Col>
-            <Form.Item noStyle dependencies={["heatingMethod"]}>
-              {({ getFieldValue }) =>
-                !getFieldValue("heatingMethod")?.includes("油加温") ? (
-                  <Col xs={24} md={12}>
-                    <Form.Item
-                      name="power"
-                      label="电压"
-                      rules={[{ required: true, message: "请输入电压" }]}
-                    >
-                      <PowerInput />
-                    </Form.Item>
-                  </Col>
-                ) : null
-              }
-            </Form.Item>
+            <PowerFormItem
+              dependencyName="heatingMethod"
+              name="power"
+              label="电压"
+              rules={[{ required: true, message: "请输入电压" }]}
+            />
             <Col xs={12} md={6}>
               <Form.Item
                 name="heatingPower"

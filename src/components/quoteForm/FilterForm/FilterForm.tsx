@@ -4,6 +4,7 @@ import ProForm from "@ant-design/pro-form";
 import { forwardRef, useEffect, useImperativeHandle } from "react";
 
 import { PowerInput } from "../formComponents/PowerInput";
+import PowerFormItem from "../formComponents/PowerFormItem";
 import { HeatingMethodSelect } from "../formComponents/HeatingMethodInput";
 import { useProductStore } from "@/store/useProductStore";
 import { useQuoteStore } from "@/store/useQuoteStore";
@@ -152,21 +153,13 @@ const FilterForm = forwardRef(
                 unit="℃"
               />
             </Col>
-            <Form.Item noStyle dependencies={["heatingMethod"]}>
-              {({ getFieldValue }) =>
-                !getFieldValue("heatingMethod")?.includes("油加温") ? (
-                  <Col xs={24} md={12}>
-                    <Form.Item
-                      label="电压"
-                      name="voltage"
-                      rules={[{ required: true, message: "请选择电压" }]}
-                    >
-                      <PowerInput />
-                    </Form.Item>
-                  </Col>
-                ) : null
-              }
-            </Form.Item>
+
+            <PowerFormItem
+              dependencyName="heatingMethod"
+              name="voltage"
+              label="电压"
+              rules={[{ required: true, message: "请选择电压" }]}
+            />
             <Col xs={12} md={6}>
               <Form.Item label="过滤器功率" name="power">
                 <InputNumber
