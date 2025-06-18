@@ -153,6 +153,7 @@ const FilterForm = forwardRef(
                 unit="℃"
               />
             </Col>
+
             <PowerFormItem
               dependencyName="heatingMethod"
               name="voltage"

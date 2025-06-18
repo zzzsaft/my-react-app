@@ -38,7 +38,11 @@ interface QuoteTableItem {
   createdAt: string;
 }
 
-const QuoteTable: React.FC<QuoteTableProps> = ({ type, status, approvalNode }) => {
+const QuoteTable: React.FC<QuoteTableProps> = ({
+  type,
+  status,
+  approvalNode,
+}) => {
   const { quotes, total, loading, fetchQuotes, fetchQuote } = useQuoteStore();
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedQuote, setSelectedQuote] = useState<any>();
@@ -120,6 +124,8 @@ const QuoteTable: React.FC<QuoteTableProps> = ({ type, status, approvalNode }) =
 
   const handleRowClick = useCallback(
     async (record: QuoteTableItem) => {
+      console.log(record);
+
       if (isTextSelecting()) return;
       const now = Date.now();
       if (now - lastClickTime.current < 1000) return;
@@ -239,7 +245,8 @@ const QuoteTable: React.FC<QuoteTableProps> = ({ type, status, approvalNode }) =
             dataIndex: "currentApprover",
             key: "currentApprover",
             width: 120,
-            render: (id: string) => (id && <MemberAvatar id={id} />) || "-",
+            render: (id: string) =>
+              (id && id != "" && <MemberAvatar id={id} />) || "-",
           },
         ]),
     {

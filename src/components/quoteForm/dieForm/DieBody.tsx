@@ -1,8 +1,10 @@
-import { ProCard } from "@ant-design/pro-components";
-import { Badge, Col, Form, Radio, Row } from "antd";
+import { ProCard, ProFormDependency } from "@ant-design/pro-components";
+import { Badge, Col, Form, Radio, Row, InputNumber } from "antd";
 import { MATERIAL_OPTIONS } from "@/util/MATERIAL";
 import { CustomSelect } from "@/components/general/CustomSelect";
 import { AutoCompleteInput } from "@/components/general/AutoCompleteInput";
+import { IntervalInputFormItem } from "@/components/general/IntervalInput";
+import ProFormListWrapper from "../formComponents/ProFormListWrapper";
 
 // 常量定义
 const UPPER_LIP_OPTIONS = {
@@ -18,6 +20,7 @@ const LOWER_LIP_OPTIONS = {
 const WIDTH_ADJUSTMENT_OPTIONS = {
   无挡块: ["不可调节"],
   外挡: [
+    "外挡（技术设计）",
     "开槽外挡",
     "挂钩外挡",
     "手动丝杆外挡",
@@ -104,6 +107,40 @@ export const DieBody = () => {
           >
             <CustomSelect initialGroups={LOWER_LIP_OPTIONS} dropdown={false} />
           </Form.Item>
+        </Col>
+        <Col xs={12} md={6}>
+          <Form.Item
+            name="lipCount"
+            label="模唇数量"
+            rules={[{ required: true, message: "请输入模唇数量" }]}
+            initialValue={1}
+          >
+            <InputNumber min={1} style={{ width: "100%" }} />
+          </Form.Item>
+        </Col>
+        <Col xs={24} md={24}>
+          <ProFormDependency name={["lipCount"]}>
+            {({ lipCount }) =>
+              lipCount > 1 ? (
+                <ProFormListWrapper
+                  name="lipThicknessRange"
+                  label="模唇厚度范围"
+                  canCreate={false}
+                  canDelete={false}
+                  min={lipCount}
+                  max={lipCount}
+                  isHorizontal
+                  formItems={
+                    <IntervalInputFormItem
+                      name={[]}
+                      rules={[{ required: true, message: "请输入厚度范围" }]}
+                      unit="mm"
+                    />
+                  }
+                />
+              ) : null
+            }
+          </ProFormDependency>
         </Col>
         <Col xs={12} md={6}>
           {/* 4. 微调间距 */}

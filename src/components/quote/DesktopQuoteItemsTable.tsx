@@ -79,6 +79,7 @@ const DesktopQuoteItemsTable: React.FC<QuoteItemsTableProps> = ({
       setCurrentItem(record);
       setOpen(true);
     }
+    console.log(record);
   };
 
   // const expandedRowKeys = useMemo(
