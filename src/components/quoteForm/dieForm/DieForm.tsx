@@ -85,7 +85,21 @@ const DieForm = forwardRef(
       const ratioList = (form.getFieldValue("compositeRatio") ||
         []) as LevelValue[];
       const base = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-      const len = value.length;
+      const len = form.getFieldValue("runnerNumber") || value.length;
+      const ratioNext = Array.from({ length: len }, (_, i) => ({
+        level: base[i],
+      }));
+      form.setFieldValue(
+        "compositeRatio",
+        ratioList.slice(0, len).concat(ratioNext.slice(ratioList.length))
+      );
+    };
+
+    const handleRunnerNumber = (value: number) => {
+      const ratioList = (form.getFieldValue("compositeRatio") ||
+        []) as LevelValue[];
+      const base = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      const len = value;
       const ratioNext = Array.from({ length: len }, (_, i) => ({
         level: base[i],
       }));
@@ -158,6 +172,7 @@ const DieForm = forwardRef(
         dieWidth: handleDieWidth,
         heatingZones: handleHeatingZones,
         compositeStructure: handleCompositeStructure,
+        runnerNumber: handleRunnerNumber,
         hasCart: handleHasCart,
         smartRegulator: handleSmartRegulator,
         haveThermalInsulation: handleThermalInsulation,
