@@ -203,8 +203,8 @@ export const Product = () => {
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={24}>
-                    <ProFormDependency name={["compositeStructure"]}>
-                      {({ compositeStructure }) => (
+                    <ProFormDependency name={["compositeStructure", "runnerNumber"]}>
+                      {({ compositeStructure, runnerNumber }) => (
                         <ProFormListWrapper
                           name="compositeRatio"
                           label="每层复合比例"
