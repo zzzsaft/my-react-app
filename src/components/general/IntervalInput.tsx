@@ -9,6 +9,7 @@ import { Form, Input } from "antd";
 import type { FormItemProps } from "antd";
 import { intervalInputRules } from "@/util/rules";
 import type { IntervalValue } from "@/types/types";
+import ProForm from "@ant-design/pro-form";
 
 const DELIMITER = "~";
 
@@ -273,7 +274,7 @@ const IntervalInputFormItem: React.FC<NumberRangeInputFormItemProps> = ({
   ...formItemProps
 }) => {
   return (
-    <Form.Item
+    <ProForm.Item
       {...formItemProps}
       rules={[
         ...(formItemProps.rules || []),
@@ -289,7 +290,7 @@ const IntervalInputFormItem: React.FC<NumberRangeInputFormItemProps> = ({
         unit={unit}
         readOnly={readOnly}
       />
-    </Form.Item>
+    </ProForm.Item>
   );
 };
 

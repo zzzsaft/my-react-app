@@ -46,6 +46,7 @@ const TemplateConfigModal: React.FC<TemplateConfigModalProps> = ({
     <Modal
       open={open}
       width={800}
+      zIndex={2000}
       onCancel={onClose}
       destroyOnHidden
       forceRender

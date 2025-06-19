@@ -141,24 +141,11 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
                     selectedId={selectedTemplate?.id}
                     onSelect={setSelectedTemplate}
                     onDoubleClick={(tpl) => {
-                      console.log(tpl);
                       setCurrentTpl(tpl);
                       setConfigOpen(true);
                     }}
                     showType={false}
                   />
-                  {/* {selectedTemplate && (
-                    <div style={{ marginTop: 16 }}>
-                      <ProductConfigurationForm
-                        quoteId={0}
-                        quoteItem={selectedTemplate as any}
-                        formType={selectedTemplate.templateType}
-                        showPrice={false}
-                        readOnly={true}
-                        quoteTemplate={selectedTemplate}
-                      />
-                    </div>
-                  )} */}
                 </div>
               ),
             },
@@ -206,16 +193,6 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
                       },
                     ]}
                   />
-                  {selected && (
-                    <div style={{ marginTop: 16 }}>
-                      <ProductConfigurationForm
-                        quoteId={0}
-                        quoteItem={selected.item}
-                        showPrice={false}
-                        readOnly={true}
-                      />
-                    </div>
-                  )}
                 </div>
               ),
             },

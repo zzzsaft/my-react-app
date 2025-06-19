@@ -63,10 +63,10 @@ const ProductConfigurationForm = forwardRef(
             ? "自动"
             : "手动";
         const runnerNumber =
-          modelFormRef.current?.form.getFieldValue("runnerNumber");
+          modelFormRef.current?.form.getFieldValue("runnerNumber") ?? 0;
         const runnerStr =
           runnerNumber && runnerNumber > 1 ? `${runnerNumber}层模内共挤` : "";
-        const final = finalProduct;
+        const final = finalProduct ?? "";
         return `${widthStr}${mat}${runnerStr}${final}${manualOrAuto}模头`;
       }
 

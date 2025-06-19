@@ -108,40 +108,7 @@ export const DieBody = () => {
             <CustomSelect initialGroups={LOWER_LIP_OPTIONS} dropdown={false} />
           </Form.Item>
         </Col>
-        <Col xs={12} md={6}>
-          <Form.Item
-            name="lipCount"
-            label="模唇数量"
-            rules={[{ required: true, message: "请输入模唇数量" }]}
-            initialValue={1}
-          >
-            <InputNumber min={1} style={{ width: "100%" }} />
-          </Form.Item>
-        </Col>
-        <Col xs={24} md={24}>
-          <ProFormDependency name={["lipCount"]}>
-            {({ lipCount }) =>
-              lipCount > 1 ? (
-                <ProFormListWrapper
-                  name="lipThicknessRange"
-                  label="模唇厚度范围"
-                  canCreate={false}
-                  canDelete={false}
-                  min={lipCount}
-                  max={lipCount}
-                  isHorizontal
-                  formItems={
-                    <IntervalInputFormItem
-                      name={[]}
-                      rules={[{ required: true, message: "请输入厚度范围" }]}
-                      unit="mm"
-                    />
-                  }
-                />
-              ) : null
-            }
-          </ProFormDependency>
-        </Col>
+
         <Col xs={12} md={6}>
           {/* 4. 微调间距 */}
           <Form.Item
@@ -202,6 +169,41 @@ export const DieBody = () => {
               // disabled={true}
             />
           </Form.Item>
+        </Col>
+        <Col xs={12} md={6}>
+          <Form.Item
+            name="lipCount"
+            label="模唇数量"
+            rules={[{ required: true, message: "请输入模唇数量" }]}
+            initialValue={1}
+          >
+            <InputNumber min={1} max={5} style={{ width: "100%" }} />
+          </Form.Item>
+        </Col>
+        <Col xs={24} md={24}>
+          <ProFormDependency name={["lipCount"]}>
+            {({ lipCount }) =>
+              lipCount > 1 ? (
+                <ProFormListWrapper
+                  name="lipThicknessRange"
+                  rules={[{ require: true }]}
+                  label="模唇厚度范围"
+                  canCreate={false}
+                  canDelete={false}
+                  min={lipCount}
+                  max={lipCount}
+                  isHorizontal
+                  formItems={
+                    <IntervalInputFormItem
+                      name={[]}
+                      rules={[{ required: true, message: "请输入厚度范围" }]}
+                      unit="mm"
+                    />
+                  }
+                />
+              ) : null
+            }
+          </ProFormDependency>
         </Col>
         <Col xs={12} md={8}>
           <Form.Item
