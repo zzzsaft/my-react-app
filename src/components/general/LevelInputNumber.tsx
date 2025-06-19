@@ -10,7 +10,7 @@ export interface LevelValue {
 export interface LevelInputNumberProps
   extends Omit<
     IntervalInputProps,
-    "value" | "onChange" | "addonBefore" | "unit"
+    "value" | "onChange" | "addonBefore" | "unit" | "units"
   > {
   value?: LevelValue;
   onChange?: (val: LevelValue) => void;
