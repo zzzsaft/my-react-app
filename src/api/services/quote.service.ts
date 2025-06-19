@@ -40,9 +40,10 @@ export const QuoteService = {
     });
     return quote.data;
   },
-  async updateQuoteItem(quote: Quote) {
+  async updateQuoteItem(quote: Quote, submit = false) {
     const result = await apiClient.post("/quote/update", {
       quote,
+      submit,
     });
     return result.data;
   },
@@ -54,6 +55,7 @@ export const QuoteService = {
     customerName?: string;
     status?: string;
     approvalNode?: string;
+    currentApprover?: string;
     sorters?: { field: string; order: string }[];
   }) {
     const { sorters, ...rest } = params || {};
