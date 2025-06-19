@@ -18,6 +18,7 @@ interface QuoteTableProps {
   type: string; // 'history' | 'oa'
   status?: string;
   approvalNode?: string;
+  currentApprover?: string;
 }
 
 interface QuoteTableItem {
@@ -42,6 +43,7 @@ const QuoteTable: React.FC<QuoteTableProps> = ({
   type,
   status,
   approvalNode,
+  currentApprover,
 }) => {
   const { quotes, total, loading, fetchQuotes, fetchQuote } = useQuoteStore();
   const [modalVisible, setModalVisible] = useState(false);
@@ -68,6 +70,7 @@ const QuoteTable: React.FC<QuoteTableProps> = ({
       customerName: values.customerName,
       status,
       approvalNode,
+      currentApprover,
       sorters: sorters
         .filter((s) => s.order)
         .map((s) => ({ field: s.field as string, order: s.order as string })),
@@ -80,6 +83,7 @@ const QuoteTable: React.FC<QuoteTableProps> = ({
     type,
     status,
     approvalNode,
+    currentApprover,
   ]);
 
   const handleSearch = () => {
@@ -93,6 +97,7 @@ const QuoteTable: React.FC<QuoteTableProps> = ({
       customerName: values.customerName,
       status,
       approvalNode,
+      currentApprover,
       sorters: sorters
         .filter((s) => s.order)
         .map((s) => ({ field: s.field as string, order: s.order as string })),
@@ -116,6 +121,7 @@ const QuoteTable: React.FC<QuoteTableProps> = ({
       customerName: values.customerName,
       status,
       approvalNode,
+      currentApprover,
       sorters: sorterArr
         .filter((s) => s.order)
         .map((s) => ({ field: s.field as string, order: s.order as string })),

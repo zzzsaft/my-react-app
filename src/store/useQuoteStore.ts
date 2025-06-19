@@ -65,6 +65,7 @@ interface QuotesStore {
     customerName?: string;
     status?: string;
     approvalNode?: string;
+    currentApprover?: string;
     sorters?: { field: string; order: string }[];
   }) => Promise<void>;
   fetchQuote: (quoteId: number) => Promise<Quote>;
@@ -100,7 +101,7 @@ interface QuotesStore {
     updateConfig: any
   ) => void;
   setQuoteItem: (quoteId: number, items: QuoteItem[]) => void;
-  saveQuote: (quoteId: number) => Promise<void>;
+  saveQuote: (quoteId: number, submit?: boolean) => Promise<void>;
   fetchPrintUrls: (quoteId: number) => Promise<void>;
   findItemById: (
     items: QuoteItem[],
@@ -395,11 +396,11 @@ export const useQuoteStore = create<QuotesStore>()(
       return undefined;
     },
 
-    saveQuote: async (quoteId) => {
+    saveQuote: async (quoteId, submit = false) => {
       set({ loading: { ...get().loading, saveQuote: true } });
       const quote = get().quotes.find((quote) => quoteId == quote.id);
       if (quote) {
-        await QuoteService.updateQuoteItem(quote);
+        await QuoteService.updateQuoteItem(quote, submit);
         set((state) => {
           state.dirtyQuotes[quoteId] = false;
         });
