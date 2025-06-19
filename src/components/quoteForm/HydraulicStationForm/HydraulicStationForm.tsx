@@ -55,12 +55,22 @@ const HydraulicStationForm = forwardRef(
         <Row gutter={16}>
           <Col xs={12} md={6}>
             <Form.Item
-              label="类型"
-              name="type"
-              initialValue="油泵"
-              rules={[{ required: true, message: "请选择类型" }]}
+              label="油泵配置"
+              name="pumpConfig"
+              initialValue="含油泵"
+              rules={[{ required: true, message: "请选择油泵配置" }]}
             >
-              <Segmented options={["油泵", "蓄能器"]} />
+              <Segmented options={["含油泵", "不含油泵"]} />
+            </Form.Item>
+          </Col>
+          <Col xs={12} md={6}>
+            <Form.Item
+              label="蓄能器配置"
+              name="accumulatorConfig"
+              initialValue="含蓄能器"
+              rules={[{ required: true, message: "请选择蓄能器配置" }]}
+            >
+              <Segmented options={["含蓄能器", "不含蓄能器"]} />
             </Form.Item>
           </Col>
           <Col xs={12} md={6}>
