@@ -5,7 +5,7 @@ import React, {
   forwardRef,
   useImperativeHandle,
 } from "react";
-import { Form, Input } from "antd";
+import { Form, Input, Select } from "antd";
 import type { FormItemProps } from "antd";
 import { intervalInputRules } from "@/util/rules";
 import type { IntervalValue } from "@/types/types";
@@ -20,6 +20,8 @@ export interface IntervalInputProps {
   addonBefore?: string | null;
   /** Display unit inside the input */
   unit?: string;
+  /** available units to choose from */
+  units?: string[];
   disabled?: boolean;
   /** When true, user cannot modify the value but it remains selectable */
   readOnly?: boolean;
@@ -44,6 +46,7 @@ const IntervalInput1: React.FC<IntervalInputProps> = forwardRef<
       addonAfter = null,
       addonBefore = null,
       unit,
+      units,
       extra = false,
       style,
       decimalPlace = 2,
@@ -51,6 +54,7 @@ const IntervalInput1: React.FC<IntervalInputProps> = forwardRef<
     ref
   ) => {
     const [internalValue, setInternalValue] = useState(value);
+    const [internalUnit, setInternalUnit] = useState(unit ?? units?.[0] ?? "");
     const [isFocused, setIsFocused] = useState(false);
     const inputRef = useRef<any>(null);
     const lastCursorPos = useRef(0);
@@ -74,15 +78,17 @@ const IntervalInput1: React.FC<IntervalInputProps> = forwardRef<
 
     useEffect(() => {
       setInternalValue(value);
-    }, [value]);
+      if (unit !== undefined) setInternalUnit(unit);
+    }, [value, unit]);
 
-    const customOnChange = (newValue: string) => {
+    const customOnChange = (newValue: string, newUnit: string = internalUnit) => {
       if (extra) {
         const e = { target: { value: newValue } };
         onChange?.(e as any);
       } else {
         onChange?.(newValue);
       }
+      setInternalUnit(newUnit);
     };
 
     const formatDisplayValue = (val: string) => {
@@ -90,8 +96,8 @@ const IntervalInput1: React.FC<IntervalInputProps> = forwardRef<
       if (!isFocused && display?.endsWith(DELIMITER)) {
         display = display.slice(0, -1);
       }
-      if (!isFocused && unit) {
-        display += unit;
+      if (!isFocused && (internalUnit || unit)) {
+        display += internalUnit || unit;
       }
       return display;
     };
@@ -213,6 +219,25 @@ const IntervalInput1: React.FC<IntervalInputProps> = forwardRef<
       }
     };
 
+    const addonAfterNode = units && units.length ? (
+      <Select
+        size="small"
+        value={internalUnit}
+        onChange={(val) => {
+          setInternalUnit(val);
+          customOnChange(internalValue, val);
+        }}
+      >
+        {units.map((u) => (
+          <Select.Option key={u} value={u}>
+            {u}
+          </Select.Option>
+        ))}
+      </Select>
+    ) : (
+      addonAfter
+    );
+
     return (
       <Input
         id={id}
@@ -225,7 +250,7 @@ const IntervalInput1: React.FC<IntervalInputProps> = forwardRef<
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
         disabled={disabled}
-        addonAfter={addonAfter}
+        addonAfter={addonAfterNode}
         readOnly={readOnly}
         style={style}
       />
@@ -241,6 +266,7 @@ interface NumberRangeInputFormItemProps extends FormItemProps {
   addonAfter?: string;
   isSecondNumberGreater?: boolean;
   unit?: string;
+  units?: string[];
   readOnly?: boolean;
 }
 
@@ -251,6 +277,7 @@ const IntervalInputFormItem: React.FC<NumberRangeInputFormItemProps> = ({
   addonAfter,
   isSecondNumberGreater = true,
   unit,
+  units,
   readOnly,
   ...formItemProps
 }) => {
@@ -269,6 +296,7 @@ const IntervalInputFormItem: React.FC<NumberRangeInputFormItemProps> = ({
         placeholder={placeholder}
         addonAfter={addonAfter}
         unit={unit}
+        units={units}
         readOnly={readOnly}
       />
     </Form.Item>
