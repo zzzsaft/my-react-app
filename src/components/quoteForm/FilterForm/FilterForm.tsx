@@ -1,7 +1,7 @@
 import { AutoComplete, Col, Form, InputNumber, Radio, Row } from "antd";
 
 import ProForm from "@ant-design/pro-form";
-import { forwardRef, useEffect, useImperativeHandle } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 
 import { PowerInput } from "../formComponents/PowerInput";
 import PowerFormItem from "../formComponents/PowerFormItem";
@@ -27,6 +27,9 @@ const FilterForm = forwardRef(
     ref
   ) => {
     const [form] = Form.useForm();
+    const prevCustomization = useRef<string>(
+      form.getFieldValue("isCustomization") ?? "常规"
+    );
     const filters = useProductStore((state) => state.filter);
     const fetchFilter = useProductStore((state) => state.fetchFilter);
 
@@ -89,15 +92,43 @@ const FilterForm = forwardRef(
       if (!r.result) form.setFieldValue("hydraulicStation", true);
     };
 
+    const updateModel = () => {
+      const isCustomization =
+        form.getFieldValue("isCustomization") === "定制";
+      const wasCustomization = prevCustomization.current === "定制";
+      let model: string = form.getFieldValue("model") ?? "";
+
+      if (wasCustomization && !isCustomization) {
+        // switched from customized to regular, clear model
+        form.setFieldValue("model", undefined);
+      } else {
+        model = model.replace("（定制）", "");
+        if (!model) {
+          form.setFieldValue("model", "");
+        } else {
+          if (isCustomization) model += "（定制）";
+          form.setFieldValue("model", model);
+        }
+      }
+      prevCustomization.current = isCustomization ? "定制" : "常规";
+    };
+
     const handleFieldsChange = async (changed: any) => {
       if (changed.name != null) {
         form.setFieldValue("model", undefined);
       }
+
+      if (changed.isCustomization != null) {
+        updateModel();
+      }
+
       if (changed.model != null) {
+        updateModel();
         const name = form.getFieldValue("name");
+        const model = changed.model.replace("（定制）", "");
 
         const item = filters.find(
-          (f) => f.name === name && f.model === changed.model
+          (f) => f.name === name && f.model === model
         );
 
         if (item) {
