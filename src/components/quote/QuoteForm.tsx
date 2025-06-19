@@ -152,6 +152,7 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
     useQuoteStore();
   const [saveLoading, setSaveLoading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
+  const [submitFlowLoading, setSubmitFlowLoading] = useState(false);
   const [contacts, setContacts] = useState<any[]>([]);
   const [nameOptions, setNameOptions] = useState<
     { value: string; label: string }[]
@@ -285,6 +286,21 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
     { leading: true, trailing: false }
   );
 
+  const submitFlow = throttle(
+    async () => {
+      setSubmitFlowLoading(true);
+      if (!quote?.id) {
+        message.error("提交失败");
+        return;
+      }
+      await saveQuote(quote.id, true);
+      setSubmitFlowLoading(false);
+      message.success("已提交流程");
+    },
+    5000,
+    { leading: true, trailing: false }
+  );
+
   const updateStore = debounce((changedValues: any) => {
     if (!quote?.id) return;
 
@@ -310,6 +326,7 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
     userId === quote?.projectManagerId || userId === quote?.chargerId;
   const submitLabel =
     quote?.status === "checking" && isManager ? "已检查" : "提交";
+  const showSubmitFlow = quote?.currentApprover === userId;
 
   return (
     <Form
@@ -395,6 +412,15 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
           >
             {submitLabel}
           </Button>
+          {showSubmitFlow && (
+            <Button
+              style={{ marginLeft: 8 }}
+              onClick={submitFlow}
+              loading={loading && submitFlowLoading}
+            >
+              提交流程
+            </Button>
+          )}
           <Button
             style={{ marginLeft: 8 }}
             onClick={save}
