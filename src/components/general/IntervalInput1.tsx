@@ -58,6 +58,10 @@ const IntervalInput1: React.FC<IntervalInputProps> = forwardRef<
     const [isFocused, setIsFocused] = useState(false);
     const inputRef = useRef<any>(null);
     const lastCursorPos = useRef(0);
+    const hasAddon =
+      addonBefore !== null && addonBefore !== undefined ||
+      addonAfter !== null && addonAfter !== undefined ||
+      Boolean(units && units.length);
     useImperativeHandle(ref, () => ({
       ...inputRef.current,
       focus: () => inputRef.current?.focus?.(),
@@ -96,7 +100,9 @@ const IntervalInput1: React.FC<IntervalInputProps> = forwardRef<
       if (!isFocused && display?.endsWith(DELIMITER)) {
         display = display.slice(0, -1);
       }
-      if (!isFocused && (internalUnit || unit)) {
+      
+      // Skip appending unit when any addon is present
+      if (!isFocused && !hasAddon && (internalUnit || unit)) {
         display += internalUnit || unit;
       }
       return display;
