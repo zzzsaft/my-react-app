@@ -100,6 +100,7 @@ const IntervalInput1: React.FC<IntervalInputProps> = forwardRef<
       if (!isFocused && display?.endsWith(DELIMITER)) {
         display = display.slice(0, -1);
       }
+      
       // Skip appending unit when any addon is present
       if (!isFocused && !hasAddon && (internalUnit || unit)) {
         display += internalUnit || unit;
