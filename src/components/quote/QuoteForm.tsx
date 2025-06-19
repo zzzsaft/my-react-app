@@ -202,6 +202,7 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
     setPhoneOptions(phones.map((p) => ({ value: p, label: p })));
     if (phones.length === 1) {
       form.setFieldsValue({ contactPhone: phones[0] });
+      if (quote) updateQuote(quote.id, { contactPhone: phones[0] });
     }
   };
 

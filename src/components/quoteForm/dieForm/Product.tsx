@@ -148,10 +148,10 @@ export const Product = () => {
           <Col xs={12} md={6}>
             <IntervalInputFormItem
               name="production"
-              label="适用产量(kg/h)"
+              label="适用产量"
               rules={[{ required: true, message: "请输入适用产量范围" }]}
               placeholder={"产量"}
-              unit="kg/h"
+              units={["kg/h", "l/h"]}
             />
           </Col>
 
@@ -203,7 +203,9 @@ export const Product = () => {
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={24}>
-                    <ProFormDependency name={["compositeStructure", "runnerNumber"]}>
+                    <ProFormDependency
+                      name={["compositeStructure", "runnerNumber"]}
+                    >
                       {({ compositeStructure, runnerNumber }) => (
                         <ProFormListWrapper
                           name="compositeRatio"

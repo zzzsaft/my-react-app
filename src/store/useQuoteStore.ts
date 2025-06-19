@@ -180,7 +180,6 @@ export const useQuoteStore = create<QuotesStore>()(
           } else {
             state.quotes.push(newQuote);
           }
-          state.loading.getQuote = false;
           state.dirtyQuotes[newQuote.id] = needSave;
         });
         if (needSave) {
@@ -189,6 +188,9 @@ export const useQuoteStore = create<QuotesStore>()(
             state.dirtyQuotes[newQuote.id] = false;
           });
         }
+        set((state) => {
+          state.loading.getQuote = false;
+        });
         return newQuote;
       } catch (error) {
         set({ loading: { ...get().loading, getQuote: false } });

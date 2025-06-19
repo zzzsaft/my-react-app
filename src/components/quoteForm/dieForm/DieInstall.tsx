@@ -14,13 +14,17 @@ const INSTALL_OPTIONS = {
 
 const FEED_SIZE = [
   { label: "供方设计", value: "供方设计" },
-  { label: "需方提供尺寸", value: "other", showInput: true },
+  { label: "需方提供尺寸", value: "需方提供尺寸" },
 ];
 
 const FEED_OPTIONS = [
   { label: "中央圆口进料", value: "中央圆口进料" },
   { label: "中央方口进料", value: "中央方口进料" },
-  { label: "其他形状或不同位置进料", value: "other", showInput: true },
+  {
+    label: "其他形状或不同位置进料",
+    value: "其他形状或不同位置进料",
+    showInput: true,
+  },
 ];
 
 const WIRING_METHOD = [
@@ -49,7 +53,7 @@ export const DieInstall = () => {
             <CustomSelect initialGroups={INSTALL_OPTIONS} dropdown={true} />
           </Form.Item>
         </Col>
-        <Col xs={12} md={8}>
+        <Col xs={12} md={12}>
           <Form.Item
             name="feedingMethod"
             label="进料口方式"
@@ -61,7 +65,7 @@ export const DieInstall = () => {
             <RadioWithInput options={FEED_OPTIONS} />
           </Form.Item>
         </Col>
-        <Col xs={12} md={8}>
+        <Col xs={12} md={12}>
           <Form.Item
             name="feedingSize"
             label="进料口尺寸"
@@ -111,7 +115,7 @@ export const DieInstall = () => {
           }}
         </Form.Item>
 
-        <Col xs={24} md={8}>
+        <Col xs={24} md={12}>
           {/* 2. 接线方式 */}
           <Form.Item
             name="wiringMethod"
@@ -191,7 +195,7 @@ export const DieInstall = () => {
             </Radio.Group>
           </Form.Item>
         </Col>
-        <Col xs={12} md={8}>
+        <Col xs={12} md={12}>
           {/* 6. 侧板接插件 */}
           <Form.Item
             name="sideConnector"
