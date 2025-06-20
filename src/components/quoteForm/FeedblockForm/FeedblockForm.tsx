@@ -102,14 +102,18 @@ const FeedblockForm = forwardRef(
           );
           form.setFieldValue("screwList", next);
 
-          const ratioList = (form.getFieldValue("compositeRatio") ||
-            []) as LevelValue[];
+          const composite = (form.getFieldValue("compositeList") || []) as any[];
           const ratioNext = Array.from({ length: count }, (_, i) => ({
             level: base[i],
           }));
           form.setFieldValue(
-            "compositeRatio",
-            ratioList.slice(0, count).concat(ratioNext.slice(ratioList.length))
+            "compositeList",
+            composite.map((item: any) => ({
+              ...item,
+              ratio: (item.ratio || [])
+                .slice(0, count)
+                .concat(ratioNext.slice((item.ratio || []).length)),
+            }))
           );
         }
       }
@@ -227,9 +231,9 @@ const FeedblockForm = forwardRef(
             </Form.Item>
             <Col xs={24} md={24}>
               <ProFormListWrapper
-                name="compositeStructure"
-                rules={[{ required: true, message: "请输入层结构形式" }]}
-                label="层结构形式"
+                name="compositeList"
+                label="层结构及比例"
+                rules={[{ required: true, message: "请输入层结构及比例" }]}
                 min={1}
                 canCreate={true}
                 canDelete={true}
@@ -239,58 +243,64 @@ const FeedblockForm = forwardRef(
                   type: "link",
                   style: { width: "unset" },
                 }}
+                creatorRecord={{
+                  ratio: Array.from(
+                    {
+                      length:
+                        countMap[form.getFieldValue("extruderNumber") as string] ||
+                        0,
+                    },
+                    (_, i) => ({ level: "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[i] })
+                  ),
+                }}
                 formItems={
-                  <ProForm.Item
-                    name="structure"
-                    rules={[{ required: true, message: "请输入层结构形式" }]}
-                  >
-                    <AutoSlashInput style={{ width: "120px" }} />
-                  </ProForm.Item>
-                }
-              />
-            </Col>
-
-            <Col xs={24} md={24}>
-              <ProFormListWrapper
-                initialValue={[{ level: "A" }, { level: "B" }]}
-                name="compositeRatio"
-                label="每层复合比例"
-                canCreate={false}
-                canDelete={false}
-                isHorizontal
-                formItems={
-                  <ProForm.Item
-                    name={[]}
-                    rules={[
-                      {
-                        validator: async (_: any, value: LevelValue) => {
-                          const num = parseFloat(value?.value?.value || "0");
-                          if (isNaN(num) || num === 0) {
-                            return Promise.reject(new Error("比例不得为0"));
-                          }
-                          if (
-                            (value?.value?.front &&
-                              value?.value?.front >= 100) ||
-                            (value?.value?.rear && value?.value?.rear >= 100)
-                          ) {
-                            return Promise.reject(new Error("比例不得超过100"));
-                          }
-                          if (
-                            value?.value?.front &&
-                            value?.value?.rear &&
-                            value?.value?.front >= value?.value?.rear
-                          ) {
-                            return Promise.reject(
-                              new Error("第一个应比第二个小")
-                            );
-                          }
-                          return Promise.resolve();
-                        },
-                      },
-                    ]}
-                  >
-                    <LevelInputNumber style={{ width: 120 }} />
-                  </ProForm.Item>
+                  <>
+                    <ProForm.Item
+                      name="structure"
+                      rules={[{ required: true, message: "请输入层结构形式" }]}
+                    >
+                      <AutoSlashInput style={{ width: "120px" }} />
+                    </ProForm.Item>
+                    <ProFormList
+                      name="ratio"
+                      copyIconProps={false}
+                      deleteIconProps={false}
+                      itemRender={({ listDom }) => <>{listDom}</>}
+                    >
+                      <ProForm.Item
+                        name={[]}
+                        rules={[
+                          {
+                            validator: async (_: any, value: LevelValue) => {
+                              const num = parseFloat(value?.value?.value || "0");
+                              if (isNaN(num) || num === 0) {
+                                return Promise.reject(new Error("比例不得为0"));
+                              }
+                              if (
+                                (value?.value?.front &&
+                                  value?.value?.front >= 100) ||
+                                (value?.value?.rear && value?.value?.rear >= 100)
+                              ) {
+                                return Promise.reject(new Error("比例不得超过100"));
+                              }
+                              if (
+                                value?.value?.front &&
+                                value?.value?.rear &&
+                                value?.value?.front >= value?.value?.rear
+                              ) {
+                                return Promise.reject(
+                                  new Error("第一个应比第二个小")
+                                );
+                              }
+                              return Promise.resolve();
+                            },
+                          },
+                        ]}
+                      >
+                        <LevelInputNumber style={{ width: 120 }} />
+                      </ProForm.Item>
+                    </ProFormList>
+                  </>
                 }
               />
             </Col>
