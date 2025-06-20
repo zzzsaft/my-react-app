@@ -15,7 +15,7 @@ interface AuthState {
   token: string | null;
   name: string | null;
   avatar: string | null;
-  userid: User | null;
+  userid: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   checkAuth: () => Promise<boolean>;

@@ -104,11 +104,12 @@ const FeedblockForm = forwardRef(
         }
       }
 
-
       if (changedFields.compositeList != null) {
         const composite = (form.getFieldValue("compositeList") || []) as any[];
         const updated = composite.map((item: any) => {
-          const letters = (item.structure || "").replace(/[^A-Z]/gi, "").split("");
+          const letters = (item.structure || "")
+            .replace(/[^A-Z]/gi, "")
+            .split("");
           const ratio = letters.map((l: string, idx: number) => ({
             level: l,
             value: item.ratio?.[idx]?.value,
@@ -237,12 +238,12 @@ const FeedblockForm = forwardRef(
                 min={1}
                 canCreate={true}
                 canDelete={true}
-                isHorizontal
-                creatorButtonProps={{
-                  creatorButtonText: "新建",
-                  type: "link",
-                  style: { width: "unset" },
-                }}
+                // isHorizontal
+                // creatorButtonProps={{
+                //   creatorButtonText: "新建",
+                //   type: "link",
+                //   style: { width: "unset" },
+                // }}
                 creatorRecord={{ ratio: [] }}
                 formItems={
                   <>
@@ -257,23 +258,39 @@ const FeedblockForm = forwardRef(
                       copyIconProps={false}
                       deleteIconProps={false}
                       creatorButtonProps={false}
-                      itemRender={({ listDom }) => <>{listDom}</>}
+                      itemRender={({ listDom }) => (
+                        <div
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            marginRight: 16,
+                            marginBottom: -20,
+                          }}
+                        >
+                          {listDom}
+                        </div>
+                      )}
                     >
                       <ProForm.Item
                         name={[]}
                         rules={[
                           {
                             validator: async (_: any, value: LevelValue) => {
-                              const num = parseFloat(value?.value?.value || "0");
-                              if (isNaN(num) || num === 0) {
-                                return Promise.reject(new Error("比例不得为0"));
-                              }
+                              const num = parseFloat(
+                                value?.value?.value || "0"
+                              );
+                              // if (isNaN(num) || num === 0) {
+                              //   return Promise.reject(new Error("比例不得为0"));
+                              // }
                               if (
                                 (value?.value?.front &&
                                   value?.value?.front >= 100) ||
-                                (value?.value?.rear && value?.value?.rear >= 100)
+                                (value?.value?.rear &&
+                                  value?.value?.rear >= 100)
                               ) {
-                                return Promise.reject(new Error("比例不得超过100"));
+                                return Promise.reject(
+                                  new Error("比例不得超过100")
+                                );
                               }
                               if (
                                 value?.value?.front &&

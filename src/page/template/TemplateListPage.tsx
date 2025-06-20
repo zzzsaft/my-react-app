@@ -9,9 +9,9 @@ import TemplateConfigModal from "../../components/template/TemplateConfigModal";
 import { useAuthStore } from "../../store/useAuthStore";
 import { TemplateService } from "../../api/services/template.service";
 
-
 const TemplateListPage: React.FC = () => {
-  const { templates, loading, refreshTemplates, fetchTemplates } = useTemplateStore();
+  const { templates, loading, refreshTemplates, fetchTemplates } =
+    useTemplateStore();
   const { userid } = useAuthStore();
   const { message, modal } = App.useApp();
 
@@ -56,7 +56,7 @@ const TemplateListPage: React.FC = () => {
         loading={loading}
         onDoubleClick={(tpl) => handleEdit(tpl)}
         actionRender={(tpl) =>
-          tpl.creatorId === userid?.id ? (
+          tpl.creatorId === userid ? (
             <>
               <Button type="link" onClick={() => handleEdit(tpl)}>
                 编辑
@@ -73,7 +73,7 @@ const TemplateListPage: React.FC = () => {
         open={configOpen}
         template={currentTpl}
         onClose={() => setConfigOpen(false)}
-        readOnly={currentTpl?.creatorId !== userid?.id}
+        readOnly={currentTpl?.creatorId !== userid}
       />
     </div>
   );
