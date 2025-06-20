@@ -13,6 +13,11 @@ export const QuoteService = {
     type: string;
     status: string;
     orderId?: string;
+    chargerId: string;
+    projectManagerId: string;
+    quoteName: string;
+    contactName?: string;
+    contactPhone?: string;
   }) {
     const quote = await apiClient.post("/quote/create", {
       ...params,
