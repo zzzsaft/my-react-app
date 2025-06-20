@@ -7,6 +7,7 @@ import {
   InputNumber,
   AutoComplete,
   DatePicker,
+  Switch,
 } from "antd";
 import { ProCard } from "@ant-design/pro-components";
 import dayjs from "dayjs";
@@ -356,6 +357,11 @@ const QuoteConfigTab: React.FC<QuoteConfigTabProps> = ({
                 onChange={onDateChange}
                 maxDate={dayjs("2025/5/1")}
               />
+            </Form.Item>
+          </Col>
+          <Col xs={12} md={6}>
+            <Form.Item name="isClosed" label="是否已成交" valuePropName="checked">
+              <Switch />
             </Form.Item>
           </Col>
         </Row>

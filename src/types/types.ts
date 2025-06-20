@@ -83,6 +83,7 @@ export interface Quote {
   quotationPdf?: string; // 报价单打印链接
   contractPdf?: string; // 合同打印链接
   configPdf?: string; // 配置表打印链接
+  isClosed?: boolean; // 是否已成交
   items: QuoteItem[];
   status: "draft" | "checking" | "completed" | "locked";
 }

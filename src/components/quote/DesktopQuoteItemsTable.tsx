@@ -48,6 +48,9 @@ const DesktopQuoteItemsTable: React.FC<QuoteItemsTableProps> = ({
       state.quotes.find((quote) => quote.id === quoteId)?.status == "locked" ||
       false
   );
+  const isClosed = useQuoteStore(
+    (state) => state.quotes.find((quote) => quote.id === quoteId)?.isClosed
+  );
   const { addQuoteItem, updateQuoteItem, setQuoteItem } = useQuoteStore();
   const { message } = App.useApp();
   const loading = useQuoteStore((state) => state.loading);
@@ -381,6 +384,7 @@ const DesktopQuoteItemsTable: React.FC<QuoteItemsTableProps> = ({
         setOpen={setOpen}
         quoteId={quoteId}
         quoteItem={currentItem ?? items[0]}
+        isClosed={isClosed}
       />
     </>
   );

@@ -12,6 +12,7 @@ interface ProductConfigModalProps {
   setOpen: (bool: boolean) => void;
   quoteId: number;
   quoteItem: QuoteItem | undefined;
+  isClosed?: boolean;
 }
 
 const ProductConfigModal: React.FC<ProductConfigModalProps> = ({
@@ -19,6 +20,7 @@ const ProductConfigModal: React.FC<ProductConfigModalProps> = ({
   setOpen,
   quoteId,
   quoteItem,
+  isClosed = false,
 }) => {
   const onUpdateItem = useQuoteStore((state) => state.updateQuoteItem);
   const material = useQuoteStore(
@@ -189,6 +191,7 @@ const ProductConfigModal: React.FC<ProductConfigModalProps> = ({
           style={{ display: loading ? "none" : "block" }}
           material={material}
           finalProduct={finalProduct}
+          isClosed={isClosed}
         />
         <ImportProductModal
           open={importOpen}
