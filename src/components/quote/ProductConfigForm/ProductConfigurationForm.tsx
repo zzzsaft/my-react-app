@@ -23,6 +23,7 @@ interface ProductConfigurationFormProps {
   readOnly?: boolean;
   formType?: string;
   quoteTemplate?: QuoteTemplate;
+  isClosed?: boolean;
 }
 const ProductConfigurationForm = forwardRef(
   (
@@ -36,6 +37,7 @@ const ProductConfigurationForm = forwardRef(
       readOnly = false,
       formType: formTypeProp,
       quoteTemplate,
+      isClosed = false,
     }: ProductConfigurationFormProps,
     ref
   ) => {
@@ -165,6 +167,8 @@ const ProductConfigurationForm = forwardRef(
                     ref={priceFormRef}
                     onGenerateName={generateName}
                     readOnly={readOnly}
+                    showProductCode={isClosed}
+                    requiredProductCode={isClosed}
                   />
                 ),
                 forceRender: true,
