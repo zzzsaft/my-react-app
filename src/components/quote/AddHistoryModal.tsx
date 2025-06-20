@@ -1,13 +1,4 @@
-import {
-  Modal,
-  Input,
-  DatePicker,
-  Form,
-  Button,
-  Row,
-  Col,
-  App,
-} from "antd";
+import { Modal, Input, DatePicker, Form, Button, Row, Col, App } from "antd";
 import InputWithButton from "../general/InputWithButton";
 import { CustomerService } from "@/api/services/customer.service";
 import { OrderService } from "@/api/services/order.service";
@@ -47,7 +38,11 @@ export const AddHistoryModal = () => {
         contactName: data["联系人"],
         contactPhone: data["电话"],
       });
-    } catch (e) {
+    } catch (e: any) {
+      if (e?.response?.data) {
+        message.error("订单号已存在");
+        return;
+      }
       console.error(e);
       message.error("查询订单失败");
     }
