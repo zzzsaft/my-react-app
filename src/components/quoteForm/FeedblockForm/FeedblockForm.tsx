@@ -31,6 +31,10 @@ import PowerFormItem from "../formComponents/PowerFormItem";
 import { HeatingMethodSelect } from "../formComponents/HeatingMethodInput";
 import ProFormListWrapper from "../formComponents/ProFormListWrapper";
 import { CustomSelect } from "@/components/general/CustomSelect";
+import {
+  IntervalInput,
+  IntervalInputFormItem,
+} from "@/components/general/IntervalInput";
 
 interface PriceFormRef {
   form: FormInstance;
@@ -73,6 +77,7 @@ const FeedblockForm = forwardRef(
         const map: Record<string, string[]> = {
           两层: ["两台机"],
           三层: ["两台机", "三台机"],
+          四层: ["两台机", "三台机", "四台机"],
           五层: ["三台机", "四台机", "五台机"],
           七层: ["四台机", "五台机", "六台机", "七台机"],
           九层: ["五台机", "六台机", "七台机", "八台机", "九台机"],
@@ -96,17 +101,22 @@ const FeedblockForm = forwardRef(
             list.slice(0, count).concat(next.slice(list.length))
           );
           form.setFieldValue("screwList", next);
-
-          const ratioList = (form.getFieldValue("compositeRatio") ||
-            []) as LevelValue[];
-          const ratioNext = Array.from({ length: count }, (_, i) => ({
-            level: base[i],
-          }));
-          form.setFieldValue(
-            "compositeRatio",
-            ratioList.slice(0, count).concat(ratioNext.slice(ratioList.length))
-          );
         }
+      }
+
+      if (changedFields.compositeList != null) {
+        const composite = (form.getFieldValue("compositeList") || []) as any[];
+        const updated = composite.map((item: any) => {
+          const letters = (item.structure || "")
+            .replace(/[^A-Z]/gi, "")
+            .split("");
+          const ratio = letters.map((l: string, idx: number) => ({
+            level: l,
+            value: item.ratio?.[idx]?.value,
+          }));
+          return { ...item, ratio };
+        });
+        form.setFieldValue("compositeList", updated);
       }
     };
 
@@ -143,19 +153,12 @@ const FeedblockForm = forwardRef(
               </Form.Item>
             </Col>
             <Col xs={12} md={6}>
-              <Form.Item
+              <IntervalInputFormItem
                 name="production"
                 label="产量(kg/h)"
                 rules={[{ required: true, message: "请输入产量" }]}
-              >
-                <InputNumber
-                  min={0}
-                  controls={false}
-                  style={{ width: "100%" }}
-                  formatter={(value) => `${value}kg/h`}
-                  parser={(value) => value?.replace(/kg\/h/g, "") as any}
-                />
-              </Form.Item>
+                unit="kg/h"
+              />
             </Col>
             <Col xs={24} md={16}>
               <Form.Item
@@ -195,7 +198,7 @@ const FeedblockForm = forwardRef(
                 initialValue={"两层"}
               >
                 <Segmented<string>
-                  options={["两层", "三层", "五层", "七层", "九层"]}
+                  options={["两层", "三层", "四层", "五层", "七层", "九层"]}
                 />
               </Form.Item>
             </Col>
@@ -205,6 +208,7 @@ const FeedblockForm = forwardRef(
                 const map: Record<string, string[]> = {
                   两层: ["两台机"],
                   三层: ["两台机", "三台机"],
+                  四层: ["两台机", "三台机", "四台机"],
                   五层: ["三台机", "四台机", "五台机"],
                   七层: ["四台机", "五台机", "六台机", "七台机"],
                   九层: ["五台机", "六台机", "七台机", "八台机", "九台机"],
@@ -228,70 +232,84 @@ const FeedblockForm = forwardRef(
             </Form.Item>
             <Col xs={24} md={24}>
               <ProFormListWrapper
-                name="compositeStructure"
-                rules={[{ required: true, message: "请输入层结构形式" }]}
-                label="层结构形式"
+                name="compositeList"
+                label="层结构及比例"
+                rules={[{ required: true, message: "请输入层结构及比例" }]}
                 min={1}
                 canCreate={true}
                 canDelete={true}
-                isHorizontal
-                creatorButtonProps={{
-                  creatorButtonText: "新建",
-                  type: "link",
-                  style: { width: "unset" },
-                }}
+                // isHorizontal
+                // creatorButtonProps={{
+                //   creatorButtonText: "新建",
+                //   type: "link",
+                //   style: { width: "unset" },
+                // }}
+                creatorRecord={{ ratio: [] }}
                 formItems={
-                  <ProForm.Item
-                    name="structure"
-                    rules={[{ required: true, message: "请输入层结构形式" }]}
-                  >
-                    <AutoSlashInput style={{ width: "120px" }} />
-                  </ProForm.Item>
-                }
-              />
-            </Col>
-
-            <Col xs={24} md={24}>
-              <ProFormListWrapper
-                initialValue={[{ level: "A" }, { level: "B" }]}
-                name="compositeRatio"
-                label="每层复合比例"
-                canCreate={false}
-                canDelete={false}
-                isHorizontal
-                formItems={
-                  <ProForm.Item
-                    name={[]}
-                    rules={[
-                      {
-                        validator: async (_: any, value: LevelValue) => {
-                          const num = parseFloat(value?.value?.value || "0");
-                          if (isNaN(num) || num === 0) {
-                            return Promise.reject(new Error("比例不得为0"));
-                          }
-                          if (
-                            (value?.value?.front &&
-                              value?.value?.front >= 100) ||
-                            (value?.value?.rear && value?.value?.rear >= 100)
-                          ) {
-                            return Promise.reject(new Error("比例不得超过100"));
-                          }
-                          if (
-                            value?.value?.front &&
-                            value?.value?.rear &&
-                            value?.value?.front >= value?.value?.rear
-                          ) {
-                            return Promise.reject(
-                              new Error("第一个应比第二个小")
-                            );
-                          }
-                          return Promise.resolve();
-                        },
-                      },
-                    ]}
-                  >
-                    <LevelInputNumber style={{ width: 120 }} />
-                  </ProForm.Item>
+                  <>
+                    <ProForm.Item
+                      name="structure"
+                      rules={[{ required: true, message: "请输入层结构形式" }]}
+                    >
+                      <AutoSlashInput style={{ width: "120px" }} />
+                    </ProForm.Item>
+                    <ProFormList
+                      name="ratio"
+                      copyIconProps={false}
+                      deleteIconProps={false}
+                      creatorButtonProps={false}
+                      itemRender={({ listDom }) => (
+                        <div
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            marginRight: 16,
+                            marginBottom: -20,
+                          }}
+                        >
+                          {listDom}
+                        </div>
+                      )}
+                    >
+                      <ProForm.Item
+                        name={[]}
+                        rules={[
+                          {
+                            validator: async (_: any, value: LevelValue) => {
+                              const num = parseFloat(
+                                value?.value?.value || "0"
+                              );
+                              // if (isNaN(num) || num === 0) {
+                              //   return Promise.reject(new Error("比例不得为0"));
+                              // }
+                              if (
+                                (value?.value?.front &&
+                                  value?.value?.front >= 100) ||
+                                (value?.value?.rear &&
+                                  value?.value?.rear >= 100)
+                              ) {
+                                return Promise.reject(
+                                  new Error("比例不得超过100")
+                                );
+                              }
+                              if (
+                                value?.value?.front &&
+                                value?.value?.rear &&
+                                value?.value?.front >= value?.value?.rear
+                              ) {
+                                return Promise.reject(
+                                  new Error("第一个应比第二个小")
+                                );
+                              }
+                              return Promise.resolve();
+                            },
+                          },
+                        ]}
+                      >
+                        <LevelInputNumber style={{ width: 120 }} />
+                      </ProForm.Item>
+                    </ProFormList>
+                  </>
                 }
               />
             </Col>
@@ -311,11 +329,7 @@ const FeedblockForm = forwardRef(
               rules={[{ required: true, message: "请输入电压" }]}
             />
             <Col xs={12} md={6}>
-              <Form.Item
-                name="heatingPower"
-                label="加热功率"
-                rules={[{ required: true, message: "请输入加热功率" }]}
-              >
+              <Form.Item name="heatingPower" label="加热功率">
                 <InputNumber
                   controls={false}
                   min={0}

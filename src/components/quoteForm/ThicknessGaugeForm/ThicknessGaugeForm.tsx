@@ -2,7 +2,7 @@ import { Col, Form, Radio, Row, Segmented, Select } from "antd";
 import ProForm from "@ant-design/pro-form";
 import { forwardRef, useImperativeHandle } from "react";
 
-const models = ["WLV3", "ULO3"];
+const models = ["WLV5", "ULO3"];
 const types = ["手动", "自动"];
 const widths = [500, 1000, 1500, 2000, 2500, 3000, 3500];
 
@@ -19,7 +19,7 @@ const ThicknessGaugeForm = forwardRef<
   const handleValuesChange = (changed: any) => {
     if (changed.model) {
       const model = changed.model;
-      if (model === "WLV3") {
+      if (model === "WLV5") {
         if (form.getFieldValue("operation") === "自动") {
           form.setFieldValue("operation", "手动");
         }
@@ -51,7 +51,7 @@ const ThicknessGaugeForm = forwardRef<
             name="model"
             label="型号"
             rules={[{ required: true, message: "请选择型号" }]}
-            initialValue="WLV3"
+            initialValue="WLV5"
           >
             <Segmented options={models} />
           </Form.Item>

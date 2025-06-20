@@ -29,7 +29,8 @@ const LevelInputNumber: React.FC<LevelInputNumberProps> = ({
     <IntervalInput
       {...rest}
       addonBefore={level}
-      unit="%"
+      // units={["%"]}
+      unit={"%"}
       value={value?.value}
       onChange={handleChange}
     />

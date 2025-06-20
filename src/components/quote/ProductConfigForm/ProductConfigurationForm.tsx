@@ -1,4 +1,4 @@
-import { Tabs, Typography } from "antd";
+import { App, Tabs, Typography } from "antd";
 import { FormInstance } from "antd/lib";
 import {
   forwardRef,
@@ -23,6 +23,7 @@ interface ProductConfigurationFormProps {
   readOnly?: boolean;
   formType?: string;
   quoteTemplate?: QuoteTemplate;
+  isClosed?: boolean;
 }
 const ProductConfigurationForm = forwardRef(
   (
@@ -36,9 +37,11 @@ const ProductConfigurationForm = forwardRef(
       readOnly = false,
       formType: formTypeProp,
       quoteTemplate,
+      isClosed = false,
     }: ProductConfigurationFormProps,
     ref
   ) => {
+    const { modal } = App.useApp();
     const priceFormRef = useRef<{ form: FormInstance }>(null);
     const modelFormRef = useRef<{ form: FormInstance }>(null);
     const updateItem = useQuoteStore((state) => state.updateQuoteItem);
@@ -52,6 +55,13 @@ const ProductConfigurationForm = forwardRef(
       if (!category) return "";
 
       if (category[0] === "平模") {
+        if (!finalProduct) {
+          modal.error({
+            title: "最终产品未填写",
+            content: "请填写最终产品",
+          });
+          return "";
+        }
         const width = modelFormRef.current?.form.getFieldValue("dieWidth");
         const material1 = modelFormRef.current?.form.getFieldValue("material");
         const widthStr = width && width.front ? `${width.front}mm` : "";
@@ -157,6 +167,7 @@ const ProductConfigurationForm = forwardRef(
                     ref={priceFormRef}
                     onGenerateName={generateName}
                     readOnly={readOnly}
+                    showProductCode={isClosed}
                   />
                 ),
                 forceRender: true,

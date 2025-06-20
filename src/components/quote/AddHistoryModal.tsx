@@ -1,10 +1,13 @@
 import { Modal, Input, DatePicker, Form, Button, Row, Col, App } from "antd";
+import InputWithButton from "../general/InputWithButton";
 import { CustomerService } from "@/api/services/customer.service";
+import { OrderService } from "@/api/services/order.service";
 import CompanySearchSelect from "../general/CompanySearchSelect";
 import { useQuoteStore } from "@/store/useQuoteStore";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import MemberSelect from "../general/MemberSelect";
+import { useMemberStore } from "@/store/useMemberStore";
 import dayjs from "dayjs";
 
 export const AddHistoryModal = () => {
@@ -13,7 +16,37 @@ export const AddHistoryModal = () => {
   const navigate = useNavigate();
   const [form] = Form.useForm();
   const { createQuote } = useQuoteStore();
+  const members = useMemberStore((state) => state.members);
+  const fetchMembers = useMemberStore((state) => state.fetchMembers);
   const [modalVisible, setModalVisible] = useState(false);
+
+  const findMemberIdByName = (name: string) => {
+    return members.find((m) => m.name === name)?.id;
+  };
+
+  const handleSearchOrder = async (value: string) => {
+    if (!value) return;
+    try {
+      await fetchMembers();
+      const data = await OrderService.getOrderInfo(value);
+      form.setFieldsValue({
+        orderId: data["订单号"],
+        customer: { name: data["客户名称"], erpId: data["客户ID"] },
+        quoteTime: data["订单日期"] ? dayjs(data["订单日期"]) : null,
+        chargerId: findMemberIdByName(data["销售负责人"] ?? ""),
+        projectManagerId: findMemberIdByName(data["项目负责人"] ?? ""),
+        contactName: data["联系人"],
+        contactPhone: data["电话"],
+      });
+    } catch (e: any) {
+      if (e?.response?.data) {
+        message.error("订单号已存在");
+        return;
+      }
+      console.error(e);
+      message.error("查询订单失败");
+    }
+  };
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
@@ -28,6 +61,8 @@ export const AddHistoryModal = () => {
         chargerId: values.chargerId,
         projectManagerId: values.projectManagerId,
         quoteName: values.quoteName,
+        contactName: values.contactName,
+        contactPhone: values.contactPhone,
       });
       message.success("历史报价单添加成功");
       form.resetFields();
@@ -76,7 +111,13 @@ export const AddHistoryModal = () => {
                 label="订单编号"
                 rules={[{ required: true, message: "请输入订单编号" }]}
               >
-                <Input placeholder="请输入订单编号" />
+                <InputWithButton
+                  placeholder="请输入订单编号"
+                  buttonText="查询"
+                  onButtonClick={() =>
+                    handleSearchOrder(form.getFieldValue("orderId"))
+                  }
+                />
               </Form.Item>
             </Col>
             <Col xs={12} md={12}>
@@ -129,7 +170,12 @@ export const AddHistoryModal = () => {
                 <MemberSelect />
               </Form.Item>
             </Col>
-            <Col xs={12} md={12}></Col>
+            <Form.Item name="contactName" hidden>
+              <Input />
+            </Form.Item>
+            <Form.Item name="contactPhone" hidden>
+              <Input />
+            </Form.Item>
           </Row>
         </Form>
       </Modal>

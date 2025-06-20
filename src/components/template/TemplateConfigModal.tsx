@@ -77,9 +77,7 @@ const TemplateConfigModal: React.FC<TemplateConfigModalProps> = ({
         showPrice={false}
         readOnly={readOnly}
         ref={readOnly ? undefined : (formRef as any)}
-        quoteTemplate={
-          isQuoteTemplate(template as any) ? (template as any) : undefined
-        }
+        quoteTemplate={template as any}
       />
     </Modal>
   );

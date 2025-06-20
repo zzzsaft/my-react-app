@@ -97,8 +97,13 @@ export const TemperatureControl = () => {
             name="thermocoupleHoles"
             label="热电偶孔"
             rules={[{ required: true, message: "请选择热电偶控位" }]}
+            initialValue={"有"}
           >
-            <Checkbox.Group options={["上模", "下模", "自定义"]} />
+            <Radio.Group>
+              <Radio value={"有"}>有</Radio>
+              <Radio value={"无"}>无</Radio>
+              <Radio value={"自定义"}>自定义</Radio>
+            </Radio.Group>
           </Form.Item>
         </Col>
         <Form.Item noStyle dependencies={["thermocoupleHoles"]}>

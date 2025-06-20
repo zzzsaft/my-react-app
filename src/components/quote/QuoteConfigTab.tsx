@@ -7,6 +7,7 @@ import {
   InputNumber,
   AutoComplete,
   DatePicker,
+  Switch,
 } from "antd";
 import { ProCard } from "@ant-design/pro-components";
 import dayjs from "dayjs";
@@ -29,6 +30,7 @@ const INDUSTRY = {
 };
 
 const FINALPRODUCT = {
+  未知: ["未知"],
   功能片材: [
     "高阻隔片材",
     "高阻隔包边片材",
@@ -136,6 +138,21 @@ const QuoteConfigTab: React.FC<QuoteConfigTabProps> = ({
               label="报价单名称"
               rules={[{ required: true, message: "请输入报价单名称" }]}
             >
+              <Input />
+            </Form.Item>
+          </Col>
+          <Col xs={12} md={6}>
+            <Form.Item
+              name="isClosed"
+              label="是否已成交"
+              valuePropName="checked"
+              initialValue={true}
+            >
+              <Switch />
+            </Form.Item>
+          </Col>
+          <Col xs={12} md={6}>
+            <Form.Item name="customerProductionId" label="需方生产线指令号">
               <Input />
             </Form.Item>
           </Col>

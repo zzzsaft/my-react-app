@@ -78,6 +78,8 @@ interface QuotesStore {
     chargerId: string;
     projectManagerId: string;
     quoteName: string;
+    contactName?: string;
+    contactPhone?: string;
   }) => Promise<Quote>;
   updateQuote: (
     quoteId: number,
@@ -181,7 +183,6 @@ export const useQuoteStore = create<QuotesStore>()(
           } else {
             state.quotes.push(newQuote);
           }
-          state.loading.getQuote = false;
           state.dirtyQuotes[newQuote.id] = needSave;
         });
         if (needSave) {
@@ -190,6 +191,9 @@ export const useQuoteStore = create<QuotesStore>()(
             state.dirtyQuotes[newQuote.id] = false;
           });
         }
+        set((state) => {
+          state.loading.getQuote = false;
+        });
         return newQuote;
       } catch (error) {
         set({ loading: { ...get().loading, getQuote: false } });
@@ -202,6 +206,9 @@ export const useQuoteStore = create<QuotesStore>()(
         type: "history",
         status: "draft",
       });
+      if (!quote.items) {
+        quote.items = [];
+      }
       set((state) => {
         state.quotes.push(quote);
       });
@@ -229,7 +236,10 @@ export const useQuoteStore = create<QuotesStore>()(
         const quote = state.quotes.find((q) => q.id === quoteId);
         if (!quote) throw new Error(`Quote ${quoteId} not found`);
 
-        const currentLength = quote.items.length;
+        const currentLength = quote.items ? quote.items.length : 0;
+        if (!quote.items) {
+          quote.items = [];
+        }
 
         // 2. 调用 API 创建新 item
         const quoteItem: QuoteItem = await QuoteService.createQuoteItem(

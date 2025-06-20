@@ -18,6 +18,7 @@ interface PriceFormRef {
 interface PriceFormProps {
   onGenerateName?: () => string | undefined;
   readOnly?: boolean;
+  showProductCode?: boolean;
 }
 
 const brandOption = [
@@ -27,7 +28,7 @@ const brandOption = [
 ];
 
 const PriceForm = forwardRef<PriceFormRef, PriceFormProps>(
-  ({ onGenerateName, readOnly = false }, ref) => {
+  ({ onGenerateName, readOnly = false, showProductCode = false }, ref) => {
     const [form] = Form.useForm();
     // 暴露form实例给父组件
     useImperativeHandle(ref, () => ({
@@ -79,11 +80,17 @@ const PriceForm = forwardRef<PriceFormRef, PriceFormProps>(
             </Form.Item>
           </Col>
 
-          <Col xs={12} sm={12}>
-            <Form.Item name="productCode" label="产品编码">
-              <Input style={{ width: "100%" }} />
-            </Form.Item>
-          </Col>
+          {showProductCode && (
+            <Col xs={12} sm={12}>
+              <Form.Item
+                name="productCode"
+                label="产品编码"
+                rules={[{ required: true, message: "请输入产品编码" }]}
+              >
+                <Input style={{ width: "100%" }} />
+              </Form.Item>
+            </Col>
+          )}
 
           <Col xs={12} sm={12}>
             <Form.Item

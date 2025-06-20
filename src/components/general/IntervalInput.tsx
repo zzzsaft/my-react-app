@@ -62,8 +62,7 @@ const IntervalInput: React.FC<IntervalInputProps> = forwardRef<
     const inputRef = useRef<any>(null);
     const lastCursorPos = useRef(0);
     const hasAddon =
-      addonBefore !== null && addonBefore !== undefined ||
-      addonAfter !== null && addonAfter !== undefined ||
+      (addonAfter !== null && addonAfter !== undefined) ||
       Boolean(units && units.length);
     useImperativeHandle(ref, () => ({
       ...inputRef.current,
@@ -102,7 +101,10 @@ const IntervalInput: React.FC<IntervalInputProps> = forwardRef<
       };
     };
 
-    const customOnChange = (newValue: string, newUnit: string = internalUnit) => {
+    const customOnChange = (
+      newValue: string,
+      newUnit: string = internalUnit
+    ) => {
       try {
         const v = constructValue(newValue);
         v.unit = newUnit;
@@ -247,24 +249,25 @@ const IntervalInput: React.FC<IntervalInputProps> = forwardRef<
       }
     };
 
-    const addonAfterNode = units && units.length ? (
-      <Select
-        size="small"
-        value={internalUnit}
-        onChange={(val) => {
-          setInternalUnit(val);
-          customOnChange(internalValue, val);
-        }}
-      >
-        {units.map((u) => (
-          <Select.Option key={u} value={u}>
-            {u}
-          </Select.Option>
-        ))}
-      </Select>
-    ) : (
-      addonAfter
-    );
+    const addonAfterNode =
+      units && units.length ? (
+        <Select
+          size="small"
+          value={internalUnit}
+          onChange={(val) => {
+            setInternalUnit(val);
+            customOnChange(internalValue, val);
+          }}
+        >
+          {units.map((u) => (
+            <Select.Option key={u} value={u}>
+              {u}
+            </Select.Option>
+          ))}
+        </Select>
+      ) : (
+        addonAfter
+      );
 
     return (
       <Input

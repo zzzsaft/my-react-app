@@ -444,7 +444,7 @@
     {
       "name": "thermocoupleHoles",
       "label": "热电偶孔",
-      "type": "Checkbox.Group"
+      "type": "Radio.Group"
     },
     {
       "name": "customThermocoupleHoles",

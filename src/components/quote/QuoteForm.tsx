@@ -203,6 +203,7 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
     setPhoneOptions(phones.map((p) => ({ value: p, label: p })));
     if (phones.length === 1) {
       form.setFieldsValue({ contactPhone: phones[0] });
+      if (quote) updateQuote(quote.id, { contactPhone: phones[0] });
     }
   };
 
@@ -237,7 +238,7 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
   const onFinish = async () => {
     setSubmitLoading(true);
     if (quote?.id) {
-      const userId = useAuthStore.getState().userid?.id;
+      const userId = useAuthStore.getState().userid;
       const isManager =
         userId === quote.projectManagerId || userId === quote.chargerId;
       if (quote.status === "checking" && isManager) {
@@ -320,7 +321,7 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
     scheduleAutoSave();
   }, 100);
 
-  const userId = useAuthStore.getState().userid?.id;
+  const userId = useAuthStore.getState().userid;
   const isManager =
     userId === quote?.projectManagerId || userId === quote?.chargerId;
   const submitLabel =
