@@ -11,6 +11,11 @@
       "type": "CustomSelect"
     },
     {
+      "name": "production",
+      "label": "产量(kg/h)",
+      "type": "InputNumber"
+    },
+    {
       "name": "structure",
       "label": "分配器结构",
       "type": "Radio.Group"
@@ -54,6 +59,16 @@
       "name": "wiredMethod",
       "label": "接线方式",
       "type": "AutoComplete"
+    },
+    {
+      "name": "compositeStructure",
+      "label": "层结构形式",
+      "type": "ProFormList"
+    },
+    {
+      "name": "compositeRatio",
+      "label": "每层复合比例",
+      "type": "ProFormList"
     }
   ],
   "FilterForm": [
@@ -86,6 +101,11 @@
       "name": "controlSystem",
       "label": "控制系统",
       "type": "AutoComplete"
+    },
+    {
+      "name": "meshBeltSpec",
+      "label": "网带规格",
+      "type": "ProFormList"
     }
   ],
   "MeteringPumpForm": [
@@ -152,6 +172,11 @@
       "name": "unitPrice",
       "label": "单价",
       "type": "InputNumber"
+    },
+    {
+      "name": "parts",
+      "label": "配件明细",
+      "type": "ProFormList"
     }
   ],
   "PriceForm": [
@@ -272,6 +297,11 @@
       "type": "Radio.Group"
     },
     {
+      "name": "lipThicknessRange",
+      "label": "模唇厚度范围",
+      "type": "ProFormList"
+    },
+    {
       "name": "installMethod",
       "label": "模头安装方式",
       "type": "CustomSelect"
@@ -335,6 +365,11 @@
       "name": "haveThermalInsulation",
       "label": "是否选配隔热装置",
       "type": "Radio.Group"
+    },
+    {
+      "name": "compositeRatio",
+      "label": "每层复合比例",
+      "type": "ProFormList"
     },
     {
       "name": "isBuySameProduct",
