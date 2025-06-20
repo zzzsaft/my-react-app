@@ -204,6 +204,9 @@ export const useQuoteStore = create<QuotesStore>()(
         type: "history",
         status: "draft",
       });
+      if (!quote.items) {
+        quote.items = [];
+      }
       set((state) => {
         state.quotes.push(quote);
       });
@@ -231,7 +234,10 @@ export const useQuoteStore = create<QuotesStore>()(
         const quote = state.quotes.find((q) => q.id === quoteId);
         if (!quote) throw new Error(`Quote ${quoteId} not found`);
 
-        const currentLength = quote.items.length;
+        const currentLength = quote.items ? quote.items.length : 0;
+        if (!quote.items) {
+          quote.items = [];
+        }
 
         // 2. 调用 API 创建新 item
         const quoteItem: QuoteItem = await QuoteService.createQuoteItem(
