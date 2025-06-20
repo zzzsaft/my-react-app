@@ -51,7 +51,13 @@ const QuoteFormPage = () => {
     loadQuote();
   }, [id, quote?.id]);
 
-  return <QuoteForm form={form} quoteId={quote?.id} onSubmit={() => {}} />;
+  return (
+    <QuoteForm
+      form={form}
+      quoteId={quote?.id}
+      onSubmit={() => navigate(-1)}
+    />
+  );
 };
 
 export default QuoteFormPage;

@@ -104,6 +104,7 @@ const FeedblockForm = forwardRef(
         }
       }
 
+
       if (changedFields.compositeList != null) {
         const composite = (form.getFieldValue("compositeList") || []) as any[];
         const updated = composite.map((item: any) => {
