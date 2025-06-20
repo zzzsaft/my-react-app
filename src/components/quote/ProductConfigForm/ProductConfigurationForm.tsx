@@ -168,7 +168,6 @@ const ProductConfigurationForm = forwardRef(
                     onGenerateName={generateName}
                     readOnly={readOnly}
                     showProductCode={isClosed}
-                    requiredProductCode={isClosed}
                   />
                 ),
                 forceRender: true,

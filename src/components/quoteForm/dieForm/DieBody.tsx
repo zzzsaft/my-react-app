@@ -186,7 +186,7 @@ export const DieBody = () => {
               lipCount > 1 ? (
                 <ProFormListWrapper
                   name="lipThicknessRange"
-                  rules={[{ require: true }]}
+                  // rules={[{ require: true }]}
                   label="模唇厚度范围"
                   canCreate={false}
                   canDelete={false}

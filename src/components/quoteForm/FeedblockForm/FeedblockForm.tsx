@@ -31,6 +31,10 @@ import PowerFormItem from "../formComponents/PowerFormItem";
 import { HeatingMethodSelect } from "../formComponents/HeatingMethodInput";
 import ProFormListWrapper from "../formComponents/ProFormListWrapper";
 import { CustomSelect } from "@/components/general/CustomSelect";
+import {
+  IntervalInput,
+  IntervalInputFormItem,
+} from "@/components/general/IntervalInput";
 
 interface PriceFormRef {
   form: FormInstance;
@@ -73,6 +77,7 @@ const FeedblockForm = forwardRef(
         const map: Record<string, string[]> = {
           两层: ["两台机"],
           三层: ["两台机", "三台机"],
+          四层: ["两台机", "三台机", "四台机"],
           五层: ["三台机", "四台机", "五台机"],
           七层: ["四台机", "五台机", "六台机", "七台机"],
           九层: ["五台机", "六台机", "七台机", "八台机", "九台机"],
@@ -143,19 +148,12 @@ const FeedblockForm = forwardRef(
               </Form.Item>
             </Col>
             <Col xs={12} md={6}>
-              <Form.Item
+              <IntervalInputFormItem
                 name="production"
                 label="产量(kg/h)"
                 rules={[{ required: true, message: "请输入产量" }]}
-              >
-                <InputNumber
-                  min={0}
-                  controls={false}
-                  style={{ width: "100%" }}
-                  formatter={(value) => `${value}kg/h`}
-                  parser={(value) => value?.replace(/kg\/h/g, "") as any}
-                />
-              </Form.Item>
+                unit="kg/h"
+              />
             </Col>
             <Col xs={24} md={16}>
               <Form.Item
@@ -195,7 +193,7 @@ const FeedblockForm = forwardRef(
                 initialValue={"两层"}
               >
                 <Segmented<string>
-                  options={["两层", "三层", "五层", "七层", "九层"]}
+                  options={["两层", "三层", "四层", "五层", "七层", "九层"]}
                 />
               </Form.Item>
             </Col>
@@ -205,6 +203,7 @@ const FeedblockForm = forwardRef(
                 const map: Record<string, string[]> = {
                   两层: ["两台机"],
                   三层: ["两台机", "三台机"],
+                  四层: ["两台机", "三台机", "四台机"],
                   五层: ["三台机", "四台机", "五台机"],
                   七层: ["四台机", "五台机", "六台机", "七台机"],
                   九层: ["五台机", "六台机", "七台机", "八台机", "九台机"],
@@ -311,11 +310,7 @@ const FeedblockForm = forwardRef(
               rules={[{ required: true, message: "请输入电压" }]}
             />
             <Col xs={12} md={6}>
-              <Form.Item
-                name="heatingPower"
-                label="加热功率"
-                rules={[{ required: true, message: "请输入加热功率" }]}
-              >
+              <Form.Item name="heatingPower" label="加热功率">
                 <InputNumber
                   controls={false}
                   min={0}

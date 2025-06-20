@@ -22,7 +22,6 @@ import { Quote } from "@/types/types";
 import { selectOptions } from "@/util/valueUtil";
 
 const INDUSTRY = {
-  未知: ["未知"],
   新能源及储能: ["动力电池（锂电、氢燃料、钠电）", "光伏新能源"],
   半导体及电子元器件: ["半导体（泛半导体）", "先进封装", "高端显示"],
   消费电子: ["消费电子"],
@@ -139,6 +138,21 @@ const QuoteConfigTab: React.FC<QuoteConfigTabProps> = ({
               label="报价单名称"
               rules={[{ required: true, message: "请输入报价单名称" }]}
             >
+              <Input />
+            </Form.Item>
+          </Col>
+          <Col xs={12} md={6}>
+            <Form.Item
+              name="isClosed"
+              label="是否已成交"
+              valuePropName="checked"
+              initialValue={true}
+            >
+              <Switch />
+            </Form.Item>
+          </Col>
+          <Col xs={12} md={6}>
+            <Form.Item name="customerProductionId" label="需方生产线指令号">
               <Input />
             </Form.Item>
           </Col>
@@ -359,11 +373,6 @@ const QuoteConfigTab: React.FC<QuoteConfigTabProps> = ({
                 onChange={onDateChange}
                 maxDate={dayjs("2025/5/1")}
               />
-            </Form.Item>
-          </Col>
-          <Col xs={12} md={6}>
-            <Form.Item name="isClosed" label="是否已成交" valuePropName="checked">
-              <Switch />
             </Form.Item>
           </Col>
         </Row>
