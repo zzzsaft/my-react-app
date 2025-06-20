@@ -13,6 +13,7 @@ import QuoteModal from "./QuoteModal";
 import { useQuoteStore } from "@/store/useQuoteStore";
 import { isTextSelecting } from "@/util/domUtil";
 import { SorterResult } from "antd/es/table/interface";
+import "./QuoteTable.less";
 
 interface QuoteTableProps {
   type: string; // 'history' | 'oa'
@@ -165,7 +166,6 @@ const QuoteTable: React.FC<QuoteTableProps> = ({
       dataIndex: "quoteName",
       key: "quoteName",
       width: 200,
-      ellipsis: true,
     },
     {
       title: "客户名称",
@@ -331,6 +331,7 @@ const QuoteTable: React.FC<QuoteTableProps> = ({
         </Form.Item>
       </Form>
       <Table<QuoteTableItem>
+        className="quoteTableWrap"
         columns={columns}
         dataSource={tableData}
         bordered
