@@ -101,21 +101,20 @@ const FeedblockForm = forwardRef(
             list.slice(0, count).concat(next.slice(list.length))
           );
           form.setFieldValue("screwList", next);
-
-          const composite = (form.getFieldValue("compositeList") || []) as any[];
-          const ratioNext = Array.from({ length: count }, (_, i) => ({
-            level: base[i],
-          }));
-          form.setFieldValue(
-            "compositeList",
-            composite.map((item: any) => ({
-              ...item,
-              ratio: (item.ratio || [])
-                .slice(0, count)
-                .concat(ratioNext.slice((item.ratio || []).length)),
-            }))
-          );
         }
+      }
+
+      if (changedFields.compositeList != null) {
+        const composite = (form.getFieldValue("compositeList") || []) as any[];
+        const updated = composite.map((item: any) => {
+          const letters = (item.structure || "").replace(/[^A-Z]/gi, "").split("");
+          const ratio = letters.map((l: string, idx: number) => ({
+            level: l,
+            value: item.ratio?.[idx]?.value,
+          }));
+          return { ...item, ratio };
+        });
+        form.setFieldValue("compositeList", updated);
       }
     };
 
@@ -243,16 +242,7 @@ const FeedblockForm = forwardRef(
                   type: "link",
                   style: { width: "unset" },
                 }}
-                creatorRecord={{
-                  ratio: Array.from(
-                    {
-                      length:
-                        countMap[form.getFieldValue("extruderNumber") as string] ||
-                        0,
-                    },
-                    (_, i) => ({ level: "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[i] })
-                  ),
-                }}
+                creatorRecord={{ ratio: [] }}
                 formItems={
                   <>
                     <ProForm.Item
@@ -265,6 +255,7 @@ const FeedblockForm = forwardRef(
                       name="ratio"
                       copyIconProps={false}
                       deleteIconProps={false}
+                      creatorButtonProps={false}
                       itemRender={({ listDom }) => <>{listDom}</>}
                     >
                       <ProForm.Item
