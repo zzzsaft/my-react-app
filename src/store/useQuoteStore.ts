@@ -78,6 +78,8 @@ interface QuotesStore {
     chargerId: string;
     projectManagerId: string;
     quoteName: string;
+    contactName?: string;
+    contactPhone?: string;
   }) => Promise<Quote>;
   updateQuote: (
     quoteId: number,
