@@ -21,6 +21,7 @@ import { Quote } from "@/types/types";
 import { selectOptions } from "@/util/valueUtil";
 
 const INDUSTRY = {
+  未知: ["未知"],
   新能源及储能: ["动力电池（锂电、氢燃料、钠电）", "光伏新能源"],
   半导体及电子元器件: ["半导体（泛半导体）", "先进封装", "高端显示"],
   消费电子: ["消费电子"],
@@ -29,6 +30,7 @@ const INDUSTRY = {
 };
 
 const FINALPRODUCT = {
+  未知: ["未知"],
   功能片材: [
     "高阻隔片材",
     "高阻隔包边片材",
