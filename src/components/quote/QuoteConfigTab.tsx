@@ -102,7 +102,7 @@ const QuoteConfigTab: React.FC<QuoteConfigTabProps> = ({
           {quote?.type != "history" && (
             <Col xs={8} md={4}>
               <Form.Item
-                name="quoteNumber"
+                name="quoteId"
                 label="报价单编号"
                 rules={[{ required: true, message: "请输入报价单编号" }]}
               >
