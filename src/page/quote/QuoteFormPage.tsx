@@ -1,6 +1,6 @@
 // pages/QuoteFormPage.tsx
-import React, { useEffect, useState } from "react";
-import { Button, App, Modal } from "antd";
+import React, { useEffect } from "react";
+import { Button, App, Modal, Typography } from "antd";
 import { useQuoteStore } from "@/store/useQuoteStore";
 import { useNavigate, useParams } from "react-router-dom";
 import dayjs from "dayjs";
@@ -52,11 +52,18 @@ const QuoteFormPage = () => {
   }, [id, quote?.id]);
 
   return (
-    <QuoteForm
-      form={form}
-      quoteId={quote?.id}
-      onSubmit={() => navigate(-1)}
-    />
+    <>
+      {quote?.opportunityName && (
+        <Typography.Title level={3} style={{ marginBottom: 16 }}>
+          {quote.opportunityName}
+        </Typography.Title>
+      )}
+      <QuoteForm
+        form={form}
+        quoteId={quote?.id}
+        onSubmit={() => navigate(-1)}
+      />
+    </>
   );
 };
 
