@@ -90,7 +90,10 @@ const QuoteModal: React.FC<QuoteModalProps> = ({
             marginRight: 40, // 为关闭按钮预留空间
           }}
         >
-          <span>{initialValues ? "编辑报价单" : "新建报价单"}</span>
+          <span>
+            {initialValues?.opportunityName ||
+              (initialValues ? "编辑报价单" : "新建报价单")}
+          </span>
           <Button
             type="text"
             icon={

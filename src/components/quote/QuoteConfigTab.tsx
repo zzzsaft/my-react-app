@@ -113,25 +113,24 @@ const QuoteConfigTab: React.FC<QuoteConfigTabProps> = ({
               </Form.Item>
             </Col>
           )}
-          <Col xs={8} md={4}>
-            <Form.Item
-              name="orderId"
-              label="订单编号"
-              rules={[{ required: true, message: "订单编号" }]}
-            >
-              <Input
-                style={{ width: "100%" }}
-                readOnly={quote?.type != "history"}
-              />
-            </Form.Item>
-          </Col>
-          {quote?.type != "history" && (
-            <Col xs={8} md={8}>
-              <Form.Item name="opportunityName" label="商机名称">
-                <Input readOnly />
-              </Form.Item>
-            </Col>
-          )}
+          <Form.Item noStyle dependencies={["isClosed"]}>
+            {({ getFieldValue }) =>
+              getFieldValue("isClosed") ? (
+                <Col xs={8} md={4}>
+                  <Form.Item
+                    name="orderId"
+                    label="订单编号"
+                    rules={[{ required: true, message: "请输入订单编号" }]}
+                  >
+                    <Input
+                      style={{ width: "100%" }}
+                      readOnly={quote?.type != "history"}
+                    />
+                  </Form.Item>
+                </Col>
+              ) : null
+            }
+          </Form.Item>
           <Col xs={12} md={8}>
             <Form.Item
               name="quoteName"
