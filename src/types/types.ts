@@ -123,6 +123,15 @@ export interface ProductSearchResult {
   orderDate: string;
 }
 
+export interface PartSearchResult {
+  id: string;
+  name: string;
+  category: string;
+  price: number;
+  unit: string;
+  type: "P" | "M";
+}
+
 interface ProductConfig {
   [key: string]: any;
 }
