@@ -1,8 +1,6 @@
 // import type { LoginParams, UserInfo } from '../types/auth.d';
-import { redirect } from "react-router-dom";
 import { apiClient } from "../http/client";
 import { Quote, QuoteItem } from "@/types/types";
-import axios from "axios";
 
 export const QuoteService = {
   async createQuote(params: {
@@ -90,5 +88,13 @@ export const QuoteService = {
       contractPdf: data.productPurchase,
       configPdf: data.productConfiguration,
     };
+  },
+
+  async print(type: "config" | "quotation" | "contract", id: number) {
+    const res = await apiClient.get(`/quote/${type}/print`, {
+      params: { id },
+      responseType: "blob",
+    });
+    return res.data as Blob;
   },
 };

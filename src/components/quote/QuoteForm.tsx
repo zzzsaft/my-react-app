@@ -10,6 +10,7 @@ import { useQuoteStore } from "@/store/useQuoteStore";
 import { CustomerService } from "@/api/services/customer.service";
 import { DownOutlined } from "@ant-design/icons";
 import { useAuthStore } from "@/store/useAuthStore";
+import { QuoteService } from "@/api/services/quote.service";
 
 const getDefaultQuoteTerms = (days: number): Clause[] => [
   {
@@ -148,8 +149,7 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
   isModal = false,
 }) => {
   const { message } = App.useApp();
-  const { updateQuote, saveQuote, isQuoteDirty, fetchPrintUrls } =
-    useQuoteStore();
+  const { updateQuote, saveQuote, isQuoteDirty } = useQuoteStore();
   const [saveLoading, setSaveLoading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [submitFlowLoading, setSubmitFlowLoading] = useState(false);
@@ -262,13 +262,11 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
 
   const print = async (type: "config" | "quote" | "contract") => {
     if (!quote?.id) return;
-    await fetchPrintUrls(quote.id);
-    const q = useQuoteStore.getState().quotes.find((i) => i.id === quote.id);
-    let url = "";
-    if (type === "config") url = q?.configPdf ?? "";
-    if (type === "quote") url = q?.quotationPdf ?? "";
-    if (type === "contract") url = q?.contractPdf ?? "";
-    if (url) window.open(url, "_blank");
+    await saveQuote(quote.id);
+    const apiType = type === "quote" ? "quotation" : type;
+    const blob = await QuoteService.print(apiType as any, quote.id);
+    const url = window.URL.createObjectURL(blob);
+    window.open(url, "_blank");
   };
 
   const save = throttle(
