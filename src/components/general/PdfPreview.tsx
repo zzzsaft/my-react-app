@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Button } from "antd";
-import { DownloadOutlined } from "@ant-design/icons";
+
+import { Modal } from "antd";
+
 
 interface PdfPreviewProps {
   open: boolean;
@@ -27,35 +28,17 @@ const PdfPreview: React.FC<PdfPreviewProps> = ({
     }
   }, [blob]);
 
-  const handleDownload = () => {
-    if (!url) return;
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = fileName;
-    a.style.display = "none";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  };
-
   return (
     <Modal
       open={open}
       footer={null}
       onCancel={onClose}
-      width="80%"
-      style={{ top: 20 }}
+      width="100%"
+      style={{ top: 0, padding: 0 }}
+      styles={{ body: { height: "100vh" } }}
       destroyOnHidden
     >
-      <div style={{ position: "relative", height: "80vh" }}>
-        <Button
-          type="primary"
-          icon={<DownloadOutlined />}
-          onClick={handleDownload}
-          style={{ position: "absolute", top: 0, right: 0, zIndex: 1 }}
-        >
-          下载
-        </Button>
+      <div style={{ position: "relative", height: "100%" }}>
         {url && (
           <iframe
             src={url}
