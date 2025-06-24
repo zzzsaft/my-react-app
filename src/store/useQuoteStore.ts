@@ -430,14 +430,14 @@ export const useQuoteStore = create<QuotesStore>()(
         return;
       }
       await get().saveQuote(quoteId);
-      const data = await QuoteService.executePrint(quote);
+      // const data = await QuoteService.executePrint(quote);
       set((state) => {
         const q = state.quotes.find((i) => i.id === quoteId);
-        if (q) {
-          q.quotationPdf = data.quotationPdf;
-          q.contractPdf = data.contractPdf;
-          q.configPdf = data.configPdf;
-        }
+        // if (q) {
+        //   q.quotationPdf = data.quotationPdf;
+        //   q.contractPdf = data.contractPdf;
+        //   q.configPdf = data.configPdf;
+        // }
       });
     },
 

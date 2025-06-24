@@ -131,8 +131,6 @@ const QuoteTable: React.FC<QuoteTableProps> = ({
 
   const handleRowClick = useCallback(
     async (record: QuoteTableItem) => {
-      console.log(record);
-
       if (isTextSelecting()) return;
       const now = Date.now();
       if (now - lastClickTime.current < 1000) return;
@@ -142,6 +140,7 @@ const QuoteTable: React.FC<QuoteTableProps> = ({
       setModalVisible(true);
       const quoteData = await fetchQuote(record.key);
       setSelectedQuote(quoteData);
+      console.log(quoteData);
     },
     [fetchQuote]
   );

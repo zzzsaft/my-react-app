@@ -262,7 +262,7 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
 
   const print = async (type: "config" | "quote" | "contract") => {
     if (!quote?.id) return;
-    await saveQuote(quote.id);
+    // await saveQuote(quote.id);
     const apiType = type === "quote" ? "quotation" : type;
     const blob = await QuoteService.print(apiType as any, quote.id);
     const url = window.URL.createObjectURL(blob);
