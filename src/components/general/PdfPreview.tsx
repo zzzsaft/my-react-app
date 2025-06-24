@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
+
 import { Modal } from "antd";
+
 
 interface PdfPreviewProps {
   open: boolean;
@@ -25,7 +27,6 @@ const PdfPreview: React.FC<PdfPreviewProps> = ({
       };
     }
   }, [blob]);
-
 
   return (
     <Modal

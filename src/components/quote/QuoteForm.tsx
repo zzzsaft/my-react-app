@@ -164,7 +164,9 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
   const [preview, setPreview] = useState<{ blob: Blob; type: string } | null>(
     null
   );
+
   const [previewLoading, setPreviewLoading] = useState(false);
+
   const deliveryDays = Form.useWatch("deliveryDays", form);
   const quoteTerms: Clause[] = Form.useWatch("quoteTerms", form) || [];
   const contractTerms: Clause[] = Form.useWatch("contractTerms", form) || [];
