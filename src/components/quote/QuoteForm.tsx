@@ -11,6 +11,7 @@ import { CustomerService } from "@/api/services/customer.service";
 import { DownOutlined } from "@ant-design/icons";
 import { useAuthStore } from "@/store/useAuthStore";
 import { QuoteService } from "@/api/services/quote.service";
+import PdfPreview from "../general/PdfPreview";
 
 const getDefaultQuoteTerms = (days: number): Clause[] => [
   {
@@ -160,6 +161,9 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
   const [phoneOptions, setPhoneOptions] = useState<
     { value: string; label: string }[]
   >([]);
+  const [preview, setPreview] = useState<{ blob: Blob; type: string } | null>(
+    null
+  );
   const deliveryDays = Form.useWatch("deliveryDays", form);
   const quoteTerms: Clause[] = Form.useWatch("quoteTerms", form) || [];
   const contractTerms: Clause[] = Form.useWatch("contractTerms", form) || [];
@@ -262,11 +266,9 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
 
   const print = async (type: "config" | "quote" | "contract") => {
     if (!quote?.id) return;
-    // await saveQuote(quote.id);
     const apiType = type === "quote" ? "quotation" : type;
     const blob = await QuoteService.print(apiType as any, quote.id);
-    const url = window.URL.createObjectURL(blob);
-    window.open(url, "_blank");
+    setPreview({ blob, type });
   };
 
   const save = throttle(
@@ -327,6 +329,7 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
   const showSubmitFlow = quote?.currentApprover === userId;
 
   return (
+    <>
     <Form
       form={form}
       scrollToFirstError={{ behavior: "smooth", block: "nearest", focus: true }}
@@ -429,6 +432,13 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
         </Col>
       </Row>
     </Form>
+    <PdfPreview
+      open={!!preview}
+      blob={preview?.blob ?? null}
+      fileName={`${preview?.type ?? ""}.pdf`}
+      onClose={() => setPreview(null)}
+    />
+    </>
   );
 };
 
