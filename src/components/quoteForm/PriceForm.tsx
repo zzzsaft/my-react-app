@@ -159,7 +159,7 @@ const PriceForm = forwardRef<PriceFormRef, PriceFormProps>(
                 min={0}
                 precision={2}
                 style={{ width: "100%" }}
-                formatter={(value) => `${formatPrice(Number(value))}`}
+                formatter={(value) => `${formatPrice(Number(value), 0, 2)}`}
               />
             </Form.Item>
           </Col>
@@ -197,7 +197,7 @@ const PriceForm = forwardRef<PriceFormRef, PriceFormProps>(
 
             return (
               <Typography.Text strong>
-                {subtotal ? `${formatPrice(Number(subtotal))}` : 0}
+                {subtotal ? `${formatPrice(Number(subtotal), 0, 2)}` : 0}
               </Typography.Text>
             );
           }}

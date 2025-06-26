@@ -1,9 +1,13 @@
 // 格式化千分位
-export const formatPrice = (value: number) => {
+export const formatPrice = (
+  value: number,
+  minimumFractionDigits: number = 0,
+  maximumFractionDigits: number = 2
+) => {
   return new Intl.NumberFormat("zh-CN", {
     style: "decimal",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
+    minimumFractionDigits,
+    maximumFractionDigits,
   }).format(value);
 };
 // 将分组数据转换为 Select 需要的格式
