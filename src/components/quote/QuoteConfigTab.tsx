@@ -340,7 +340,10 @@ const QuoteConfigTab: React.FC<QuoteConfigTabProps> = ({
               label="发送人"
               initialValue={quote?.salesSupportId}
             >
-              <MemberSelect placeholder="选择发送人" />
+              <MemberSelect
+                placeholder="选择发送人"
+                departmentKeywords={["项目", "销售"]}
+              />
             </Form.Item>
           </Col>
           <Col xs={12} md={6}>

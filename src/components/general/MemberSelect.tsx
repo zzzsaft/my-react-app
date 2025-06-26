@@ -23,6 +23,8 @@ interface MemberSelectProps extends Omit<SelectProps, "value" | "onChange"> {
   initialDisplayCount?: number;
   mode?: "multiple" | "tags" | undefined;
   disabled?: boolean;
+  /** 限制成员部门必须包含的关键字列表 */
+  departmentKeywords?: string[];
 }
 
 const MemberSelect: React.FC<MemberSelectProps> = ({
@@ -33,6 +35,7 @@ const MemberSelect: React.FC<MemberSelectProps> = ({
   style = { width: "100%" },
   initialDisplayCount = 5,
   disabled,
+  departmentKeywords,
   ...restProps
 }) => {
   const members = useMemberStore((state) => state.members);
@@ -42,6 +45,13 @@ const MemberSelect: React.FC<MemberSelectProps> = ({
   const [searchText, setSearchText] = useState("");
   const [debouncedSearchText] = useDebounce(searchText, 500);
   const [initialLoaded, setInitialLoaded] = useState(false);
+
+  const isValidDepartment = (member: Member) => {
+    if (!departmentKeywords || departmentKeywords.length === 0) {
+      return true;
+    }
+    return departmentKeywords.some((k) => member.department?.includes(k));
+  };
 
   // 初始化加载成员
   useEffect(() => {
@@ -58,7 +68,9 @@ const MemberSelect: React.FC<MemberSelectProps> = ({
     const searchMembers = () => {
       if (!debouncedSearchText) {
         // 没有搜索词时显示前initialDisplayCount个成员
-        setOptions(members.slice(0, initialDisplayCount));
+        setOptions(
+          members.filter(isValidDepartment).slice(0, initialDisplayCount)
+        );
         return;
       }
 
@@ -84,7 +96,7 @@ const MemberSelect: React.FC<MemberSelectProps> = ({
             .toLowerCase()
             .includes(debouncedSearchText.toLowerCase());
           return nameMatch || pinyinMatch || pinyinMatchFull;
-        });
+        }).filter(isValidDepartment);
 
         setOptions(filtered);
       } catch (error) {
@@ -152,6 +164,7 @@ const MemberSelect: React.FC<MemberSelectProps> = ({
       options={selectOptions}
       loading={fetching}
       allowClear
+      {...restProps}
       labelRender={(props) => {
         const memberId = props.value;
         const member = [...members, ...options].find((m) => m.id === memberId);
