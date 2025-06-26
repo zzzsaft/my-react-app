@@ -70,6 +70,8 @@ export interface Quote {
   address: any; // 地址
   contactName: string; // 联系人姓名
   contactPhone: string; // 联系人手机号
+  senderId?: string; // 发送人id
+  senderPhone?: string; // 发送人电话
   telephone?: string; // 电话
   faxNumber?: string; // 传真号
   technicalLevel: string; // 技术等级

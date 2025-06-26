@@ -21,6 +21,18 @@ import QuoteItemsTable from "./QuoteItemsTable";
 import { Quote } from "@/types/types";
 import { selectOptions } from "@/util/valueUtil";
 
+const SENDER_PHONE_OPTIONS = [
+  { value: "0576-84610021", label: "蔡:0576-84610021" },
+  { value: "0576-84610010", label: "阮:0576-84610010" },
+  { value: "0576-84610019", label: "辛:0576-84610019" },
+  { value: "0576-84610007", label: "张1:0576-84610007" },
+  { value: "0576-84025778", label: "张2:0576-84025778" },
+  { value: "0576-84610008", label: "杨:0576-84610008" },
+  { value: "0576-84610003", label: "闫:0576-84610003" },
+  { value: "0576-84025988", label: "卞:0576-84025988" },
+  { value: "0576-84610002", label: "卓:0576-84610002" },
+];
+
 const INDUSTRY = {
   新能源及储能: ["动力电池（锂电、氢燃料、钠电）", "光伏新能源"],
   半导体及电子元器件: ["半导体（泛半导体）", "先进封装", "高端显示"],
@@ -316,6 +328,23 @@ const QuoteConfigTab: React.FC<QuoteConfigTabProps> = ({
               rules={[{ required: true, message: "请输入联系人手机号" }]}
             >
               <AutoComplete options={phoneOptions} />
+            </Form.Item>
+          </Col>
+          <Col xs={12} md={6}>
+            <Form.Item
+              name="senderId"
+              label="发送人"
+              initialValue={quote?.salesSupportId}
+            >
+              <MemberSelect
+                placeholder="选择发送人"
+                departmentKeywords={["项目", "销售"]}
+              />
+            </Form.Item>
+          </Col>
+          <Col xs={12} md={6}>
+            <Form.Item name="senderPhone" label="发送人电话">
+              <AutoComplete options={SENDER_PHONE_OPTIONS} />
             </Form.Item>
           </Col>
           <Col xs={12} md={8}>
