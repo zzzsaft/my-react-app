@@ -161,6 +161,12 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
   const [phoneOptions, setPhoneOptions] = useState<
     { value: string; label: string }[]
   >([]);
+  const [faxOptions, setFaxOptions] = useState<
+    { value: string; label: string }[]
+  >([]);
+  const [addressOptions, setAddressOptions] = useState<
+    { value: string; label: string }[]
+  >([]);
   const [preview, setPreview] = useState<{ blob: Blob; type: string } | null>(
     null
   );
@@ -196,9 +202,12 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
       setPhoneOptions(
         list.map((c: any) => ({ value: c.phone, label: c.phone }))
       );
-      if (data.address) {
-        form.setFieldsValue({ address: data.address });
-      }
+      setFaxOptions(
+        (data?.general?.fax ?? []).map((f: string) => ({ value: f, label: f }))
+      );
+      setAddressOptions(
+        (data?.general?.address ?? []).map((a: string) => ({ value: a, label: a }))
+      );
     } catch (e) {
       console.error(e);
     }
@@ -208,9 +217,19 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
     const matched = contacts.filter((c) => c.name === value);
     const phones = matched.map((c) => c.phone);
     setPhoneOptions(phones.map((p) => ({ value: p, label: p })));
+    const addresses = matched.map((c) => c.address).filter(Boolean);
+    const faxes = matched.map((c) => c.fax).filter(Boolean);
     if (phones.length === 1) {
       form.setFieldsValue({ contactPhone: phones[0] });
       if (quote) updateQuote(quote.id, { contactPhone: phones[0] });
+    }
+    if (addresses.length === 1) {
+      form.setFieldsValue({ address: addresses[0] });
+      if (quote) updateQuote(quote.id, { address: addresses[0] as any });
+    }
+    if (faxes.length === 1) {
+      form.setFieldsValue({ faxNumber: faxes[0] });
+      if (quote) updateQuote(quote.id, { faxNumber: faxes[0] });
     }
   };
 
@@ -372,6 +391,8 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
                 quote={quote}
                 nameOptions={nameOptions}
                 phoneOptions={phoneOptions}
+                faxOptions={faxOptions}
+                addressOptions={addressOptions}
                 handleNameSelect={handleNameSelect}
               />
             ),
