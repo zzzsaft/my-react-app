@@ -334,23 +334,6 @@ const QuoteConfigTab: React.FC<QuoteConfigTabProps> = ({
               <AutoComplete options={phoneOptions} />
             </Form.Item>
           </Col>
-          <Col xs={12} md={6}>
-            <Form.Item
-              name="senderId"
-              label="发送人"
-              initialValue={quote?.salesSupportId}
-            >
-              <MemberSelect
-                placeholder="选择发送人"
-                departmentKeywords={["项目", "销售"]}
-              />
-            </Form.Item>
-          </Col>
-          <Col xs={12} md={6}>
-            <Form.Item name="senderPhone" label="发送人电话">
-              <AutoComplete options={SENDER_PHONE_OPTIONS} />
-            </Form.Item>
-          </Col>
           <Col xs={12} md={8}>
             <Form.Item name="telephone" label="电话">
               <Input />
@@ -372,6 +355,23 @@ const QuoteConfigTab: React.FC<QuoteConfigTabProps> = ({
               rules={[{ required: true, message: "请输入地址" }]}
             >
               <AddressInput addressOptions={addressOptions} />
+            </Form.Item>
+          </Col>
+          <Col xs={12} md={6}>
+            <Form.Item
+              name="senderId"
+              label="发送人"
+              initialValue={quote?.salesSupportId}
+            >
+              <MemberSelect
+                placeholder="选择发送人"
+                departmentKeywords={["项目", "销售"]}
+              />
+            </Form.Item>
+          </Col>
+          <Col xs={12} md={6}>
+            <Form.Item name="senderPhone" label="发送人电话">
+              <AutoComplete options={SENDER_PHONE_OPTIONS} />
             </Form.Item>
           </Col>
         </Row>
