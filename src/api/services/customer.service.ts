@@ -30,7 +30,26 @@ export const CustomerService = {
     const res = await apiClient.get("/customer/contact/get", {
       params: { id },
     });
-    return res.data as { contacts: any[]; address: any };
+    const data = res.data as {
+      contact?: any[];
+      general?: { fax?: string[]; address?: string[] };
+    };
+    const contacts = (data?.contact ?? []).map((item: any) => ({
+      name: item.contact ?? item.name,
+      phone: item.phone,
+      address: item.address,
+      fax: item.fax,
+    }));
+    return {
+      contacts,
+      general: {
+        fax: data?.general?.fax ?? [],
+        address: data?.general?.address ?? [],
+      },
+    } as {
+      contacts: any[];
+      general: { fax: string[]; address: string[] };
+    };
   },
   async matchCustomer(payload: {
     externalUserId: string;

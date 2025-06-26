@@ -87,6 +87,8 @@ interface QuoteConfigTabProps {
   quote?: Quote;
   nameOptions: { value: string; label: string }[];
   phoneOptions: { value: string; label: string }[];
+  faxOptions: { value: string; label: string }[];
+  addressOptions: { value: string; label: string }[];
   handleNameSelect: (value: string) => void;
 }
 
@@ -95,6 +97,8 @@ const QuoteConfigTab: React.FC<QuoteConfigTabProps> = ({
   quote,
   nameOptions,
   phoneOptions,
+  faxOptions,
+  addressOptions,
   handleNameSelect,
 }) => {
   const onDateChange = (date: any) => {
@@ -350,13 +354,21 @@ const QuoteConfigTab: React.FC<QuoteConfigTabProps> = ({
             </Form.Item>
           </Col>
           <Col xs={12} md={8}>
-            <Form.Item name="faxNumber" label="传真号">
-              <Input />
+            <Form.Item
+              name="faxNumber"
+              label="传真号"
+              rules={[{ required: true, message: "请输入传真号" }]}
+            >
+              <AutoComplete options={faxOptions} />
             </Form.Item>
           </Col>
           <Col xs={24} md={24}>
-            <Form.Item name="address" label="地址">
-              <AddressInput />
+            <Form.Item
+              name="address"
+              label="地址"
+              rules={[{ required: true, message: "请输入地址" }]}
+            >
+              <AddressInput addressOptions={addressOptions} />
             </Form.Item>
           </Col>
         </Row>
