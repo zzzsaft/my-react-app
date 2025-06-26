@@ -64,6 +64,7 @@ export interface Quote {
   projectManagerId: string; // 项目管理id
   totalProductPrice: number; // 产品价格合计
   discountAmount: number; // 优惠金额
+  hideItemPrice?: boolean; // 是否隐藏分项价格
   quoteAmount: number; // 报价单金额
   deliveryDays: number; // 交期天数
   address: any; // 地址

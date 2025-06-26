@@ -167,6 +167,13 @@ const DieForm = forwardRef(
       if (!result.result) form.setFieldValue("thicknessGauge", true);
     };
 
+    const handleLowerLipStructure = (value: string) => {
+      if (value?.includes("整体")) {
+        form.setFieldValue("lipCount", 1);
+        handleLipCount(1);
+      }
+    };
+
     const handleLipCount = (value: number) => {
       const count = value ?? 1;
       if (count <= 1) {
@@ -191,6 +198,7 @@ const DieForm = forwardRef(
         smartRegulator: handleSmartRegulator,
         haveThermalInsulation: handleThermalInsulation,
         thicknessGauge: handleThicknessGauge,
+        lowerLipStructure: handleLowerLipStructure,
         lipCount: handleLipCount,
       };
 
