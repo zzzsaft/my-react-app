@@ -269,6 +269,14 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
 
   const print = async (type: "config" | "quote" | "contract") => {
     if (!quote?.id) return;
+    if (type === "quote" && quoteTerms.length === 0) {
+      message.error("请设置至少一条报价条约");
+      return;
+    }
+    if (type === "contract" && contractTerms.length === 0) {
+      message.error("请设置合同条款");
+      return;
+    }
     setPreviewLoading(true);
     try {
       const apiType = type === "quote" ? "quotation" : type;
