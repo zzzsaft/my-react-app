@@ -3,9 +3,8 @@ import {
   ProForm,
   ProFormDependency,
 } from "@ant-design/pro-components";
-import { Col, Form, Input, InputNumber, Radio, Row } from "antd";
+import { Col, Form, Input, InputNumber, Radio, Row, Cascader } from "antd";
 import { IntervalInputFormItem } from "@/components/general/IntervalInput";
-import { CustomSelect } from "@/components/general/CustomSelect";
 import ScrewForm from "../formComponents/ScrewForm";
 import AutoSlashInput from "@/components/general/AutoSlashInput";
 import ProFormListWrapper from "../formComponents/ProFormListWrapper";
@@ -14,9 +13,26 @@ import LevelInputNumber, {
 } from "@/components/general/LevelInputNumber";
 import MaterialSelect from "@/components/general/MaterialSelect";
 
-const RUNNER_NUMBER_OPTIONS = {
-  流道形式: ["单腔流道", "模内共挤", "分配器共挤", "分配器+模内共挤"],
-};
+const RUNNER_TYPE_OPTIONS = [
+  {
+    value: "单腔流道",
+    label: "单腔流道",
+    children: [
+      { value: "衣架式", label: "衣架式" },
+      { value: "特殊支管式", label: "特殊支管式" },
+      { value: "TPU专用流道", label: "TPU专用流道" },
+    ],
+  },
+  {
+    value: "多腔流道",
+    label: "多腔流道",
+    children: [
+      { value: "模内共挤", label: "模内共挤" },
+      { value: "分配器共挤", label: "分配器共挤" },
+      { value: "分配器+模内共挤", label: "分配器+模内共挤" },
+    ],
+  },
+];
 export const Product = () => {
   const form = Form.useFormInstance();
   return (
@@ -169,12 +185,28 @@ export const Product = () => {
             <Form.Item
               name="runnerType"
               label="流道形式"
-              rules={[{ required: true, message: "请选择流道数量" }]}
+              rules={[
+                { required: true, message: "请选择流道形式" },
+                {
+                  validator: (_, value) => {
+                    if (
+                      Array.isArray(value) &&
+                      value.length === 1 &&
+                      value[0] === "多腔流道"
+                    ) {
+                      return Promise.reject(
+                        new Error("请在多腔流道下选择具体选项")
+                      );
+                    }
+                    return Promise.resolve();
+                  },
+                },
+              ]}
             >
-              <CustomSelect
-                showSearch={false}
-                dropdown={false}
-                initialGroups={RUNNER_NUMBER_OPTIONS}
+              <Cascader
+                options={RUNNER_TYPE_OPTIONS}
+                placeholder="请选择"
+                changeOnSelect
               />
             </Form.Item>
           </Col>
