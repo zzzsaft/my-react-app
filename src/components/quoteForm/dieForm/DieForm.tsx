@@ -211,9 +211,9 @@ const DieForm = forwardRef(
           disabled={readOnly}
         >
           <SameProduct />
-          <Form.Item noStyle dependencies={["hasCart"]}>
+          <Form.Item noStyle dependencies={["isBuySameProduct"]}>
             {({ getFieldValue }) => {
-              const isBuySameProduct = getFieldValue("isBuySameProduct"); // 获取 hasCart 的值
+              const isBuySameProduct = getFieldValue("isBuySameProduct");
               return !isBuySameProduct ? (
                 <>
                   <Product />
