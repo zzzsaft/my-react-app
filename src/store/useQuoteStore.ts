@@ -80,6 +80,8 @@ interface QuotesStore {
     quoteName: string;
     contactName?: string;
     contactPhone?: string;
+    senderId?: string;
+    senderPhone?: string;
   }) => Promise<Quote>;
   updateQuote: (
     quoteId: number,
