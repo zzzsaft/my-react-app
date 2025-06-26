@@ -32,6 +32,9 @@ const MeteringPumpForm = forwardRef(
     const quoteItems = useQuoteStore
       .getState()
       .quotes.find((quote) => quote.id === quoteId)?.items;
+    const quoteType = useQuoteStore(
+      (state) => state.quotes.find((q) => q.id === quoteId)?.type
+    );
     const { showProductActionModal } = useProductActionModal();
     const pump = useProductStore((state) => state.pump);
     const addProp: any = (
@@ -195,7 +198,7 @@ const MeteringPumpForm = forwardRef(
           onValuesChange={handleFieldsChange}
           disabled={readOnly}
         >
-          <ModelSelection />
+          <ModelSelection temperatureRequired={quoteType !== "history"} />
           <ModelOption />
 
           <Form.Item label="其他备注" name="remark">

@@ -170,16 +170,22 @@ export const DieBody = () => {
             />
           </Form.Item>
         </Col>
-        <Col xs={12} md={6}>
-          <Form.Item
-            name="lipCount"
-            label="模唇数量"
-            rules={[{ required: true, message: "请输入模唇数量" }]}
-            initialValue={1}
-          >
-            <InputNumber min={1} max={5} style={{ width: "100%" }} />
-          </Form.Item>
-        </Col>
+        <Form.Item noStyle dependencies={["lowerLipStructure"]}>
+          {({ getFieldValue }) =>
+            getFieldValue("lowerLipStructure")?.includes("整体") ? null : (
+              <Col xs={12} md={6}>
+                <Form.Item
+                  name="lipCount"
+                  label="模唇数量"
+                  rules={[{ required: true, message: "请输入模唇数量" }]}
+                  initialValue={1}
+                >
+                  <InputNumber min={1} max={5} style={{ width: "100%" }} />
+                </Form.Item>
+              </Col>
+            )
+          }
+        </Form.Item>
         <Col xs={24} md={24}>
           <ProFormDependency name={["lipCount"]}>
             {({ lipCount }) =>

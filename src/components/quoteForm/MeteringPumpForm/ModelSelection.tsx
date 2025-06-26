@@ -17,7 +17,11 @@ import MaterialSelect from "@/components/general/MaterialSelect";
 import { useProductStore } from "@/store/useProductStore";
 import ExtruderForm from "../formComponents/ExtruderForm";
 
-export const ModelSelection = () => {
+export const ModelSelection = ({
+  temperatureRequired = true,
+}: {
+  temperatureRequired?: boolean;
+}) => {
   const pump = useProductStore((state) => state.pump);
   const fetchPump = useProductStore((state) => state.fetchPump);
   useEffect(() => {
@@ -57,7 +61,11 @@ export const ModelSelection = () => {
             <IntervalInputFormItem
               name="temperature"
               label="工艺温度(℃)"
-              rules={[{ required: true, message: "请输入工艺温度" }]}
+              rules={
+                temperatureRequired
+                  ? [{ required: true, message: "请输入工艺温度" }]
+                  : []
+              }
               placeholder={"工艺温度"}
               addonAfter="℃"
             />
