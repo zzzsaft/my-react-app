@@ -188,10 +188,14 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
   };
   const handleQuoteTermsChange = (terms: Clause[]) => {
     form.setFieldsValue({ quoteTerms: terms });
+    if (quote) updateQuote(quote.id, { quoteTerms: terms });
+    scheduleAutoSave();
   };
 
   const handleContractTermsChange = (terms: Clause[]) => {
     form.setFieldsValue({ contractTerms: terms });
+    if (quote) updateQuote(quote.id, { contractTerms: terms });
+    scheduleAutoSave();
   };
   const fetchContacts = throttle(async (id: string) => {
     try {
@@ -235,11 +239,16 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
 
   const setDefaultQuoteTerms = () => {
     const days = deliveryDays ?? 0;
-    form.setFieldsValue({ quoteTerms: getDefaultQuoteTerms(days) });
+    const terms = getDefaultQuoteTerms(days);
+    form.setFieldsValue({ quoteTerms: terms });
+    if (quote) updateQuote(quote.id, { quoteTerms: terms });
+    scheduleAutoSave();
   };
 
   const setDefaultContractTerms = () => {
     form.setFieldsValue({ contractTerms: DEFAULT_CONTRACT_TERMS });
+    if (quote) updateQuote(quote.id, { contractTerms: DEFAULT_CONTRACT_TERMS });
+    scheduleAutoSave();
   };
   const quote = useQuoteStore((state) =>
     state.quotes.find((q) => q.id == quoteId)
