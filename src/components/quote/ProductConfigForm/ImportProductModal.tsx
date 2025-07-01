@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Tabs, Table, Button } from "antd";
+import { Modal, Tabs, Table, Button, Pagination } from "antd";
 import { ProductService } from "@/api/services/product.service";
 import ProductSearchBar from "../../general/ProductSearchBar";
 import {
@@ -44,6 +44,10 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
   const [tplLoading, setTplLoading] = useState(false);
   const [tplPage, setTplPage] = useState(1);
   const [tplTotal, setTplTotal] = useState(0);
+  const [otherPage, setOtherPage] = useState(1);
+  const [otherTotal, setOtherTotal] = useState(0);
+  const [searchField, setSearchField] = useState<"code" | "name">("code");
+  const [searchKeyword, setSearchKeyword] = useState("");
 
   const fetchTemplates = async (page: number) => {
     setTplLoading(true);
@@ -73,18 +77,32 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
     }
   }, [open, mode, formType, orderOnly]);
 
-  const handleSearch = async (field: "code" | "name", keyword: string) => {
+  const fetchOthers = async (
+    page: number,
+    field: "code" | "name",
+    keyword: string
+  ) => {
     setLoading(true);
     try {
-      const data = await ProductService.searchProducts(
+      const { list, total } = await ProductService.searchProducts(
         keyword,
         field,
-        formType
+        formType,
+        page,
+        10
       );
-      setList(data);
+      setList(list);
+      setOtherTotal(total);
+      setOtherPage(page);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSearch = (field: "code" | "name", keyword: string) => {
+    setSearchField(field);
+    setSearchKeyword(keyword);
+    fetchOthers(1, field, keyword);
   };
 
   const cleanConfig = (config: any) => {
@@ -204,8 +222,13 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
                     style={{ marginTop: 16 }}
                     dataSource={list}
                     rowKey={(row) => row.item.id}
-                    pagination={false}
+                    pagination={{ current: otherPage, pageSize: 10, total: otherTotal }}
                     loading={loading}
+                    onChange={(p) => {
+                      if (p.current) {
+                        fetchOthers(p.current, searchField, searchKeyword);
+                      }
+                    }}
                     onRow={(record) => ({
                       onClick: () => setSelected(record),
                       onDoubleClick: () => {
@@ -238,6 +261,13 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
                           d ? new Date(d as any).toLocaleDateString() : "",
                       },
                     ]}
+                  />
+                  <Pagination
+                    style={{ marginTop: 16, textAlign: "right" }}
+                    current={otherPage}
+                    pageSize={10}
+                    total={otherTotal}
+                    onChange={(p) => fetchOthers(p, searchField, searchKeyword)}
                   />
                 </div>
               ),

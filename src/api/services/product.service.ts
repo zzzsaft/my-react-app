@@ -5,11 +5,13 @@ export const ProductService = {
   async searchProducts(
     keyword: string,
     field: "code" | "name",
-    formType?: string
+    formType?: string,
+    page = 1,
+    pageSize = 10
   ) {
     const res = await apiClient.get("/product/search", {
-      params: { keyword, field, formType },
+      params: { keyword, field, formType, page, pageSize },
     });
-    return res.data as ProductSearchResult[];
+    return res.data as { list: ProductSearchResult[]; total: number };
   },
 };
