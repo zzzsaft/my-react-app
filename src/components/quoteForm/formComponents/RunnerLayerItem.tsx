@@ -1,5 +1,5 @@
 import ProForm from "@ant-design/pro-form";
-import { Col, Row, Input, InputNumber } from "antd";
+import { Col, Row, Input, InputNumber, Select } from "antd";
 import { IntervalInput } from "@/components/general/IntervalInput";
 import MaterialSelect from "@/components/general/MaterialSelect";
 
@@ -10,18 +10,21 @@ interface RunnerLayerItemProps {
 const RunnerLayerItem: React.FC<RunnerLayerItemProps> = ({ materials }) => {
   return (
     <Row gutter={16}>
-      <Col xs={24} md={6}>
+      <Col xs={4} md={2}>
         <ProForm.Item name="level" label="层" readonly>
           <Input disabled />
         </ProForm.Item>
       </Col>
-      <Col xs={24} md={6}>
+      <Col xs={8} md={6}>
         <ProForm.Item
-          name="value"
+          name="ratio"
           label="比例"
           rules={[
             {
-              validator: async (_: any, value: { value?: string; front?: number; rear?: number }) => {
+              validator: async (
+                _: any,
+                value: { value?: string; front?: number; rear?: number }
+              ) => {
                 const num = parseFloat(value?.value || "0");
                 if (isNaN(num) || num === 0) {
                   return Promise.reject(new Error("比例不得为0"));
@@ -47,29 +50,26 @@ const RunnerLayerItem: React.FC<RunnerLayerItemProps> = ({ materials }) => {
           <IntervalInput unit="%" style={{ width: 120 }} />
         </ProForm.Item>
       </Col>
-      <Col xs={24} md={6}>
+      <Col xs={8} md={6}>
         <ProForm.Item
           name="temperature"
           label="工艺温度(℃)"
           rules={[{ required: true, message: "请输入工艺温度" }]}
         >
-          <InputNumber
-            formatter={(value) => `${value}℃`}
-            parser={(value) => value?.replace(/℃/g, "") as any}
-            min={0}
-            precision={0}
-            style={{ width: "100%" }}
-          />
+          <IntervalInput unit="℃" />
         </ProForm.Item>
       </Col>
-      <Col xs={24} md={6}>
+      <Col xs={8} md={10}>
         <ProForm.Item
           name="material"
           label="材料"
           rules={[{ required: true, message: "请选择材料" }]}
         >
-          <MaterialSelect
-            options={materials ? { 可选材料: materials } : undefined}
+          <Select
+            options={materials?.map((item) => ({
+              label: item,
+              value: item,
+            }))}
             placeholder="请选择材料"
           />
         </ProForm.Item>

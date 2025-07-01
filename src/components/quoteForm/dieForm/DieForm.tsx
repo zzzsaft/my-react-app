@@ -210,20 +210,12 @@ const DieForm = forwardRef(
             quoteItemId={quoteItemId}
             onLockChange={setLocked}
           />
-          <Form.Item noStyle dependencies={["isBuySameProduct"]}>
-            {({ getFieldValue }) => {
-              const isBuySameProduct = getFieldValue("isBuySameProduct");
-              return !isBuySameProduct ? (
-                <>
-                  <Product />
-                  <DieBody />
-                  <DieInstall />
-                  <TemperatureControl />
-                  <SurfaceTreatment />
-                </>
-              ) : null;
-            }}
-          </Form.Item>
+
+          <Product />
+          <DieBody />
+          <DieInstall />
+          <TemperatureControl />
+          <SurfaceTreatment />
 
           <Form.Item label="其他备注" name="remark">
             <TextArea />

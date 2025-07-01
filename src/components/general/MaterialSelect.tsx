@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Select } from "antd";
 import { selectOptions } from "@/util/valueUtil";
 
@@ -14,6 +14,7 @@ interface MaterialSelectProps {
   disabled?: boolean;
   placeholder?: string;
   style?: React.CSSProperties;
+  mode?: "tags" | "multiple" | undefined;
 }
 // 模拟数据源
 const MATERIAL = {
@@ -29,9 +30,9 @@ const MaterialSelect: React.FC<MaterialSelectProps> = ({
   disabled = false,
   placeholder = "输入材料，按回车确认",
   style,
+  mode = "tags",
 }) => {
   const VALID_TAG = /^[\u4e00-\u9fa5a-zA-Z\d%()（）+-]+$/;
-
   const handleChange = (newValue: string[]) => {
     if (onChange) {
       const cleaned = newValue
@@ -54,7 +55,7 @@ const MaterialSelect: React.FC<MaterialSelectProps> = ({
       id={id}
       placeholder={placeholder}
       disabled={disabled}
-      mode="tags"
+      mode={mode}
       onInputKeyDown={handleInputKeyDown}
       options={selectOptions(options ?? MATERIAL)}
       value={value}

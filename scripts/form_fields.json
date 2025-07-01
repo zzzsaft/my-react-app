@@ -353,7 +353,7 @@
     },
     {
       "name": "extrudeType",
-      "label": "挤出类型",
+      "label": "复合类型",
       "type": "Select"
     },
     {

@@ -259,16 +259,7 @@ const QuoteConfigTab: React.FC<QuoteConfigTabProps> = ({
               <MoneyInput quoteId={quote?.id ?? 0} />
             </Form.Item>
           </Col>
-          <Col xs={12} md={6}>
-            <Form.Item
-              name="hideItemPrice"
-              label="隐藏分项价格"
-              valuePropName="checked"
-              initialValue={false}
-            >
-              <Switch />
-            </Form.Item>
-          </Col>
+
           <Col xs={12} md={6}>
             <Form.Item label="报价单金额">
               <MoneyInput
@@ -295,6 +286,16 @@ const QuoteConfigTab: React.FC<QuoteConfigTabProps> = ({
                   return Math.min(Math.max(num, 0), 365) as any;
                 }}
               />
+            </Form.Item>
+          </Col>
+          <Col xs={12} md={6}>
+            <Form.Item
+              name="hideItemPrice"
+              label="隐藏分项价格"
+              valuePropName="checked"
+              initialValue={false}
+            >
+              <Switch />
             </Form.Item>
           </Col>
         </Row>
