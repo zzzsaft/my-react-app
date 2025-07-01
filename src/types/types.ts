@@ -122,6 +122,11 @@ export interface QuoteItem {
     value: any;
     key: string;
   };
+  importInfo?: {
+    type: "template" | "order";
+    name: string;
+    id: string;
+  };
   isCategoryLocked: boolean;
 }
 

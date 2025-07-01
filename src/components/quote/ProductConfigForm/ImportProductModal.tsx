@@ -18,6 +18,7 @@ interface ImportProductModalProps {
   onCancel: () => void;
   onImport: (item: QuoteItem) => void;
   formType?: string;
+  orderOnly?: boolean;
 }
 
 const ImportProductModal: React.FC<ImportProductModalProps> = ({
@@ -25,10 +26,11 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
   onCancel,
   onImport,
   formType,
+  orderOnly = false,
 }) => {
   const isOtherForm = formType === "OtherForm";
   const [mode, setMode] = useState<"template" | "other">(
-    isOtherForm ? "other" : "template"
+    orderOnly || isOtherForm ? "other" : "template"
   );
   const [list, setList] = useState<ProductSearchResult[]>([]);
   const [selected, setSelected] = useState<ProductSearchResult>();
@@ -46,16 +48,16 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
   } = useTemplateStore();
 
   useEffect(() => {
-    if (isOtherForm) {
+    if (isOtherForm || orderOnly) {
       setMode("other");
     }
-  }, [isOtherForm]);
+  }, [isOtherForm, orderOnly]);
 
   useEffect(() => {
-    if (open && mode === "template") {
+    if (!orderOnly && open && mode === "template") {
       refreshTemplates(formType);
     }
-  }, [open, mode, formType, refreshTemplates]);
+  }, [open, mode, formType, refreshTemplates, orderOnly]);
 
   const handleSearch = async (field: "code" | "name", keyword: string) => {
     setLoading(true);
@@ -76,11 +78,20 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
       onImport({
         ...selectedTemplate,
         config: selectedTemplate.config,
+        importInfo: {
+          type: "template",
+          name: selectedTemplate.name,
+          id: selectedTemplate.id,
+        },
       } as any);
     } else if (mode === "other" && selected) {
       onImport({
-        // ...selectedTemplate,
         config: selected.item.config,
+        importInfo: {
+          type: "order",
+          name: selected.item.productName ?? "",
+          id: String(selected.item.id),
+        },
       } as any);
       // onImport(selected.item);
     }
@@ -113,42 +124,46 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
           activeKey={mode}
           onChange={(key) => setMode(key as any)}
           items={[
-            {
-              key: "template",
-              label: "从模版导入",
-              disabled: isOtherForm,
-              children: (
-                <div>
-                  <div style={{ marginBottom: 16 }}>
-                    <Button
-                      type="primary"
-                      onClick={() => setCreateOpen(true)}
-                      disabled={isOtherForm}
-                    >
-                      创建模版
-                    </Button>
-                    <Button
-                      style={{ marginLeft: 8 }}
-                      onClick={() => refreshTemplates(formType)}
-                      loading={tplLoading}
-                    >
-                      刷新
-                    </Button>
-                  </div>
-                  <TemplateTable
-                    templates={templates}
-                    loading={tplLoading}
-                    selectedId={selectedTemplate?.id}
-                    onSelect={setSelectedTemplate}
-                    onDoubleClick={(tpl) => {
-                      setCurrentTpl(tpl);
-                      setConfigOpen(true);
-                    }}
-                    showType={false}
-                  />
-                </div>
-              ),
-            },
+            ...(!orderOnly
+              ? [
+                  {
+                    key: "template",
+                    label: "从模版导入",
+                    disabled: isOtherForm,
+                    children: (
+                      <div>
+                        <div style={{ marginBottom: 16 }}>
+                          <Button
+                            type="primary"
+                            onClick={() => setCreateOpen(true)}
+                            disabled={isOtherForm}
+                          >
+                            创建模版
+                          </Button>
+                          <Button
+                            style={{ marginLeft: 8 }}
+                            onClick={() => refreshTemplates(formType)}
+                            loading={tplLoading}
+                          >
+                            刷新
+                          </Button>
+                        </div>
+                        <TemplateTable
+                          templates={templates}
+                          loading={tplLoading}
+                          selectedId={selectedTemplate?.id}
+                          onSelect={setSelectedTemplate}
+                          onDoubleClick={(tpl) => {
+                            setCurrentTpl(tpl);
+                            setConfigOpen(true);
+                          }}
+                          showType={false}
+                        />
+                      </div>
+                    ),
+                  },
+                ]
+              : []),
             {
               key: "other",
               label: "从其他产品导入",
@@ -199,11 +214,13 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
           ]}
         />
       </Modal>
-      <TemplateCreateModal
-        open={createOpen}
-        onClose={() => setCreateOpen(false)}
-        formType={formType}
-      />
+      {!orderOnly && (
+        <TemplateCreateModal
+          open={createOpen}
+          onClose={() => setCreateOpen(false)}
+          formType={formType}
+        />
+      )}
       <TemplateConfigModal
         open={configOpen}
         template={currentTpl}

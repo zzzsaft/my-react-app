@@ -1,5 +1,5 @@
 import { Form, FormInstance } from "antd";
-import { forwardRef, useImperativeHandle } from "react";
+import { forwardRef, useImperativeHandle, useState } from "react";
 import { Product } from "./Product";
 import { DieBody } from "./DieBody";
 import { DieInstall } from "./DieInstall";
@@ -24,6 +24,7 @@ const DieForm = forwardRef(
     ref
   ) => {
     const [form] = Form.useForm();
+    const [locked, setLocked] = useState(false);
     const quoteItems = useQuoteStore
       .getState()
       .quotes.find((quote) => quote.id === quoteId)?.items;
@@ -202,9 +203,13 @@ const DieForm = forwardRef(
           form={form}
           submitter={false}
           onValuesChange={handleFieldsChange}
-          disabled={readOnly}
+          disabled={readOnly || locked}
         >
-          <SameProduct />
+          <SameProduct
+            quoteId={quoteId}
+            quoteItemId={quoteItemId}
+            onLockChange={setLocked}
+          />
           <Form.Item noStyle dependencies={["isBuySameProduct"]}>
             {({ getFieldValue }) => {
               const isBuySameProduct = getFieldValue("isBuySameProduct");

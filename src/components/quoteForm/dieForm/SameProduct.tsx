@@ -1,58 +1,126 @@
-import { Col, Form, Input, Radio, Row } from "antd";
+import { Button, Col, Form, Input, Row } from "antd";
 import { useState } from "react";
+import ImportProductModal from "@/components/quote/ProductConfigForm/ImportProductModal";
 
-export const SameProduct = () => {
-  const [isBuySameProduct, setIsBuySameProduct] = useState<boolean>(false);
-  const [isIntercompatible, setIsIntercompatible] = useState<boolean>(false);
+interface SameProductProps {
+  quoteId: number;
+  quoteItemId: number;
+  onLockChange?: (locked: boolean) => void;
+}
+
+export const SameProduct: React.FC<SameProductProps> = ({
+  quoteId,
+  quoteItemId,
+  onLockChange,
+}) => {
+  const form = Form.useFormInstance();
+  const [sameOpen, setSameOpen] = useState(false);
+  const [interOpen, setInterOpen] = useState(false);
+  const [sameSelected, setSameSelected] = useState(false);
+  const [interSelected, setInterSelected] = useState(false);
+
+  const handleSameSelect = (item: any) => {
+    form.setFieldsValue({
+      isBuySameProduct: true,
+      lastProductCode: item.productCode,
+    });
+    setSameSelected(true);
+    setSameOpen(false);
+    onLockChange?.(true);
+  };
+
+  const handleInterSelect = (item: any) => {
+    form.setFieldsValue({
+      isIntercompatible: true,
+      intercompatibleProductCode: item.productCode,
+    });
+    setInterSelected(true);
+    setInterOpen(false);
+  };
+
   return (
-    <Row gutter={16}>
-      <Col xs={12} md={8}>
-        <Form.Item
-          name="isBuySameProduct"
-          label="是否购买过相同型号产品"
-          rules={[{ required: true, message: "是否购买过相同型号产品" }]}
-        >
-          <Radio.Group onChange={(e) => setIsBuySameProduct(e.target.value)}>
-            <Radio value={true}>是</Radio>
-            <Radio value={false}>否</Radio>
-          </Radio.Group>
-        </Form.Item>
-      </Col>
-      {isBuySameProduct ? (
+    <>
+      <Row gutter={16}>
         <Col xs={12} md={8}>
-          <Form.Item
-            name="lastProductCode"
-            label="同型号产品编号"
-            rules={[{ required: true, message: "请输入原产品名称编号" }]}
+          <Button
+            danger={sameSelected}
+            type={sameSelected ? "primary" : "default"}
+            onClick={() => {
+              if (sameSelected) {
+                form.setFieldsValue({
+                  isBuySameProduct: false,
+                  lastProductCode: undefined,
+                });
+                setSameSelected(false);
+                onLockChange?.(false);
+              } else {
+                setSameOpen(true);
+              }
+            }}
           >
-            <Input />
-          </Form.Item>
+            {sameSelected ? "取消相同产品" : "选择相同产品编号"}
+          </Button>
         </Col>
-      ) : (
-        <Col xs={12} md={8}>
-          <Form.Item
-            name="isIntercompatible"
-            label="是否与购买过的产品互配"
-            rules={[{ required: true, message: "是否与原购买过的产品互配" }]}
-          >
-            <Radio.Group onChange={(e) => setIsIntercompatible(e.target.value)}>
-              <Radio value={true}>是</Radio>
-              <Radio value={false}>否</Radio>
-            </Radio.Group>
-          </Form.Item>
-        </Col>
-      )}
-      {!isBuySameProduct && isIntercompatible && (
-        <Col xs={12} md={8}>
-          <Form.Item
-            name="intercompatibleProductCode"
-            label="互配产品编号"
-            rules={[{ required: true, message: "请输入原产品名称编号" }]}
-          >
-            <Input />
-          </Form.Item>
-        </Col>
-      )}
-    </Row>
+        {sameSelected && (
+          <Col xs={12} md={8}>
+            <Form.Item
+              name="lastProductCode"
+              label="同型号产品编号"
+              rules={[{ required: true, message: "请输入原产品名称编号" }]}
+            >
+              <Input disabled />
+            </Form.Item>
+          </Col>
+        )}
+        {!sameSelected && (
+          <Col xs={12} md={8}>
+            <Button
+              danger={interSelected}
+              type={interSelected ? "primary" : "default"}
+              onClick={() => {
+                if (interSelected) {
+                  form.setFieldsValue({
+                    isIntercompatible: false,
+                    intercompatibleProductCode: undefined,
+                  });
+                  setInterSelected(false);
+                } else {
+                  setInterOpen(true);
+                }
+              }}
+            >
+              {interSelected ? "取消互配产品" : "选择互配产品编号"}
+            </Button>
+          </Col>
+        )}
+        {!sameSelected && interSelected && (
+          <Col xs={12} md={8}>
+            <Form.Item
+              name="intercompatibleProductCode"
+              label="互配产品编号"
+              rules={[{ required: true, message: "请输入原产品名称编号" }]}
+            >
+              <Input disabled />
+            </Form.Item>
+          </Col>
+        )}
+      </Row>
+      <ImportProductModal
+        open={sameOpen}
+        onCancel={() => setSameOpen(false)}
+        onImport={handleSameSelect}
+        formType="DieForm"
+        orderOnly
+      />
+      <ImportProductModal
+        open={interOpen}
+        onCancel={() => setInterOpen(false)}
+        onImport={handleInterSelect}
+        formType="DieForm"
+        orderOnly
+      />
+    </>
   );
 };
+
+export default SameProduct;
