@@ -150,7 +150,11 @@ const ProductConfigModal: React.FC<ProductConfigModalProps> = ({
               alignItems: "center",
             }}
           >
-            <span>{quoteItem?.productCategory?.join("/")}</span>
+            <span>
+              {quoteItem?.productCategory?.join("/")}
+              {quoteItem?.importInfo &&
+                `(${quoteItem.importInfo.id} ${quoteItem.importInfo.name})`}
+            </span>
             <Button
               type="link"
               onClick={() => setImportOpen(true)}
@@ -197,13 +201,17 @@ const ProductConfigModal: React.FC<ProductConfigModalProps> = ({
           open={importOpen}
           onCancel={() => setImportOpen(false)}
           onImport={(item) => {
-            // update current form instead of store so modal stays open
             if (item.config) {
               formRef.current?.modelForm?.setFieldsValue(item.config);
             }
             if (item.productName) {
               formRef.current?.priceForm?.setFieldsValue({
                 productName: item.productName,
+              });
+            }
+            if (quoteItem?.id && item.importInfo) {
+              onUpdateItem(quoteId, quoteItem.id, {
+                importInfo: item.importInfo,
               });
             }
             setImportOpen(false);
