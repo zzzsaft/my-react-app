@@ -20,8 +20,8 @@ export const useTemplateStore = create<TemplateState>()(
     },
     refreshTemplates: async (formType?: string) => {
       set({ loading: true });
-      const data = await TemplateService.getTemplates({ formType });
-      set({ templates: data, loading: false });
+      const { list } = await TemplateService.getTemplates({ formType });
+      set({ templates: list, loading: false });
     },
   }))
 );

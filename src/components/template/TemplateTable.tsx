@@ -1,5 +1,6 @@
 import React from "react";
 import { Table } from "antd";
+import type { TablePaginationConfig } from "antd/es/table";
 import MemberAvatar from "../general/MemberAvatar";
 import { QuoteTemplate } from "@/types/types";
 
@@ -11,6 +12,8 @@ interface TemplateTableProps {
   onDoubleClick?: (tpl: QuoteTemplate) => void;
   showType?: boolean;
   actionRender?: (tpl: QuoteTemplate) => React.ReactNode;
+  pagination?: false | TablePaginationConfig;
+  onPageChange?: (page: number, pageSize: number) => void;
 }
 
 const TEMPLATE_TYPE_MAP: Record<string, string> = {
@@ -33,6 +36,8 @@ const TemplateTable: React.FC<TemplateTableProps> = ({
   onDoubleClick,
   showType = true,
   actionRender,
+  pagination = false,
+  onPageChange,
 }) => {
   const columns = [
     { title: "ID", dataIndex: "id", width: 80 },
@@ -76,7 +81,12 @@ const TemplateTable: React.FC<TemplateTableProps> = ({
       dataSource={templates}
       columns={columns as any}
       loading={loading}
-      pagination={false}
+      pagination={pagination}
+      onChange={(p: TablePaginationConfig) => {
+        if (onPageChange && p.current && p.pageSize) {
+          onPageChange(p.current, p.pageSize);
+        }
+      }}
       onRow={(record) => ({
         onClick: () => onSelect?.(record),
         onDoubleClick: () => onDoubleClick?.(record),
