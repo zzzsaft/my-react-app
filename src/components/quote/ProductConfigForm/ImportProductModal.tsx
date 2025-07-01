@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Tabs, Table, Button } from "antd";
 import { ProductService } from "@/api/services/product.service";
-import ProductConfigurationForm from "./ProductConfigurationForm";
 import ProductSearchBar from "../../general/ProductSearchBar";
 import {
   QuoteItem,
   ProductSearchResult,
   QuoteTemplate,
 } from "../../../types/types";
-import { useTemplateStore } from "../../../store/useTemplateStore";
 import TemplateTable from "../../template/TemplateTable";
 import TemplateCreateModal from "../../template/TemplateCreateModal";
 import TemplateConfigModal from "../../template/TemplateConfigModal";
+import { TemplateService } from "@/api/services/template.service";
 
 interface ImportProductModalProps {
   open: boolean;
@@ -41,11 +40,26 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
   const [currentTpl, setCurrentTpl] = useState<
     QuoteTemplate | QuoteItem | null
   >(null);
-  const {
-    templates,
-    loading: tplLoading,
-    refreshTemplates,
-  } = useTemplateStore();
+  const [templates, setTemplates] = useState<QuoteTemplate[]>([]);
+  const [tplLoading, setTplLoading] = useState(false);
+  const [tplPage, setTplPage] = useState(1);
+  const [tplTotal, setTplTotal] = useState(0);
+
+  const fetchTemplates = async (page: number) => {
+    setTplLoading(true);
+    try {
+      const { list, total } = await TemplateService.getTemplates({
+        formType,
+        page,
+        pageSize: 10,
+      });
+      setTemplates(list);
+      setTplTotal(total);
+      setTplPage(page);
+    } finally {
+      setTplLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (isOtherForm || orderOnly) {
@@ -55,9 +69,9 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
 
   useEffect(() => {
     if (!orderOnly && open && mode === "template") {
-      refreshTemplates(formType);
+      fetchTemplates(1);
     }
-  }, [open, mode, formType, refreshTemplates, orderOnly]);
+  }, [open, mode, formType, orderOnly]);
 
   const handleSearch = async (field: "code" | "name", keyword: string) => {
     setLoading(true);
@@ -156,7 +170,7 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
                           </Button>
                           <Button
                             style={{ marginLeft: 8 }}
-                            onClick={() => refreshTemplates(formType)}
+                            onClick={() => fetchTemplates(1)}
                             loading={tplLoading}
                           >
                             刷新
@@ -172,6 +186,8 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
                             setConfigOpen(true);
                           }}
                           showType={false}
+                          pagination={{ current: tplPage, pageSize: 10, total: tplTotal }}
+                          onPageChange={(p) => fetchTemplates(p)}
                         />
                       </div>
                     ),
@@ -205,6 +221,7 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
                       },
                     })}
                     columns={[
+                      { title: "产品编号", dataIndex: ["item", "productCode"] },
                       { title: "产品名称", dataIndex: ["item", "productName"] },
                       { title: "客户", dataIndex: "customer" },
                       {
@@ -231,14 +248,20 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
       {!orderOnly && (
         <TemplateCreateModal
           open={createOpen}
-          onClose={() => setCreateOpen(false)}
+          onClose={() => {
+            setCreateOpen(false);
+            fetchTemplates(1);
+          }}
           formType={formType}
         />
       )}
       <TemplateConfigModal
         open={configOpen}
         template={currentTpl}
-        onClose={() => setConfigOpen(false)}
+        onClose={() => {
+          setConfigOpen(false);
+          fetchTemplates(tplPage);
+        }}
         readOnly
       />
     </>

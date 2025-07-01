@@ -2,9 +2,13 @@ import { apiClient } from "../http/client";
 import { QuoteTemplate } from "@/types/types";
 
 export const TemplateService = {
-  async getTemplates(params?: { formType?: string }) {
+  async getTemplates(params?: {
+    formType?: string;
+    page?: number;
+    pageSize?: number;
+  }) {
     const res = await apiClient.get("/template/get", { params });
-    return res.data as QuoteTemplate[];
+    return res.data as { list: QuoteTemplate[]; total: number };
   },
   async getTemplate(id: string) {
     const res = await apiClient.get("/template/detail/get", { params: { id } });
