@@ -6,6 +6,7 @@ import { formatPrice } from "@/util/valueUtil";
 import { isTextSelecting } from "@/util/domUtil";
 import ProductConfigModal from "./ProductConfigForm/ProductConfigModal";
 import { QuoteItem } from "@/types/types";
+import { getFormType } from "./ProductConfigForm/formSelector";
 import { useMemo, useState } from "react";
 import SortableTable, { DragHandle } from "../general/SortableTable";
 import { SortableColumn } from "../general/SortableColumn";
@@ -62,10 +63,12 @@ const DesktopQuoteItemsTable: React.FC<QuoteItemsTableProps> = ({
     if (value[0] == "平模" || value[0] == "配套件") {
       productName = "";
     }
+    const formType = getFormType(value);
     updateQuoteItem(quoteId, record.id, {
       productCategory: value,
       isCompleted: false,
       productName,
+      formType,
     });
   };
   const [open, setOpen] = useState(false);
