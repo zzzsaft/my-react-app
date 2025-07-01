@@ -73,11 +73,23 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
     }
   };
 
+  const cleanConfig = (config: any) => {
+    const {
+      isBuySameProduct,
+      lastProductCode,
+      isIntercompatible,
+      intercompatibleProductCode,
+      ...rest
+    } = config || {};
+    return rest;
+  };
+
   const handleImport = () => {
     if (mode === "template" && selectedTemplate) {
       onImport({
         ...selectedTemplate,
-        config: selectedTemplate.config,
+        productCode: (selectedTemplate as any).productCode,
+        config: cleanConfig(selectedTemplate.config),
         importInfo: {
           type: "template",
           name: selectedTemplate.name,
@@ -86,7 +98,9 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
       } as any);
     } else if (mode === "other" && selected) {
       onImport({
-        config: selected.item.config,
+        ...selected.item,
+        config: cleanConfig(selected.item.config),
+        productCode: (selected.item as any).productCode,
         importInfo: {
           type: "order",
           name: selected.item.productName ?? "",
