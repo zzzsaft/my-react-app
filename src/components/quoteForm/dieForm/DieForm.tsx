@@ -197,7 +197,7 @@ const DieForm = forwardRef(
     };
 
     return (
-      <>
+      <div style={{ position: "relative" }}>
         <ProForm
           layout={"vertical"}
           form={form}
@@ -229,8 +229,21 @@ const DieForm = forwardRef(
             <TextArea />
           </Form.Item>
         </ProForm>
+        {locked && (
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              zIndex: 10,
+              background: "rgba(255,255,255,0.4)",
+            }}
+          />
+        )}
         {/* <FloatButton.BackTop visibilityHeight={0} /> */}
-      </>
+      </div>
     );
   }
 );

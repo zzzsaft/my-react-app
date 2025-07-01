@@ -20,6 +20,16 @@ export const SameProduct: React.FC<SameProductProps> = ({
   const [interSelected, setInterSelected] = useState(false);
 
   const handleSameSelect = (item: any) => {
+    if (item?.config) {
+      const {
+        isBuySameProduct,
+        lastProductCode,
+        isIntercompatible,
+        intercompatibleProductCode,
+        ...rest
+      } = item.config as any;
+      form.setFieldsValue(rest);
+    }
     form.setFieldsValue({
       isBuySameProduct: true,
       lastProductCode: item.productCode,
@@ -40,26 +50,29 @@ export const SameProduct: React.FC<SameProductProps> = ({
 
   return (
     <>
-      <Row gutter={16}>
+      <Row gutter={16} style={{ position: "relative", zIndex: 20 }}>
         <Col xs={12} md={8}>
-          <Button
-            danger={sameSelected}
-            type={sameSelected ? "primary" : "default"}
-            onClick={() => {
-              if (sameSelected) {
-                form.setFieldsValue({
-                  isBuySameProduct: false,
-                  lastProductCode: undefined,
-                });
-                setSameSelected(false);
-                onLockChange?.(false);
-              } else {
-                setSameOpen(true);
-              }
-            }}
-          >
-            {sameSelected ? "取消相同产品" : "选择相同产品编号"}
-          </Button>
+          <Form.Item label="同型号产品编号" colon={false} style={{ marginBottom: 0 }}>
+            <Button
+              danger={sameSelected}
+              type={sameSelected ? "primary" : "default"}
+              title={sameSelected ? "取消相同产品" : "选择相同产品编号"}
+              onClick={() => {
+                if (sameSelected) {
+                  form.setFieldsValue({
+                    isBuySameProduct: false,
+                    lastProductCode: undefined,
+                  });
+                  setSameSelected(false);
+                  onLockChange?.(false);
+                } else {
+                  setSameOpen(true);
+                }
+              }}
+            >
+              {sameSelected ? "取消相同产品" : "选择相同产品编号"}
+            </Button>
+          </Form.Item>
         </Col>
         {sameSelected && (
           <Col xs={12} md={8}>
@@ -74,23 +87,26 @@ export const SameProduct: React.FC<SameProductProps> = ({
         )}
         {!sameSelected && (
           <Col xs={12} md={8}>
-            <Button
-              danger={interSelected}
-              type={interSelected ? "primary" : "default"}
-              onClick={() => {
-                if (interSelected) {
-                  form.setFieldsValue({
-                    isIntercompatible: false,
-                    intercompatibleProductCode: undefined,
-                  });
-                  setInterSelected(false);
-                } else {
-                  setInterOpen(true);
-                }
-              }}
-            >
-              {interSelected ? "取消互配产品" : "选择互配产品编号"}
-            </Button>
+            <Form.Item label="互配产品编号" colon={false} style={{ marginBottom: 0 }}>
+              <Button
+                danger={interSelected}
+                type={interSelected ? "primary" : "default"}
+                title={interSelected ? "取消互配产品" : "选择互配产品编号"}
+                onClick={() => {
+                  if (interSelected) {
+                    form.setFieldsValue({
+                      isIntercompatible: false,
+                      intercompatibleProductCode: undefined,
+                    });
+                    setInterSelected(false);
+                  } else {
+                    setInterOpen(true);
+                  }
+                }}
+              >
+                {interSelected ? "取消互配产品" : "选择互配产品编号"}
+              </Button>
+            </Form.Item>
           </Col>
         )}
         {!sameSelected && interSelected && (
