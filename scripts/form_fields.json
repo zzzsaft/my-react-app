@@ -66,7 +66,7 @@
       "type": "ProFormList"
     },
     {
-      "name": "compositeRatio",
+      "name": "runnerLayers",
       "label": "每层复合比例",
       "type": "ProFormList"
     }
@@ -352,8 +352,13 @@
       "type": "CustomSelect"
     },
     {
+      "name": "extrudeType",
+      "label": "挤出类型",
+      "type": "Select"
+    },
+    {
       "name": "runnerNumber",
-      "label": "模内共挤层数",
+      "label": "层数",
       "type": "InputNumber"
     },
     {
@@ -367,7 +372,7 @@
       "type": "Radio.Group"
     },
     {
-      "name": "compositeRatio",
+      "name": "runnerLayers",
       "label": "每层复合比例",
       "type": "ProFormList"
     },

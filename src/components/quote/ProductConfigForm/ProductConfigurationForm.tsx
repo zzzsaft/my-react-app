@@ -72,10 +72,17 @@ const ProductConfigurationForm = forwardRef(
           typeof upperLip === "string" && upperLip.includes("自动")
             ? "自动"
             : "手动";
+        const extrudeType = modelFormRef.current?.form.getFieldValue(
+          "extrudeType"
+        );
         const runnerNumber =
           modelFormRef.current?.form.getFieldValue("runnerNumber") ?? 0;
         const runnerStr =
-          runnerNumber && runnerNumber > 1 ? `${runnerNumber}层模内共挤` : "";
+          extrudeType &&
+          ["模内共挤", "分配器+模内共挤"].includes(extrudeType) &&
+          runnerNumber > 1
+            ? `${runnerNumber}层${extrudeType}`
+            : "";
         const final = finalProduct ?? "";
         return `${widthStr}${mat}${runnerStr}${final}${manualOrAuto}模头`;
       }
