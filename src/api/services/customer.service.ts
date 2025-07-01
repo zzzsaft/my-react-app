@@ -51,6 +51,16 @@ export const CustomerService = {
       general: { fax: string[]; address: string[] };
     };
   },
+  async getCompanyInfo(name: string) {
+    const res = await apiClient.get("/customer/company_info", {
+      params: { name },
+    });
+    return res.data as {
+      address: string;
+      legalPersonName: string;
+      postalCode: string;
+    };
+  },
   async matchCustomer(payload: {
     externalUserId: string;
     corpName: string;

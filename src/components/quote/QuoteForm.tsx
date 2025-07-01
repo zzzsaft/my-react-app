@@ -217,6 +217,31 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
     }
   }, 1000);
 
+  const fetchCompanyInfo = throttle(async (name: string) => {
+    try {
+      const data = await CustomerService.getCompanyInfo(name);
+      form.setFieldsValue({
+        companyInfo: {
+          companyAddress: data.address,
+          legalPersonName: data.legalPersonName,
+          postalCode: data.postalCode,
+        },
+      });
+      if (quote) {
+        updateQuote(quote.id, {
+          companyInfo: {
+            ...quote.companyInfo,
+            companyAddress: data.address,
+            legalPersonName: data.legalPersonName,
+            postalCode: data.postalCode,
+          },
+        });
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }, 1000);
+
   const handleNameSelect = (value: string) => {
     const matched = contacts.filter((c) => c.name === value);
     const phones = matched.map((c) => c.phone);
@@ -269,6 +294,21 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
       fetchContacts(quote.customerId);
     }
   }, [quote?.customerId]);
+
+  useEffect(() => {
+    if (!quote?.customerName) return;
+    const info = quote?.companyInfo;
+    if (
+      !info?.companyAddress &&
+      !info?.legalPersonName &&
+      !info?.authorizedPerson &&
+      !info?.bankName &&
+      !info?.bankAccount &&
+      !info?.postalCode
+    ) {
+      fetchCompanyInfo(quote.customerName);
+    }
+  }, [quote?.customerName]);
 
   const onFinish = async () => {
     setSubmitLoading(true);
@@ -357,6 +397,16 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
       if (customer?.erpId) {
         fetchContacts(customer.erpId);
       }
+      if (customer?.name) {
+        fetchCompanyInfo(customer.name);
+      }
+    } else if (changedValues.companyInfo) {
+      updateQuote(quote.id, {
+        companyInfo: {
+          ...quote.companyInfo,
+          ...changedValues.companyInfo,
+        },
+      });
     } else {
       updateQuote(quote.id, {
         ...changedValues,
