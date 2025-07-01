@@ -204,7 +204,11 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
                             setConfigOpen(true);
                           }}
                           showType={false}
-                          pagination={{ current: tplPage, pageSize: 10, total: tplTotal }}
+                          pagination={{
+                            current: tplPage,
+                            pageSize: 10,
+                            total: tplTotal,
+                          }}
                           onPageChange={(p) => fetchTemplates(p)}
                         />
                       </div>
@@ -222,7 +226,11 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
                     style={{ marginTop: 16 }}
                     dataSource={list}
                     rowKey={(row) => row.item.id}
-                    pagination={{ current: otherPage, pageSize: 10, total: otherTotal }}
+                    pagination={{
+                      current: otherPage,
+                      pageSize: 10,
+                      total: otherTotal,
+                    }}
                     loading={loading}
                     onChange={(p) => {
                       if (p.current) {
@@ -261,13 +269,6 @@ const ImportProductModal: React.FC<ImportProductModalProps> = ({
                           d ? new Date(d as any).toLocaleDateString() : "",
                       },
                     ]}
-                  />
-                  <Pagination
-                    style={{ marginTop: 16, textAlign: "right" }}
-                    current={otherPage}
-                    pageSize={10}
-                    total={otherTotal}
-                    onChange={(p) => fetchOthers(p, searchField, searchKeyword)}
                   />
                 </div>
               ),

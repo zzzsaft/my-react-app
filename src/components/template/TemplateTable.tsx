@@ -1,5 +1,5 @@
 import React from "react";
-import { Table } from "antd";
+import { Pagination, Table } from "antd";
 import type { TablePaginationConfig } from "antd/es/table";
 import MemberAvatar from "../general/MemberAvatar";
 import { QuoteTemplate } from "@/types/types";
@@ -76,26 +76,39 @@ const TemplateTable: React.FC<TemplateTableProps> = ({
   ].filter(Boolean);
 
   return (
-    <Table
-      rowKey="id"
-      dataSource={templates}
-      columns={columns as any}
-      loading={loading}
-      pagination={pagination}
-      onChange={(p: TablePaginationConfig) => {
-        if (onPageChange && p.current && p.pageSize) {
-          onPageChange(p.current, p.pageSize);
-        }
-      }}
-      onRow={(record) => ({
-        onClick: () => onSelect?.(record),
-        onDoubleClick: () => onDoubleClick?.(record),
-        style: {
-          cursor: onSelect ? "pointer" : undefined,
-          backgroundColor: selectedId === record.id ? "#e6f4ff" : undefined,
-        },
-      })}
-    />
+    <div>
+      <Table
+        rowKey="id"
+        dataSource={templates}
+        columns={columns as any}
+        loading={loading}
+        pagination={pagination}
+        onChange={(p: TablePaginationConfig) => {
+          if (onPageChange && p.current && p.pageSize) {
+            onPageChange(p.current, p.pageSize);
+          }
+        }}
+        onRow={(record) => ({
+          onClick: () => onSelect?.(record),
+          onDoubleClick: () => onDoubleClick?.(record),
+          style: {
+            cursor: onSelect ? "pointer" : undefined,
+            backgroundColor: selectedId === record.id ? "#e6f4ff" : undefined,
+          },
+        })}
+      />
+      {pagination && (
+        <div style={{ marginTop: 16, textAlign: "right" }}>
+          <Pagination
+            {...pagination}
+            showSizeChanger={false}
+            onChange={(page, pageSize) => {
+              onPageChange?.(page, pageSize);
+            }}
+          />
+        </div>
+      )}
+    </div>
   );
 };
 

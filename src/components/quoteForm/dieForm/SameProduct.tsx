@@ -52,8 +52,13 @@ export const SameProduct: React.FC<SameProductProps> = ({
     <>
       <Row gutter={16} style={{ position: "relative", zIndex: 20 }}>
         <Col xs={12} md={8}>
-          <Form.Item label="同型号产品编号" colon={false} style={{ marginBottom: 0 }}>
+          <Form.Item
+            label="是否购买过相同型号产品"
+            colon={false}
+            style={{ marginBottom: 0 }}
+          >
             <Button
+              disabled={false}
               danger={sameSelected}
               type={sameSelected ? "primary" : "default"}
               title={sameSelected ? "取消相同产品" : "选择相同产品编号"}
@@ -87,7 +92,11 @@ export const SameProduct: React.FC<SameProductProps> = ({
         )}
         {!sameSelected && (
           <Col xs={12} md={8}>
-            <Form.Item label="互配产品编号" colon={false} style={{ marginBottom: 0 }}>
+            <Form.Item
+              label="是否与购买过的产品互配"
+              colon={false}
+              style={{ marginBottom: 0 }}
+            >
               <Button
                 danger={interSelected}
                 type={interSelected ? "primary" : "default"}

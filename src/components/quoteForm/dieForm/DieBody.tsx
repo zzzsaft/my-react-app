@@ -122,7 +122,9 @@ export const DieBody = () => {
                 validator(_, value) {
                   if (
                     value &&
-                    !FINE_TUNING_OPTIONS.map((i) => i.value).includes(value)
+                    !FINE_TUNING_OPTIONS.map((i) => i.value).includes(
+                      value.toString()
+                    )
                   ) {
                     return Promise.reject(`${value}mm属于定制微调间距`);
                   }

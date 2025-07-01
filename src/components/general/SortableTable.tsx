@@ -58,7 +58,7 @@ const Row: React.FC<RowProps> = (props) => {
     ...props.style,
     transform: CSS.Translate.toString(transform),
     transition,
-    ...(isDragging ? { position: "relative", zIndex: 9999 } : {}),
+    ...(isDragging ? { position: "relative", zIndex: 3000 } : {}),
   };
 
   const contextValue = useMemo<RowContextProps>(
@@ -183,7 +183,7 @@ export function SortableTable<
             onResize: handleResizeColumn(index),
           } as ResizableTitleProps),
       })) as ColumnsType<T>,
-    [colState,visibleColumns]
+    [colState, visibleColumns]
   );
   const handleDragEnd = ({ active, over }: DragEndEvent) => {
     if (!over || active.id === over.id) return;
