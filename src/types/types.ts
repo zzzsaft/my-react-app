@@ -74,6 +74,14 @@ export interface Quote {
   senderPhone?: string; // 发送人电话
   telephone?: string; // 电话
   faxNumber?: string; // 传真号
+  companyInfo?: {
+    companyAddress?: string; // 单位地址
+    legalPersonName?: string; // 法定代表人
+    authorizedPerson?: string; // 委托代表人
+    bankName?: string; // 开户银行
+    bankAccount?: string; // 账号
+    postalCode?: string; // 邮政编码
+  };
   technicalLevel: string; // 技术等级
   projectLevel: string; // 项目等级
   flowState: string; // 报价状态
