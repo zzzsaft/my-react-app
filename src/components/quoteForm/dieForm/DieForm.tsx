@@ -10,7 +10,6 @@ import ProForm from "@ant-design/pro-form";
 import TextArea from "antd/es/input/TextArea";
 import useProductActionModal from "@/hook/showProductActionModal";
 import { useQuoteStore } from "@/store/useQuoteStore";
-import { LevelValue } from "@/components/general/LevelInputNumber";
 interface PriceFormRef {
   form: FormInstance; // 明确定义暴露的form实例
 }
@@ -81,30 +80,17 @@ const DieForm = forwardRef(
     const handleCompositeStructure = (value: string) => {
       const list = value.split("").map((s: any) => ({ layer: s }));
       form.setFieldValue("screwList", list);
-
-      const ratioList = (form.getFieldValue("compositeRatio") ||
-        []) as LevelValue[];
-      const base = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-      const len = form.getFieldValue("runnerNumber") || value.length;
-      const ratioNext = Array.from({ length: len }, (_, i) => ({
-        level: base[i],
-      }));
-      form.setFieldValue(
-        "compositeRatio",
-        ratioList.slice(0, len).concat(ratioNext.slice(ratioList.length))
-      );
     };
 
     const handleRunnerNumber = (value: number) => {
-      const ratioList = (form.getFieldValue("compositeRatio") ||
-        []) as LevelValue[];
+      const ratioList = (form.getFieldValue("runnerLayers") || []) as any[];
       const base = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
       const len = value;
       const ratioNext = Array.from({ length: len }, (_, i) => ({
         level: base[i],
       }));
       form.setFieldValue(
-        "compositeRatio",
+        "runnerLayers",
         ratioList.slice(0, len).concat(ratioNext.slice(ratioList.length))
       );
     };

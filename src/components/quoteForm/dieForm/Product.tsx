@@ -3,15 +3,14 @@ import {
   ProForm,
   ProFormDependency,
 } from "@ant-design/pro-components";
-import { Col, Form, Input, InputNumber, Radio, Row, Cascader } from "antd";
+import { Col, Form, Input, InputNumber, Radio, Row, Cascader, Select } from "antd";
 import { IntervalInputFormItem } from "@/components/general/IntervalInput";
 import ScrewForm from "../formComponents/ScrewForm";
 import AutoSlashInput from "@/components/general/AutoSlashInput";
 import ProFormListWrapper from "../formComponents/ProFormListWrapper";
-import LevelInputNumber, {
-  LevelValue,
-} from "@/components/general/LevelInputNumber";
+
 import MaterialSelect from "@/components/general/MaterialSelect";
+import RunnerLayerItem from "../formComponents/RunnerLayerItem";
 
 const RUNNER_TYPE_OPTIONS = [
   {
@@ -26,12 +25,14 @@ const RUNNER_TYPE_OPTIONS = [
   {
     value: "多腔流道",
     label: "多腔流道",
-    children: [
-      { value: "模内共挤", label: "模内共挤" },
-      { value: "分配器共挤", label: "分配器共挤" },
-      { value: "分配器+模内共挤", label: "分配器+模内共挤" },
-    ],
   },
+];
+
+const EXTRUDE_TYPE_OPTIONS = [
+  { value: "单层挤出", label: "单层挤出" },
+  { value: "模内共挤", label: "模内共挤" },
+  { value: "分配器共挤", label: "分配器共挤" },
+  { value: "分配器+模内共挤", label: "分配器+模内共挤" },
 ];
 export const Product = () => {
   const form = Form.useFormInstance();
@@ -181,27 +182,11 @@ export const Product = () => {
             />
           </Col>
           <Col xs={12} md={6}>
-            {/* 5. 流道数量 */}
+            {/* 流道形式 */}
             <Form.Item
               name="runnerType"
               label="流道形式"
-              rules={[
-                { required: true, message: "请选择流道形式" },
-                {
-                  validator: (_, value) => {
-                    if (
-                      Array.isArray(value) &&
-                      value.length === 1 &&
-                      value[0] === "多腔流道"
-                    ) {
-                      return Promise.reject(
-                        new Error("请在多腔流道下选择具体选项")
-                      );
-                    }
-                    return Promise.resolve();
-                  },
-                },
-              ]}
+              rules={[{ required: true, message: "请选择流道形式" }]}
             >
               <Cascader
                 options={RUNNER_TYPE_OPTIONS}
@@ -210,16 +195,28 @@ export const Product = () => {
               />
             </Form.Item>
           </Col>
-          <Form.Item noStyle dependencies={["runnerType"]}>
+          <Col xs={12} md={6}>
+            {/* 挤出类型 */}
+            <Form.Item
+              name="extrudeType"
+              label="挤出类型"
+              rules={[{ required: true, message: "请选择挤出类型" }]}
+            >
+              <Select options={EXTRUDE_TYPE_OPTIONS} placeholder="请选择" />
+            </Form.Item>
+          </Col>
+          <Form.Item noStyle dependencies={["extrudeType"]}>
             {({ getFieldValue }) =>
-              getFieldValue("runnerType")?.includes("模内共挤") ? (
+              ["模内共挤", "分配器+模内共挤"].includes(
+                getFieldValue("extrudeType")
+              ) ? (
                 <>
                   <Col xs={12} md={6}>
                     <Form.Item
                       name="runnerNumber"
-                      label="模内共挤层数"
+                      label="层数"
                       rules={[
-                        { required: true, message: "请输入模内共挤层数" },
+                        { required: true, message: "请输入层数" },
                       ]}
                     >
                       <InputNumber min={2} max={6} style={{ width: "100%" }} />
@@ -236,58 +233,21 @@ export const Product = () => {
                   </Col>
                   <Col xs={24} md={24}>
                     <ProFormDependency
-                      name={["compositeStructure", "runnerNumber"]}
+                      name={["runnerNumber", "material"]}
                     >
-                      {({ compositeStructure, runnerNumber }) => (
+                      {({ runnerNumber, material }) => (
                         <ProFormListWrapper
-                          name="compositeRatio"
+                          name="runnerLayers"
                           label="每层复合比例"
                           canCreate={false}
                           canDelete={false}
-                          isHorizontal
+                          isHorizontal={false}
                           formItems={
-                            <ProForm.Item
-                              name={[]}
-                              rules={[
-                                {
-                                  validator: async (
-                                    _: any,
-                                    value: LevelValue
-                                  ) => {
-                                    const num = parseFloat(
-                                      value?.value?.value || "0"
-                                    );
-                                    if (isNaN(num) || num === 0) {
-                                      return Promise.reject(
-                                        new Error("比例不得为0")
-                                      );
-                                    }
-                                    if (
-                                      (value?.value?.front &&
-                                        value?.value?.front >= 100) ||
-                                      (value?.value?.rear &&
-                                        value?.value?.rear >= 100)
-                                    ) {
-                                      return Promise.reject(
-                                        new Error("比例不得超过100")
-                                      );
-                                    }
-                                    if (
-                                      value?.value?.front &&
-                                      value?.value?.rear &&
-                                      value?.value?.front >= value?.value?.rear
-                                    ) {
-                                      return Promise.reject(
-                                        new Error("第一个应比第二个小")
-                                      );
-                                    }
-                                    return Promise.resolve();
-                                  },
-                                },
-                              ]}
-                            >
-                              <LevelInputNumber style={{ width: 120 }} />
-                            </ProForm.Item>
+                            <RunnerLayerItem
+                              materials={
+                                Array.isArray(material) ? material : [material]
+                              }
+                            />
                           }
                         />
                       )}
@@ -311,9 +271,11 @@ export const Product = () => {
           </Form.Item>
         </Row>
       </ProCard>
-      <Form.Item noStyle dependencies={["runnerType", "material"]}>
+      <Form.Item noStyle dependencies={["extrudeType", "material"]}>
         {({ getFieldValue }) =>
-          getFieldValue("runnerType")?.includes("模内共挤") ? (
+          ["模内共挤", "分配器+模内共挤"].includes(
+            getFieldValue("extrudeType")
+          ) ? (
             <ProCard
               title="螺杆信息"
               collapsible

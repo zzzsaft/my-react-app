@@ -6,6 +6,10 @@ interface MaterialSelectProps {
   id?: string;
   value?: string[];
   onChange?: (value: string[]) => void;
+  /**
+   * Custom option groups. Keys are group titles and values are
+   * option labels. When omitted the default MATERIAL groups are used.
+   */
   options?: Record<string, string[]>;
   disabled?: boolean;
   placeholder?: string;
@@ -21,6 +25,7 @@ const MaterialSelect: React.FC<MaterialSelectProps> = ({
   id,
   value = [],
   onChange,
+  options,
   disabled = false,
   placeholder = "输入材料，按回车确认",
   style,
@@ -51,7 +56,7 @@ const MaterialSelect: React.FC<MaterialSelectProps> = ({
       disabled={disabled}
       mode="tags"
       onInputKeyDown={handleInputKeyDown}
-      options={selectOptions(MATERIAL)}
+      options={selectOptions(options ?? MATERIAL)}
       value={value}
       onChange={handleChange}
       style={{ ...style, width: "100%" }}
