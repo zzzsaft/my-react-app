@@ -15,10 +15,11 @@ export const AddHistoryModal = () => {
   const { message } = App.useApp();
   const navigate = useNavigate();
   const [form] = Form.useForm();
-  const { createQuote } = useQuoteStore();
+  const { createQuote, addQuoteItem } = useQuoteStore();
   const members = useMemberStore((state) => state.members);
   const fetchMembers = useMemberStore((state) => state.fetchMembers);
   const [modalVisible, setModalVisible] = useState(false);
+  const [items, setItems] = useState<{ productCode: string; name: string }[]>([]);
 
   const findMemberIdByName = (name: string) => {
     return members.find((m) => m.name === name)?.id;
@@ -29,6 +30,7 @@ export const AddHistoryModal = () => {
     try {
       await fetchMembers();
       const data = await OrderService.getOrderInfo(value);
+      setItems(data.items ?? []);
       form.setFieldsValue({
         orderId: data["订单号"],
         customer: { name: data["客户名称"], erpId: data["客户ID"] },
@@ -64,6 +66,14 @@ export const AddHistoryModal = () => {
         contactName: values.contactName,
         contactPhone: values.contactPhone,
       });
+      if (quote?.id && items.length > 0) {
+        for (const item of items) {
+          await addQuoteItem(quote.id, {
+            productCode: item.productCode,
+            productName: item.name,
+          });
+        }
+      }
       message.success("历史报价单添加成功");
       form.resetFields();
       if (quote?.id) {
