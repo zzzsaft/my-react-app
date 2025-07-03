@@ -28,6 +28,7 @@ const WIDTH_ADJUSTMENT_OPTIONS = {
     "齿轮调节外挡",
   ],
   内挡: ["固定式内挡", "手动丝杆内挡", "电动丝杆内挡"],
+  其他: ["不锈钢垫片"],
 };
 
 const FINE_TUNING_OPTIONS = [

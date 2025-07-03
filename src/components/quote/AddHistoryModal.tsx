@@ -83,6 +83,10 @@ export const AddHistoryModal = () => {
         items: items.map((item) => ({
           productCode: item.productCode,
           productName: item.name,
+          quantity: 1,
+          brand: "精诚",
+          discountRate: 100,
+          config: {},
         })),
       });
       message.success("历史报价单添加成功");
