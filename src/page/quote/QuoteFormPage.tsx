@@ -39,6 +39,7 @@ const QuoteFormPage = () => {
         form.setFieldsValue({
           ...restQuote,
           quoteTime: quote.quoteTime ? dayjs(quote.quoteTime) : null,
+          quoteDeadline: quote.quoteDeadline ? dayjs(quote.quoteDeadline) : null,
           customerName: {
             name: quote.customerName,
             value: quote.customerName,
