@@ -47,6 +47,7 @@ const ProductConfigModal: React.FC<ProductConfigModalProps> = ({
       // ...otherValue,
       brand: quoteItem.brand,
       productName: quoteItem.productName || "",
+      productCode: quoteItem.productCode || "",
       quantity: quoteItem.quantity || 0,
       unitPrice: quoteItem.unitPrice || 0,
       discountRate: quoteItem.discountRate || 0,

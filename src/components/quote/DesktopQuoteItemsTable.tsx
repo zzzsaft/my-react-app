@@ -59,15 +59,15 @@ const DesktopQuoteItemsTable: React.FC<QuoteItemsTableProps> = ({
 
   const handleCascaderChange = (value: string[], record: QuoteItem) => {
     if (!value || value.length === 0) return;
-    let productName = value[value.length - 1] ?? "";
-    if (value[0] == "平模" || value[0] == "配套件") {
-      productName = "";
-    }
+    // let productName = value[value.length - 1] ?? "";
+    // if (value[0] == "平模" || value[0] == "配套件") {
+    //   productName = "";
+    // }
     const formType = getFormType(value);
     updateQuoteItem(quoteId, record.id, {
       productCategory: value,
       isCompleted: false,
-      productName,
+      // productName,
       formType,
     });
   };
@@ -79,10 +79,13 @@ const DesktopQuoteItemsTable: React.FC<QuoteItemsTableProps> = ({
 
   const handleRowClick = (record: QuoteItem) => {
     if (isTextSelecting()) return;
-    if (!record.productCategory || record.productCategory.length === 0) {
+
+    const latest =
+      useQuoteStore.getState().findItemById(items, record.id) ?? record;
+    if (!latest.productCategory || latest.productCategory.length === 0) {
       message.warning("请先填写产品类型");
     } else {
-      setCurrentItem(record);
+      setCurrentItem(latest);
       setOpen(true);
     }
     console.log(record);
