@@ -31,11 +31,16 @@ export const CustomerService = {
       params: { id },
     });
     const data = res.data as {
-      contact?: any[];
+      contact?: {
+        contact: string;
+        phone: string[];
+        address: string[];
+        fax: string[];
+      }[];
       general?: { fax?: string[]; address?: string[] };
     };
-    const contacts = (data?.contact ?? []).map((item: any) => ({
-      name: item.contact ?? item.name,
+    const contacts = (data?.contact ?? []).map((item) => ({
+      name: item.contact,
       phone: item.phone,
       address: item.address,
       fax: item.fax,
