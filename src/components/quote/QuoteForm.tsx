@@ -216,15 +216,15 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
       const list = data?.contacts || [];
       setContacts(list);
       setNameOptions(list.map((c: any) => ({ value: c.name, label: c.name })));
-      setPhoneOptions(
-        list.map((c: any) => ({ value: c.phone, label: c.phone }))
-      );
-      setFaxOptions(
-        (data?.general?.fax ?? []).map((f: string) => ({ value: f, label: f }))
-      );
-      setAddressOptions(
-        (data?.general?.address ?? []).map((a: string) => ({ value: a, label: a }))
-      );
+
+      const phones = Array.from(new Set(list.flatMap((c: any) => c.phone)));
+      setPhoneOptions(phones.map((p: string) => ({ value: p, label: p })));
+
+      const faxSet = new Set<string>([...list.flatMap((c: any) => c.fax), ...(data?.general?.fax ?? [])]);
+      setFaxOptions(Array.from(faxSet).map((f: string) => ({ value: f, label: f })));
+
+      const addrSet = new Set<string>([...list.flatMap((c: any) => c.address), ...(data?.general?.address ?? [])]);
+      setAddressOptions(Array.from(addrSet).map((a: string) => ({ value: a, label: a })));
     } catch (e) {
       console.error(e);
     }
@@ -257,10 +257,16 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
 
   const handleNameSelect = (value: string) => {
     const matched = contacts.filter((c) => c.name === value);
-    const phones = matched.map((c) => c.phone);
-    setPhoneOptions(phones.map((p) => ({ value: p, label: p })));
-    const addresses = matched.map((c) => c.address).filter(Boolean);
-    const faxes = matched.map((c) => c.fax).filter(Boolean);
+    const phones = matched.flatMap((c) => c.phone);
+    setPhoneOptions(
+      Array.from(new Set(phones)).map((p) => ({ value: p, label: p }))
+    );
+    const addresses = matched
+      .flatMap((c) => c.address)
+      .filter(Boolean);
+    const faxes = matched
+      .flatMap((c) => c.fax)
+      .filter(Boolean);
     if (phones.length === 1) {
       form.setFieldsValue({ contactPhone: phones[0] });
       if (quote) updateQuote(quote.id, { contactPhone: phones[0] });
