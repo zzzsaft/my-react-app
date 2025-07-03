@@ -3,6 +3,7 @@ import FeedblockForm from "@/components/quoteForm/FeedblockForm/FeedblockForm";
 import FilterForm from "@/components/quoteForm/FilterForm/FilterForm";
 import HydraulicStationForm from "@/components/quoteForm/HydraulicStationForm/HydraulicStationForm";
 import MeteringPumpForm from "@/components/quoteForm/MeteringPumpForm/MeteringPumpForm";
+import ManifoldForm from "@/components/quoteForm/ManifoldForm/ManifoldForm";
 import { OtherForm } from "@/components/quoteForm/OtherForm";
 import PartsForm from "@/components/quoteForm/PartsForm";
 import SmartRegulator from "@/components/quoteForm/SmartRegulator";
@@ -16,6 +17,7 @@ export function getFormType(category: string[] | undefined | null): string {
   if (category?.includes("智能调节器")) return "SmartRegulator";
   if (category?.at(1) == "熔体计量泵") return "MeteringPumpForm";
   if (category?.at(1) == "共挤复合分配器") return "FeedblockForm";
+  if (category?.at(1) == "合流器") return "ManifoldForm";
   if (category?.at(1) == "过滤器") return "FilterForm";
   if (category?.at(1) == "测厚仪") return "ThicknessGaugeForm";
   if (category?.includes("液压站")) return "HydraulicStationForm";
@@ -72,6 +74,18 @@ export function getFormByCategory(
     return {
       form: (
         <FeedblockForm
+          ref={modelFormRef}
+          quoteId={quoteId}
+          quoteItemId={quoteItemId}
+          readOnly={readOnly}
+        />
+      ),
+      formType,
+    };
+  if (formType === "ManifoldForm")
+    return {
+      form: (
+        <ManifoldForm
           ref={modelFormRef}
           quoteId={quoteId}
           quoteItemId={quoteItemId}

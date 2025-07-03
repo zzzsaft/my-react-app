@@ -24,6 +24,7 @@ const TEMPLATE_TYPE_MAP: Record<string, string> = {
   FilterForm: "过滤器",
   ThicknessGaugeForm: "测厚仪",
   HydraulicStationForm: "液压站",
+  ManifoldForm: "合流器",
   PartsForm: "小配件",
   OtherForm: "其他",
 };

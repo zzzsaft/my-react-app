@@ -44,7 +44,7 @@ const App: React.FC = () => {
                 <Route path="todo" element={<TodoQuoteTablePage />} />
                 <Route path=":id" element={<QuoteFormPage />} />
               </Route>
-              <Route path="template" element={<Outlet />}> 
+              <Route path="template" element={<Outlet />}>
                 <Route index element={<TemplateListPage />} />
               </Route>
             </Route>
