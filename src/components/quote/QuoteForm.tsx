@@ -1,6 +1,16 @@
 // components/quote/QuoteForm.tsx
 import React, { useState, useEffect, useRef } from "react";
-import { Form, Button, Tabs, App, Row, Col, Dropdown, MenuProps, Spin } from "antd";
+import {
+  Form,
+  Button,
+  Tabs,
+  App,
+  Row,
+  Col,
+  Dropdown,
+  MenuProps,
+  Spin,
+} from "antd";
 import { Quote, Clause } from "@/types/types";
 import QuoteConfigTab from "./QuoteConfigTab";
 import QuoteTermsTab from "./QuoteTermsTab";
@@ -172,6 +182,8 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
     null
   );
 
+  const [activeTab, setActiveTab] = useState("1");
+
   const [previewLoading, setPreviewLoading] = useState(false);
 
   const deliveryDays = Form.useWatch("deliveryDays", form);
@@ -338,9 +350,19 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
 
   const print = async (type: "config" | "quote" | "contract") => {
     if (!quote?.id) return;
-    if (type === "quote" && quoteTerms.length === 0) {
-      message.error("请设置至少一条报价条约");
-      return;
+    if (type === "quote") {
+      const validDays = form.getFieldValue("quoteValidDays");
+      if (!validDays || quoteTerms.length === 0) {
+        setActiveTab("2");
+        if (!validDays && quoteTerms.length === 0) {
+          message.error("请填写报价有效期并设置报价条约");
+        } else if (!validDays) {
+          message.error("请填写报价有效期");
+        } else {
+          message.error("请设置至少一条报价条约");
+        }
+        return;
+      }
     }
     if (type === "contract" && contractTerms.length === 0) {
       message.error("请设置合同条款");
@@ -451,7 +473,8 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
       preserve={true}
     >
       <Tabs
-        defaultActiveKey="1"
+        activeKey={activeTab}
+        onChange={setActiveTab}
         items={[
           {
             label: "配置表",
@@ -473,13 +496,11 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
             label: "报价条约",
             key: "2",
             children: (
-              <Form.Item name="quoteTerms" noStyle>
-                <QuoteTermsTab
-                  value={quoteTerms}
-                  onChange={handleQuoteTermsChange}
-                  onSetDefault={setDefaultQuoteTerms}
-                />
-              </Form.Item>
+              <QuoteTermsTab
+                value={quoteTerms}
+                onChange={handleQuoteTermsChange}
+                onSetDefault={setDefaultQuoteTerms}
+              />
             ),
           },
           {

@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "antd";
+import { Button, Row, Col, Form, InputNumber, DatePicker } from "antd";
 import TermsTable from "./TermsTable";
 import { Clause } from "@/types/types";
 
@@ -16,6 +16,19 @@ const QuoteTermsTab: React.FC<QuoteTermsTabProps> = ({
 }) => {
   return (
     <>
+      <Form.Item name="quoteTerms" noStyle hidden />
+      <Row gutter={16} style={{ marginBottom: 16 }}>
+        <Col xs={12} md={6}>
+          <Form.Item name="quoteValidDays" label="报价有效期（天）">
+            <InputNumber min={1} style={{ width: "100%" }} />
+          </Form.Item>
+        </Col>
+        <Col xs={12} md={6}>
+          <Form.Item name="quoteDeadline" label="报价截止日期">
+            <DatePicker style={{ width: "100%" }} disabled />
+          </Form.Item>
+        </Col>
+      </Row>
       <Button type="dashed" onClick={onSetDefault} style={{ marginBottom: 16 }}>
         设置默认条款
       </Button>
