@@ -473,13 +473,11 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
             label: "报价条约",
             key: "2",
             children: (
-              <Form.Item name="quoteTerms" noStyle>
-                <QuoteTermsTab
-                  value={quoteTerms}
-                  onChange={handleQuoteTermsChange}
-                  onSetDefault={setDefaultQuoteTerms}
-                />
-              </Form.Item>
+              <QuoteTermsTab
+                value={quoteTerms}
+                onChange={handleQuoteTermsChange}
+                onSetDefault={setDefaultQuoteTerms}
+              />
             ),
           },
           {
