@@ -12,6 +12,7 @@ import { DownOutlined } from "@ant-design/icons";
 import { useAuthStore } from "@/store/useAuthStore";
 import { QuoteService } from "@/api/services/quote.service";
 import PdfPreview from "../general/PdfPreview";
+import dayjs from "dayjs";
 
 const getDefaultQuoteTerms = (days: number): Clause[] => [
   {
@@ -388,12 +389,27 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
   const updateStore = debounce((changedValues: any) => {
     if (!quote?.id) return;
 
+    const updateData: any = { ...changedValues };
+
+    if (
+      changedValues.quoteValidDays !== undefined ||
+      changedValues.quoteTime
+    ) {
+      const days =
+        changedValues.quoteValidDays ?? form.getFieldValue("quoteValidDays");
+      const time = changedValues.quoteTime ?? form.getFieldValue("quoteTime");
+      if (time && days != null) {
+        const deadline = dayjs(time).add(days, "day");
+        form.setFieldsValue({ quoteDeadline: deadline });
+        updateData.quoteDeadline = deadline.toDate();
+        updateData.quoteValidDays = days;
+      }
+    }
+
     if (changedValues.customerName) {
       const customer = changedValues.customerName as any;
-      updateQuote(quote.id, {
-        customerId: customer?.erpId,
-        customerName: customer?.name,
-      });
+      updateData.customerId = customer?.erpId;
+      updateData.customerName = customer?.name;
       if (customer?.erpId) {
         fetchContacts(customer.erpId);
       }
@@ -401,17 +417,13 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
         fetchCompanyInfo(customer.name);
       }
     } else if (changedValues.companyInfo) {
-      updateQuote(quote.id, {
-        companyInfo: {
-          ...quote.companyInfo,
-          ...changedValues.companyInfo,
-        },
-      });
-    } else {
-      updateQuote(quote.id, {
-        ...changedValues,
-      });
+      updateData.companyInfo = {
+        ...quote.companyInfo,
+        ...changedValues.companyInfo,
+      };
     }
+
+    updateQuote(quote.id, updateData);
     scheduleAutoSave();
   }, 100);
 
