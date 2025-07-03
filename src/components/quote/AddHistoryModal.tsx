@@ -1,4 +1,4 @@
-import { Modal, Input, DatePicker, Form, Button, Row, Col, App } from "antd";
+import { Modal, Input, DatePicker, Form, Button, Row, Col, App, Spin } from "antd";
 import InputWithButton from "../general/InputWithButton";
 import { CustomerService } from "@/api/services/customer.service";
 import { OrderService } from "@/api/services/order.service";
@@ -20,6 +20,7 @@ export const AddHistoryModal = () => {
   const fetchMembers = useMemberStore((state) => state.fetchMembers);
   const [modalVisible, setModalVisible] = useState(false);
   const [items, setItems] = useState<{ productCode: string; name: string }[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const findMemberIdByName = (name: string) => {
     return members.find((m) => m.name === name)?.id;
@@ -52,6 +53,7 @@ export const AddHistoryModal = () => {
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
+      setLoading(true);
       setModalVisible(false);
       const quote = await createQuote({
         ...values,
@@ -79,6 +81,7 @@ export const AddHistoryModal = () => {
       if (quote?.id) {
         navigate(`/quote/${quote.id}`);
       }
+      setLoading(false);
     } catch (error: any) {
       if (
         error?.response?.data?.message &&
@@ -88,10 +91,16 @@ export const AddHistoryModal = () => {
       }
       console.error("添加历史报价单失败:", error);
       message.error("添加历史报价单失败");
+      setLoading(false);
     }
   };
   return (
     <>
+      {loading && (
+        <div className="full-page-spin">
+          <Spin tip="加载中..." size="large" />
+        </div>
+      )}
       <div style={{ marginBottom: 16 }}>
         <Button type="primary" onClick={() => setModalVisible(true)}>
           添加历史报价单
