@@ -6,6 +6,7 @@ import ProductConfigurationForm from "./ProductConfigurationForm";
 import { CheckOutlined, EditOutlined } from "@ant-design/icons";
 import { QuoteItem } from "@/types/types";
 import ImportProductModal from "./ImportProductModal";
+import QuoteSharePopover from "../Share/QuoteSharePopover";
 
 interface ProductConfigModalProps {
   open: boolean;
@@ -156,13 +157,16 @@ const ProductConfigModal: React.FC<ProductConfigModalProps> = ({
               {quoteItem?.importInfo &&
                 `(${quoteItem.importInfo.id} ${quoteItem.importInfo.name})`}
             </span>
-            <Button
-              type="link"
-              onClick={() => setImportOpen(true)}
-              disabled={quoteItem?.formType === "OtherForm"}
-            >
-              从模版导入
-            </Button>
+            <div>
+              <QuoteSharePopover quoteItem={quoteItem} />
+              <Button
+                type="link"
+                onClick={() => setImportOpen(true)}
+                disabled={quoteItem?.formType === "OtherForm"}
+              >
+                从模版导入
+              </Button>
+            </div>
           </div>
         }
         width={800}
