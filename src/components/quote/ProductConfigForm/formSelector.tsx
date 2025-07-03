@@ -7,6 +7,7 @@ import { OtherForm } from "@/components/quoteForm/OtherForm";
 import PartsForm from "@/components/quoteForm/PartsForm";
 import SmartRegulator from "@/components/quoteForm/SmartRegulator";
 import ThicknessGaugeForm from "@/components/quoteForm/ThicknessGaugeForm/ThicknessGaugeForm";
+import CoatingDieForm from "@/components/quoteForm/CoatingDieForm/CoatingDieForm";
 import React, { RefObject } from "react";
 
 export type ModelFormRef = RefObject<{ form: any } | null>;
@@ -19,6 +20,7 @@ export function getFormType(category: string[] | undefined | null): string {
   if (category?.at(1) == "过滤器") return "FilterForm";
   if (category?.at(1) == "测厚仪") return "ThicknessGaugeForm";
   if (category?.includes("液压站")) return "HydraulicStationForm";
+  if (category?.includes("涂布模头")) return "CoatingDieForm";
   if (category?.[1]?.includes("赠品")) return "PartsForm";
   return "OtherForm";
 }
@@ -108,6 +110,18 @@ export function getFormByCategory(
     return {
       form: (
         <HydraulicStationForm
+          ref={modelFormRef}
+          quoteId={quoteId}
+          quoteItemId={quoteItemId}
+          readOnly={readOnly}
+        />
+      ),
+      formType,
+    };
+  if (formType === "CoatingDieForm")
+    return {
+      form: (
+        <CoatingDieForm
           ref={modelFormRef}
           quoteId={quoteId}
           quoteItemId={quoteItemId}
