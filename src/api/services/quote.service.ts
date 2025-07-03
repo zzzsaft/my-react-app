@@ -100,4 +100,59 @@ export const QuoteService = {
     });
     return res.data as Blob;
   },
+
+  async createShareLink(
+    quoteItemId: number,
+    expiresIn: number,
+    editable = false
+  ) {
+    const res = await apiClient.post("/quoteItem/share", {
+      quoteItemId,
+      expiresIn,
+      editable,
+    });
+    return res.data as { uuid: string };
+  },
+
+  async getShare(uuid: string) {
+    const res = await apiClient.get("/quoteItem/share/detail", {
+      params: { uuid },
+    });
+    return res.data as {
+      quoteItem: QuoteItem;
+      quoteId: number;
+      editable: boolean;
+      shareUserId: string;
+      shareUserName: string;
+    };
+  },
+
+  async getShareLinks(quoteItemId: number) {
+    const res = await apiClient.get("/quoteItem/share", {
+      params: { quoteItemId },
+    });
+    return res.data as
+      | undefined
+      | { viewUuid: string; editUuid: string; expireDays?: number };
+  },
+
+  async disableShare(quoteItemId: number) {
+    const res = await apiClient.post("/quoteItem/share/disable", {
+      quoteItemId,
+    });
+    return res.data;
+  },
+
+  async saveShare(
+    uuid: string,
+    shareUserId: string,
+    quoteItem: Partial<QuoteItem>
+  ) {
+    const res = await apiClient.post("/quoteItem/share/save", {
+      uuid,
+      shareUserId,
+      quoteItem,
+    });
+    return res.data;
+  },
 };
