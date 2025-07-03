@@ -1,6 +1,16 @@
 // components/quote/QuoteForm.tsx
 import React, { useState, useEffect, useRef } from "react";
-import { Form, Button, Tabs, App, Row, Col, Dropdown, MenuProps, Spin } from "antd";
+import {
+  Form,
+  Button,
+  Tabs,
+  App,
+  Row,
+  Col,
+  Dropdown,
+  MenuProps,
+  Spin,
+} from "antd";
 import { Quote, Clause } from "@/types/types";
 import QuoteConfigTab from "./QuoteConfigTab";
 import QuoteTermsTab from "./QuoteTermsTab";
@@ -12,6 +22,7 @@ import { DownOutlined } from "@ant-design/icons";
 import { useAuthStore } from "@/store/useAuthStore";
 import { QuoteService } from "@/api/services/quote.service";
 import PdfPreview from "../general/PdfPreview";
+import dayjs from "dayjs";
 
 const getDefaultQuoteTerms = (days: number): Clause[] => [
   {
@@ -170,6 +181,8 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
   const [preview, setPreview] = useState<{ blob: Blob; type: string } | null>(
     null
   );
+
+  const [activeTab, setActiveTab] = useState("1");
 
   const [previewLoading, setPreviewLoading] = useState(false);
 
@@ -337,9 +350,19 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
 
   const print = async (type: "config" | "quote" | "contract") => {
     if (!quote?.id) return;
-    if (type === "quote" && quoteTerms.length === 0) {
-      message.error("请设置至少一条报价条约");
-      return;
+    if (type === "quote") {
+      const validDays = form.getFieldValue("quoteValidDays");
+      if (!validDays || quoteTerms.length === 0) {
+        setActiveTab("2");
+        if (!validDays && quoteTerms.length === 0) {
+          message.error("请填写报价有效期并设置报价条约");
+        } else if (!validDays) {
+          message.error("请填写报价有效期");
+        } else {
+          message.error("请设置至少一条报价条约");
+        }
+        return;
+      }
     }
     if (type === "contract" && contractTerms.length === 0) {
       message.error("请设置合同条款");
@@ -388,12 +411,27 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
   const updateStore = debounce((changedValues: any) => {
     if (!quote?.id) return;
 
+    const updateData: any = { ...changedValues };
+
+    if (
+      changedValues.quoteValidDays !== undefined ||
+      changedValues.quoteTime
+    ) {
+      const days =
+        changedValues.quoteValidDays ?? form.getFieldValue("quoteValidDays");
+      const time = changedValues.quoteTime ?? form.getFieldValue("quoteTime");
+      if (time && days != null) {
+        const deadline = dayjs(time).add(days, "day");
+        form.setFieldsValue({ quoteDeadline: deadline });
+        updateData.quoteDeadline = deadline.toDate();
+        updateData.quoteValidDays = days;
+      }
+    }
+
     if (changedValues.customerName) {
       const customer = changedValues.customerName as any;
-      updateQuote(quote.id, {
-        customerId: customer?.erpId,
-        customerName: customer?.name,
-      });
+      updateData.customerId = customer?.erpId;
+      updateData.customerName = customer?.name;
       if (customer?.erpId) {
         fetchContacts(customer.erpId);
       }
@@ -401,17 +439,13 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
         fetchCompanyInfo(customer.name);
       }
     } else if (changedValues.companyInfo) {
-      updateQuote(quote.id, {
-        companyInfo: {
-          ...quote.companyInfo,
-          ...changedValues.companyInfo,
-        },
-      });
-    } else {
-      updateQuote(quote.id, {
-        ...changedValues,
-      });
+      updateData.companyInfo = {
+        ...quote.companyInfo,
+        ...changedValues.companyInfo,
+      };
     }
+
+    updateQuote(quote.id, updateData);
     scheduleAutoSave();
   }, 100);
 
@@ -439,7 +473,8 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
       preserve={true}
     >
       <Tabs
-        defaultActiveKey="1"
+        activeKey={activeTab}
+        onChange={setActiveTab}
         items={[
           {
             label: "配置表",
@@ -461,13 +496,11 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
             label: "报价条约",
             key: "2",
             children: (
-              <Form.Item name="quoteTerms" noStyle>
-                <QuoteTermsTab
-                  value={quoteTerms}
-                  onChange={handleQuoteTermsChange}
-                  onSetDefault={setDefaultQuoteTerms}
-                />
-              </Form.Item>
+              <QuoteTermsTab
+                value={quoteTerms}
+                onChange={handleQuoteTermsChange}
+                onSetDefault={setDefaultQuoteTerms}
+              />
             ),
           },
           {

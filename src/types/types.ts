@@ -88,6 +88,8 @@ export interface Quote {
   currentApprovalNode: string; // 当前审批节点
   currentApprover: string; // 当前审批人
   quoteTime: Date | null; // 报价时间
+  quoteValidDays?: number; // 报价有效期天数
+  quoteDeadline?: Date | null; // 报价截止日期
   createdAt?: string; // 创建日期
   quoteTerms: Clause[];
   contractTerms: Clause[];
