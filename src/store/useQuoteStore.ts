@@ -82,6 +82,7 @@ interface QuotesStore {
     contactPhone?: string;
     senderId?: string;
     senderPhone?: string;
+    items?: Partial<QuoteItem>[];
   }) => Promise<Quote>;
   updateQuote: (
     quoteId: number,

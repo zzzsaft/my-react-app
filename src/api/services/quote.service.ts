@@ -18,6 +18,7 @@ export const QuoteService = {
     contactPhone?: string;
     senderId?: string;
     senderPhone?: string;
+    items?: Partial<QuoteItem>[];
   }) {
     const quote = await apiClient.post("/quote/create", {
       ...params,

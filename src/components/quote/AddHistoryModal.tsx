@@ -15,7 +15,7 @@ export const AddHistoryModal = () => {
   const { message } = App.useApp();
   const navigate = useNavigate();
   const [form] = Form.useForm();
-  const { createQuote, addQuoteItem } = useQuoteStore();
+  const { createQuote } = useQuoteStore();
   const members = useMemberStore((state) => state.members);
   const fetchMembers = useMemberStore((state) => state.fetchMembers);
   const [modalVisible, setModalVisible] = useState(false);
@@ -67,15 +67,11 @@ export const AddHistoryModal = () => {
         quoteName: values.quoteName,
         contactName: values.contactName,
         contactPhone: values.contactPhone,
+        items: items.map((item) => ({
+          productCode: item.productCode,
+          productName: item.name,
+        })),
       });
-      if (quote?.id && items.length > 0) {
-        for (const item of items) {
-          await addQuoteItem(quote.id, {
-            productCode: item.productCode,
-            productName: item.name,
-          });
-        }
-      }
       message.success("历史报价单添加成功");
       form.resetFields();
       if (quote?.id) {
