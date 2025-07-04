@@ -201,7 +201,7 @@ const FilterForm = forwardRef(
               </Form.Item>
             </Col>
             <Col xs={12} md={12}>
-              <Form.Item label="加热方式" name="heatingMethod">
+              <Form.Item label="机体加热方式" name="heatingMethod">
                 <HeatingMethodSelect multiple />
               </Form.Item>
             </Col>

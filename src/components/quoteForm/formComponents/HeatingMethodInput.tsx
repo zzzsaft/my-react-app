@@ -4,7 +4,12 @@ import type { SelectProps } from "antd";
 
 const { Option } = Select;
 
-type HeatingMethod = "油加温" | "加热棒" | "铸铝加热板" | "铸铜加热板";
+type HeatingMethod =
+  | "油加温"
+  | "加热棒"
+  | "加热圈"
+  | "铸铝加热板"
+  | "铸铜加热板";
 
 interface HeatingMethodSelectProps {
   value?: HeatingMethod | HeatingMethod[];
@@ -81,6 +86,7 @@ export const HeatingMethodSelect: React.FC<HeatingMethodSelectProps> = ({
   const methodOptions = [
     { value: "油加温", label: "油加温" },
     { value: "加热棒", label: "加热棒" },
+    { value: "加热圈", label: "加热圈" },
     {
       value: "铸铝加热板",
       label: "铸铝加热板",
