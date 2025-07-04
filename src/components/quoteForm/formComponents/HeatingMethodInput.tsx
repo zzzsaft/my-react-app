@@ -44,11 +44,26 @@ export const HeatingMethodSelect: React.FC<HeatingMethodSelectProps> = ({
   const { message } = App.useApp();
   const selectRef = useRef<any>(null);
   const handleChange = (selected: HeatingMethod | HeatingMethod[]) => {
-    const selectedMethods = multiple
+    let selectedMethods = multiple
       ? Array.isArray(selected)
         ? selected
         : [selected]
       : [selected as HeatingMethod];
+
+    const prevMethods = Array.isArray(value) ? value : value ? [value] : [];
+
+    // 选中油加温时只保留油加温
+    if (selectedMethods.includes("油加温")) {
+      onChange?.(multiple ? ["油加温"] : "油加温");
+      return;
+    }
+
+    // 已选油加温再选择其他，仍仅保留油加温
+    if (prevMethods.includes("油加温")) {
+      message.warning("油加温不能与其他方式同时选择");
+      onChange?.(multiple ? ["油加温"] : "油加温");
+      return;
+    }
 
     // 检查是否同时选择了铸铝和铸铜加热板
     const hasCastAluminum = selectedMethods.includes("铸铝加热板");
@@ -58,10 +73,9 @@ export const HeatingMethodSelect: React.FC<HeatingMethodSelectProps> = ({
       message.warning("不能同时选择铸铝加热板和铸铜加热板");
 
       // 保留之前的选择（移除最新选择的一个）
-      const previousValue = Array.isArray(value) ? value : value ? [value] : [];
-      const newValue = previousValue.includes("铸铝加热板")
-        ? previousValue.filter((m) => m !== "铸铜加热板")
-        : previousValue.filter((m) => m !== "铸铝加热板");
+      const newValue = prevMethods.includes("铸铝加热板")
+        ? prevMethods.filter((m) => m !== "铸铜加热板")
+        : prevMethods.filter((m) => m !== "铸铝加热板");
 
       onChange?.(multiple ? newValue : newValue[0]);
       return;

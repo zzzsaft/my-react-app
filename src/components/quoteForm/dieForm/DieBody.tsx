@@ -6,6 +6,10 @@ import { AutoCompleteInput } from "@/components/general/AutoCompleteInput";
 import { IntervalInputFormItem } from "@/components/general/IntervalInput";
 import ProFormListWrapper from "../formComponents/ProFormListWrapper";
 
+interface DieBodyProps {
+  isHollow?: boolean;
+}
+
 // 常量定义
 const UPPER_LIP_OPTIONS = {
   手动: ["手动差动推式", "手动全推式", "手动推拉式", "手动减力推拉式"],
@@ -53,7 +57,16 @@ const LOWER_OPTIONS = [
   // { label: "其他", value: "other", showInput: true },
 ];
 
-export const DieBody = () => {
+export const DieBody: React.FC<DieBodyProps> = ({ isHollow = false }) => {
+  const upperLipOptions = isHollow
+    ? { 默认: ["推式弹性微调（中空专用）"] }
+    : UPPER_LIP_OPTIONS;
+  const lowerLipOptions = isHollow
+    ? { 默认: ["推式弹性微调（中空专用）"] }
+    : LOWER_LIP_OPTIONS;
+  const widthAdjustmentOptions = isHollow
+    ? { 外挡: ["挂钩外挡"], 无: ["无"] }
+    : WIDTH_ADJUSTMENT_OPTIONS;
   return (
     <ProCard
       title="模体配置"
@@ -82,9 +95,10 @@ export const DieBody = () => {
             name="widthAdjustment"
             label="宽幅调节方式"
             rules={[{ required: true, message: "请选择宽幅调节方式" }]}
+            initialValue={isHollow ? "挂钩外挡" : undefined}
           >
             <CustomSelect
-              initialGroups={WIDTH_ADJUSTMENT_OPTIONS}
+              initialGroups={widthAdjustmentOptions}
               dropdown={false}
             />
           </Form.Item>
@@ -95,8 +109,9 @@ export const DieBody = () => {
             name="upperLipStructure"
             label="上模唇结构"
             rules={[{ required: true, message: "请选择上模唇结构" }]}
+            initialValue={isHollow ? "推式弹性微调（中空专用）" : undefined}
           >
-            <CustomSelect initialGroups={UPPER_LIP_OPTIONS} dropdown={false} />
+            <CustomSelect initialGroups={upperLipOptions} dropdown={false} />
           </Form.Item>
         </Col>
         <Col xs={12} md={12}>
@@ -105,8 +120,9 @@ export const DieBody = () => {
             name="lowerLipStructure"
             label="下模唇结构"
             rules={[{ required: true, message: "请选择下模唇结构" }]}
+            initialValue={isHollow ? "推式弹性微调（中空专用）" : undefined}
           >
-            <CustomSelect initialGroups={LOWER_LIP_OPTIONS} dropdown={false} />
+            <CustomSelect initialGroups={lowerLipOptions} dropdown={false} />
           </Form.Item>
         </Col>
 
@@ -214,6 +230,15 @@ export const DieBody = () => {
             }
           </ProFormDependency>
         </Col>
+        {isHollow && (
+          <Col xs={12} md={6}>
+            <IntervalInputFormItem
+              name="coreThickness"
+              label="模芯厚度"
+              unit="mm"
+            />
+          </Col>
+        )}
         <Col xs={12} md={8}>
           <Form.Item
             name="smartRegulator"
