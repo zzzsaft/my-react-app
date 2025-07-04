@@ -18,7 +18,7 @@ export const OtherForm = forwardRef<
   // 计算小计``
 
   return (
-    <Form layout={"vertical"} form={form} disabled={readOnly}>
+    <Form layout={"vertical"} form={form}>
       <Form.Item
         name="remark"
         label="规格型号"

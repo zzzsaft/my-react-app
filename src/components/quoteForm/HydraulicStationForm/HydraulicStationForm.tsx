@@ -76,7 +76,6 @@ const HydraulicStationForm = forwardRef(
         layout="vertical"
         form={form}
         submitter={false}
-        disabled={readOnly}
         onValuesChange={handleFieldsChange}
       >
         {linkedName && (

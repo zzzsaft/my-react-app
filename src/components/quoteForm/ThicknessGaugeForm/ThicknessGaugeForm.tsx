@@ -43,7 +43,6 @@ const ThicknessGaugeForm = forwardRef<
       form={form}
       submitter={false}
       onValuesChange={handleValuesChange}
-      disabled={readOnly}
     >
       <Row gutter={16}>
         <Col xs={12} md={6}>

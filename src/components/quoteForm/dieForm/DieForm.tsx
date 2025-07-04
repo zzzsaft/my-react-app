@@ -203,7 +203,7 @@ const DieForm = forwardRef(
           form={form}
           submitter={false}
           onValuesChange={handleFieldsChange}
-          disabled={readOnly || locked}
+          disabled={locked}
         >
           <SameProduct
             quoteId={quoteId}

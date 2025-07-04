@@ -18,7 +18,7 @@ const CoatingDieForm = forwardRef<CoatingDieFormRef, { quoteId: number; quoteIte
     }));
 
     return (
-      <ProForm layout="vertical" form={form} submitter={false} disabled={readOnly}>
+      <ProForm layout="vertical" form={form} submitter={false}>
         <BasicInfo />
         <LiquidInfo />
         <ProcessInfo />

@@ -196,7 +196,6 @@ const MeteringPumpForm = forwardRef(
           form={form}
           submitter={false}
           onValuesChange={handleFieldsChange}
-          disabled={readOnly}
         >
           <ModelSelection temperatureRequired={quoteType !== "history"} />
           <ModelOption />
