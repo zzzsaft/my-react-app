@@ -122,10 +122,12 @@ export const Product = () => {
             <IntervalInputFormItem
               name="thickness"
               label="制品厚度(mm)"
-              dependencies={["lipOpening"]}
+              dependencies={["lipOpening", "lipCount"]}
               rules={[
                 {
                   validator: (_, value) => {
+                    const lipCount = form.getFieldValue("lipCount");
+                    if (lipCount > 1) return Promise.resolve();
                     const other = form.getFieldValue("lipOpening");
                     if (!value?.value && !other?.value) {
                       return Promise.reject(
@@ -144,10 +146,12 @@ export const Product = () => {
             <IntervalInputFormItem
               name="lipOpening"
               label="模唇开口(mm)"
-              dependencies={["thickness"]}
+              dependencies={["thickness", "lipCount"]}
               rules={[
                 {
                   validator: (_, value) => {
+                    const lipCount = form.getFieldValue("lipCount");
+                    if (lipCount > 1) return Promise.resolve();
                     const other = form.getFieldValue("thickness");
                     if (!value?.value && !other?.value) {
                       return Promise.reject(
@@ -172,15 +176,22 @@ export const Product = () => {
             />
           </Col>
 
-          <Col xs={12} md={6}>
-            <IntervalInputFormItem
-              name="temperature"
-              label="工艺温度(℃)"
-              rules={[{ required: true, message: "请输入工艺温度" }]}
-              placeholder={"工艺温度"}
-              unit="℃"
-            />
-          </Col>
+          <Form.Item noStyle dependencies={["extrudeType", "runnerNumber"]}>
+            {({ getFieldValue }) =>
+              getFieldValue("extrudeType") === "模内共挤" &&
+              getFieldValue("runnerNumber") > 1 ? null : (
+                <Col xs={12} md={6}>
+                  <IntervalInputFormItem
+                    name="temperature"
+                    label="工艺温度(℃)"
+                    rules={[{ required: true, message: "请输入工艺温度" }]}
+                    placeholder={"工艺温度"}
+                    unit="℃"
+                  />
+                </Col>
+              )
+            }
+          </Form.Item>
           <Col xs={12} md={6}>
             {/* 流道形式 */}
             <Form.Item

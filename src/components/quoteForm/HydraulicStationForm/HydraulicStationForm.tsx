@@ -7,7 +7,7 @@ import {
   Segmented,
   Typography,
 } from "antd";
-import { forwardRef, useImperativeHandle } from "react";
+import { forwardRef, useImperativeHandle, useEffect } from "react";
 import ProForm from "@ant-design/pro-form";
 import { PowerInput } from "../formComponents/PowerInput";
 import { useQuoteStore } from "@/store/useQuoteStore";
@@ -27,11 +27,40 @@ const HydraulicStationForm = forwardRef(
     }: HydraulicStationFormProps & { readOnly?: boolean },
     ref
   ) => {
-    const [form] = Form.useForm();
+  const [form] = Form.useForm();
 
-    useImperativeHandle(ref, () => ({
-      form,
-    }));
+  useImperativeHandle(ref, () => ({
+    form,
+  }));
+
+  const valveCountMap: Record<string, number> = {
+    单: 1,
+    一: 1,
+    双: 2,
+    二: 2,
+    三: 3,
+    四: 4,
+    五: 5,
+    六: 6,
+  };
+
+  const updatePipeQuantity = (valve: string) => {
+    const count = valveCountMap[valve];
+    if (!count) return;
+    const quantity = count * 2;
+    form.setFieldValue("pipeQuantity", quantity);
+  };
+
+  const handleFieldsChange = (changedFields: any) => {
+    if (changedFields.valveShare != null) {
+      updatePipeQuantity(changedFields.valveShare);
+    }
+  };
+
+  useEffect(() => {
+    updatePipeQuantity(form.getFieldValue("valveShare"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
     const quoteItems =
       useQuoteStore.getState().quotes.find((q) => q.id === quoteId)?.items ??
@@ -43,7 +72,13 @@ const HydraulicStationForm = forwardRef(
       : undefined;
 
     return (
-      <ProForm layout="vertical" form={form} submitter={false} disabled={readOnly}>
+      <ProForm
+        layout="vertical"
+        form={form}
+        submitter={false}
+        disabled={readOnly}
+        onValuesChange={handleFieldsChange}
+      >
         {linkedName && (
           <Typography.Text
             type="secondary"

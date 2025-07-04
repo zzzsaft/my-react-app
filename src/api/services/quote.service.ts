@@ -149,6 +149,7 @@ export const QuoteService = {
     return res.data;
   },
 
+
   async updateExpire(uuid: string, expiresAt: Date) {
     const res = await apiClient.post("/quoteItem/share/update", {
       uuid,
@@ -156,7 +157,6 @@ export const QuoteService = {
     });
     return res.data;
   },
-
   async saveShare(
     uuid: string,
     shareUserId: string,
