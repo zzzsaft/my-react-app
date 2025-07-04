@@ -43,14 +43,24 @@ export const HeatingMethodSelect: React.FC<HeatingMethodSelectProps> = ({
 }) => {
   const { message } = App.useApp();
   const selectRef = useRef<any>(null);
-  const handleChange = (selected: HeatingMethod | HeatingMethod[]) => {
+  const handleChange = (selected: HeatingMethod | HeatingMethod[] | null) => {
     let selectedMethods = multiple
       ? Array.isArray(selected)
         ? selected
-        : [selected]
-      : [selected as HeatingMethod];
+        : selected
+        ? [selected]
+        : []
+      : selected
+      ? [selected as HeatingMethod]
+      : [];
 
     const prevMethods = Array.isArray(value) ? value : value ? [value] : [];
+
+    // 清空选择
+    if (selectedMethods.length === 0) {
+      onChange?.(multiple ? [] : undefined);
+      return;
+    }
 
     // 选中油加温时只保留油加温
     if (selectedMethods.includes("油加温")) {
