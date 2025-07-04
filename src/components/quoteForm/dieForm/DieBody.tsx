@@ -99,6 +99,7 @@ export const DieBody: React.FC<DieBodyProps> = ({ isHollow = false }) => {
           >
             <CustomSelect
               initialGroups={widthAdjustmentOptions}
+              mode="multiple"
               dropdown={false}
             />
           </Form.Item>

@@ -30,7 +30,21 @@ const QuoteSharePage: React.FC = () => {
     };
     load();
   }, [uuid, pwd]);
-
+  useEffect(() => {
+    if (!data?.quoteItem) return;
+    let timer: number;
+    const setFields = () => {
+      if (!formRef.current?.modelForm) {
+        timer = window.setTimeout(setFields, 100);
+        return;
+      }
+      formRef.current?.modelForm?.setFieldsValue({
+        ...(data.quoteItem?.config || {}),
+      });
+    };
+    setFields();
+    return () => window.clearTimeout(timer);
+  }, [data?.quoteItem]);
   if (!data) return <Spin />;
 
   const handleSave = async (config: any) => {
@@ -52,23 +66,9 @@ const QuoteSharePage: React.FC = () => {
     />
   );
 
-  useEffect(() => {
-    if (!data?.quoteItem) return;
-    let timer: number;
-    const setFields = () => {
-      if (!formRef.current?.modelForm) {
-        timer = window.setTimeout(setFields, 100);
-        return;
-      }
-      formRef.current?.modelForm?.setFieldsValue({ ...(data.quoteItem?.config || {}) });
-    };
-    setFields();
-    return () => window.clearTimeout(timer);
-  }, [data?.quoteItem]);
-
   return (
     <Watermark content={`${data.shareUserName}`}>
-      <div style={{ position: "relative", padding: "0 24px"  }}>
+      <div style={{ position: "relative", padding: "0 50px" }}>
         {content}
         {data.editable && (
           <Button

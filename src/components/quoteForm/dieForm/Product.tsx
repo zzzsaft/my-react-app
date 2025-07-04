@@ -3,7 +3,16 @@ import {
   ProForm,
   ProFormDependency,
 } from "@ant-design/pro-components";
-import { Col, Form, Input, InputNumber, Radio, Row, Cascader, Select } from "antd";
+import {
+  Col,
+  Form,
+  Input,
+  InputNumber,
+  Radio,
+  Row,
+  Cascader,
+  Select,
+} from "antd";
 import { IntervalInputFormItem } from "@/components/general/IntervalInput";
 import ScrewForm from "../formComponents/ScrewForm";
 import AutoSlashInput from "@/components/general/AutoSlashInput";
@@ -20,6 +29,7 @@ const RUNNER_TYPE_OPTIONS = [
       { value: "衣架式", label: "衣架式" },
       { value: "特殊支管式", label: "特殊支管式" },
       { value: "TPU专用流道", label: "TPU专用流道" },
+      { value: "中空专用流道", label: "中空专用流道" },
     ],
   },
   {
@@ -226,9 +236,7 @@ export const Product = () => {
                     <Form.Item
                       name="runnerNumber"
                       label="层数"
-                      rules={[
-                        { required: true, message: "请输入层数" },
-                      ]}
+                      rules={[{ required: true, message: "请输入层数" }]}
                     >
                       <InputNumber min={2} max={6} style={{ width: "100%" }} />
                     </Form.Item>
@@ -243,9 +251,7 @@ export const Product = () => {
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={24}>
-                    <ProFormDependency
-                      name={["runnerNumber", "material"]}
-                    >
+                    <ProFormDependency name={["runnerNumber", "material"]}>
                       {({ runnerNumber, material }) => (
                         <ProFormListWrapper
                           name="runnerLayers"
