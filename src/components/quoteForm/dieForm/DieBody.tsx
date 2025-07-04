@@ -94,7 +94,29 @@ export const DieBody: React.FC<DieBodyProps> = ({ isHollow = false }) => {
           <Form.Item
             name="widthAdjustment"
             label="宽幅调节方式"
-            rules={[{ required: true, message: "请选择宽幅调节方式" }]}
+            rules={[
+              { required: true, message: "请选择宽幅调节方式" },
+              {
+                validator(_, value) {
+                  if (!value) return Promise.resolve();
+                  const selected = Array.isArray(value) ? value : [value];
+                  if (selected.length > 2) {
+                    return Promise.reject("最多选择两项");
+                  }
+                  const innerOptions = widthAdjustmentOptions["内挡"] || [];
+                  const outerOptions = widthAdjustmentOptions["外挡"] || [];
+                  const innerCount = selected.filter((v) => innerOptions.includes(v)).length;
+                  const outerCount = selected.filter((v) => outerOptions.includes(v)).length;
+                  if (innerCount > 1) {
+                    return Promise.reject("内挡最多选择一项");
+                  }
+                  if (outerCount > 1) {
+                    return Promise.reject("外挡最多选择一项");
+                  }
+                  return Promise.resolve();
+                },
+              },
+            ]}
             initialValue={isHollow ? "挂钩外挡" : undefined}
           >
             <CustomSelect
