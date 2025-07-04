@@ -52,9 +52,23 @@ const QuoteSharePage: React.FC = () => {
     />
   );
 
+  useEffect(() => {
+    if (!data?.quoteItem) return;
+    let timer: number;
+    const setFields = () => {
+      if (!formRef.current?.modelForm) {
+        timer = window.setTimeout(setFields, 100);
+        return;
+      }
+      formRef.current?.modelForm?.setFieldsValue({ ...(data.quoteItem?.config || {}) });
+    };
+    setFields();
+    return () => window.clearTimeout(timer);
+  }, [data?.quoteItem]);
+
   return (
     <Watermark content={`${data.shareUserName} (${data.shareUserId})`}>
-      <div style={{ position: "relative" }}>
+      <div style={{ position: "relative", padding: "0 24px" }}>
         {content}
         {data.editable && (
           <Button

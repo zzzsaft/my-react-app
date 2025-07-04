@@ -5,6 +5,7 @@ import {
   Switch,
   Space,
   DatePicker,
+  Row,
   message,
 } from "antd";
 import InputWithButton from "@/components/general/InputWithButton";
@@ -160,7 +161,8 @@ const QuoteSharePopover: React.FC<QuoteSharePopoverProps> = ({
       </div>
       {enabled && (
         <>
-          <Space>
+          <Row gutter={8} align="middle">
+            <span>有效期至:</span>
             <DatePicker
               value={expireDate}
               onChange={(d) => d && setExpireDate(d)}
@@ -171,12 +173,15 @@ const QuoteSharePopover: React.FC<QuoteSharePopoverProps> = ({
                 return diff < 1 || diff > 3;
               }}
             />
-            <Button type="primary" size="small" onClick={handleUpdateExpire}
+            <Button
+              type="primary"
+              size="small"
+              onClick={handleUpdateExpire}
               loading={loading}
             >
               确认
             </Button>
-          </Space>
+          </Row>
           <InputWithButton
             readOnly
             value={viewLink}
