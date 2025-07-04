@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Popover, Button, Switch, Space, DatePicker, message } from "antd";
+import {
+  Popover,
+  Button,
+  Switch,
+  Space,
+  DatePicker,
+  Row,
+  message,
+} from "antd";
 import InputWithButton from "@/components/general/InputWithButton";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useQuoteStore } from "@/store/useQuoteStore";
@@ -153,7 +161,8 @@ const QuoteSharePopover: React.FC<QuoteSharePopoverProps> = ({
       </div>
       {enabled && (
         <>
-          <Space>
+          <Row gutter={8} align="middle">
+            <span>有效期至:</span>
             <DatePicker
               value={expireDate}
               onChange={(d) => d && setExpireDate(d)}
@@ -172,7 +181,7 @@ const QuoteSharePopover: React.FC<QuoteSharePopoverProps> = ({
             >
               确认
             </Button>
-          </Space>
+          </Row>
           <InputWithButton
             readOnly
             value={viewLink}
