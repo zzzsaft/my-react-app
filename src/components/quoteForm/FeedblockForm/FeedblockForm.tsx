@@ -22,6 +22,7 @@ import TextArea from "antd/es/input/TextArea";
 import MaterialSelect from "@/components/general/MaterialSelect";
 import AutoSlashInput from "@/components/general/AutoSlashInput";
 import RatioInput from "@/components/general/RatioInput";
+import { useQuoteStore } from "@/store/useQuoteStore";
 import LevelInputNumber, {
   LevelValue,
 } from "@/components/general/LevelInputNumber";
@@ -51,6 +52,9 @@ const FeedblockForm = forwardRef(
     ref
   ) => {
     const [form] = Form.useForm();
+    const quoteType = useQuoteStore(
+      (state) => state.quotes.find((q) => q.id === quoteId)?.type
+    );
 
     useImperativeHandle(ref, () => ({
       form,
@@ -150,7 +154,9 @@ const FeedblockForm = forwardRef(
               <IntervalInputFormItem
                 name="production"
                 label="分配器产量(kg/h)"
-                rules={[{ required: true, message: "请输入产量" }]}
+                rules={
+                  quoteType !== "history" ? [{ required: true, message: "请输入产量" }] : []
+                }
                 unit="kg/h"
               />
             </Col>
