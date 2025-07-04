@@ -21,6 +21,7 @@ import HistoryQuoteTablePage from "./page/quote/HistoryQuoteTablePage";
 import OAQuoteTablePage from "./page/quote/OAQuoteTablePage";
 import TodoQuoteTablePage from "./page/quote/TodoQuoteTablePage";
 import QuoteFormPage from "./page/quote/QuoteFormPage";
+import QuoteSharePage from "./page/quote/QuoteSharePage";
 import TemplateListPage from "./page/template/TemplateListPage";
 import { NoPermissionPage } from "./page/NoPermissionPage";
 
@@ -53,6 +54,7 @@ const App: React.FC = () => {
 
           {/* 不需要鉴权的路由 */}
           <Route path="/auth-callback" element={<AuthCallback />} />
+          <Route path="/quote/share/:uuid" element={<QuoteSharePage />} />
           <Route path="/login" element={<div />} />
           <Route path="/error/no-permission" element={<NoPermissionPage />} />
 

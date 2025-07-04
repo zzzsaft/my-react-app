@@ -100,4 +100,73 @@ export const QuoteService = {
     });
     return res.data as Blob;
   },
+
+  async createShareLink(
+    quoteItemId: number,
+    expiresAt: Date,
+    editable = false
+  ) {
+    const res = await apiClient.post("/quoteItem/share", {
+      quoteItemId,
+      expiresAt,
+      editable,
+    });
+    return res.data as { uuid: string; pwd: string };
+  },
+
+  async getShare(uuid: string, pwd: string) {
+    const res = await apiClient.get("/quoteItem/share/detail", {
+      params: { uuid, pwd },
+    });
+    return res.data as {
+      quoteItem: QuoteItem;
+      quoteId: number;
+      editable: boolean;
+      shareUserId: string;
+      shareUserName: string;
+    };
+  },
+
+  async getShareLinks(quoteItemId: number) {
+    const res = await apiClient.get("/quoteItem/share", {
+      params: { quoteItemId },
+    });
+    return res.data as
+      | undefined
+      | {
+          viewUuid: string;
+          viewPwd: string;
+          editUuid: string;
+          editPwd: string;
+          expiresAt?: string;
+        };
+  },
+
+  async disableShare(quoteItemId: number) {
+    const res = await apiClient.post("/quoteItem/share/disable", {
+      quoteItemId,
+    });
+    return res.data;
+  },
+
+  async updateExpire(uuid: string, expiresAt: Date) {
+    const res = await apiClient.post("/quoteItem/share/update", {
+      uuid,
+      expiresAt,
+    });
+    return res.data;
+  },
+
+  async saveShare(
+    uuid: string,
+    shareUserId: string,
+    quoteItem: Partial<QuoteItem>
+  ) {
+    const res = await apiClient.post("/quoteItem/share/save", {
+      uuid,
+      shareUserId,
+      quoteItem,
+    });
+    return res.data;
+  },
 };
