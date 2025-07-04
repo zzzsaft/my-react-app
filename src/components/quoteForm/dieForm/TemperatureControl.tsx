@@ -38,7 +38,7 @@ export const TemperatureControl = () => {
                   name="heatingMethod"
                   label={
                     <TooltipLabel
-                      label="加热方式"
+                      label="模体加热方式"
                       tooltip="330以上不可选铸铝加热板"
                     />
                   }
@@ -201,11 +201,7 @@ export const TemperatureControl = () => {
             const temperature = getFieldValue("temperature");
             return lipHeating ? (
               <Col xs={24} sm={12}>
-                <Form.Item
-                  name="lipHeatingMethod"
-                  label="模唇加热方式"
-                  rules={[{ required: true, message: "请选择模唇加热方式" }]}
-                >
+                <Form.Item name="lipHeatingMethod" label="模唇加热方式">
                   <HeatingMethodSelect
                     multiple={true}
                     temperature={temperature?.value}

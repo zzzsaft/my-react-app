@@ -36,9 +36,10 @@ const QuoteSharePopover: React.FC<QuoteSharePopoverProps> = ({
   const [isExpired, setIsExpired] = useState(false);
 
   const shareUserName = useAuthStore((s) => s.name) || "";
-  const customerName = useQuoteStore(
-    (s) => s.quotes.find((q) => q.id === quoteId)?.customerName
-  ) || "";
+  const customerName =
+    useQuoteStore(
+      (s) => s.quotes.find((q) => q.id === quoteId)?.customerName
+    ) || "";
   const productName = quoteItem?.productName || "";
 
   const base = typeof window !== "undefined" ? window.location.origin : "";
@@ -87,7 +88,7 @@ const QuoteSharePopover: React.FC<QuoteSharePopoverProps> = ({
     setLoading(true);
     try {
       const info = await QuoteService.getShareLinks(quoteItem.id);
-      if (info) {
+      if (info?.viewUuid) {
         setEnabled(true);
         setViewLink(`${base}/quote/share/${info.viewUuid}?pwd=${info.viewPwd}`);
         setEditLink(`${base}/quote/share/${info.editUuid}?pwd=${info.editPwd}`);
@@ -146,7 +147,6 @@ const QuoteSharePopover: React.FC<QuoteSharePopoverProps> = ({
       loadShareInfo();
     }
   }, [visible]);
-
 
   const content = (
     <Space direction="vertical">
@@ -214,4 +214,3 @@ const QuoteSharePopover: React.FC<QuoteSharePopoverProps> = ({
 };
 
 export default QuoteSharePopover;
-

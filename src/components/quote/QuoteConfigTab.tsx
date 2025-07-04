@@ -341,19 +341,15 @@ const QuoteConfigTab: React.FC<QuoteConfigTabProps> = ({
             </Form.Item>
           </Col>
           <Col xs={12} md={8}>
-            <Form.Item
-              name="faxNumber"
-              label="传真号"
-              rules={[{ required: true, message: "请输入传真号" }]}
-            >
+            <Form.Item name="faxNumber" label="传真号">
               <AutoComplete options={faxOptions} />
             </Form.Item>
           </Col>
           <Col xs={24} md={24}>
             <Form.Item
               name="address"
-              label="地址"
-              rules={[{ required: true, message: "请输入地址" }]}
+              label="收货地址"
+              rules={[{ required: true, message: "请输入收货地址" }]}
             >
               <AddressInput addressOptions={addressOptions} />
             </Form.Item>

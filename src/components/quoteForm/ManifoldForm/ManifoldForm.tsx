@@ -15,13 +15,27 @@ const options = [
   { label: "按原图纸", value: "按原图纸" },
 ];
 
-const ManifoldForm = forwardRef<FormInstance | null, ManifoldFormProps>(
-  ({ readOnly = false }, ref) => {
+const ManifoldForm = forwardRef(
+  (
+    {
+      quoteId,
+      quoteItemId,
+      readOnly = false,
+    }: { quoteId: number; quoteItemId: number; readOnly?: boolean },
+    ref
+  ) => {
     const [form] = Form.useForm();
-    useImperativeHandle(ref, () => ({ form }));
+    useImperativeHandle(ref, () => ({
+      form,
+    }));
 
     return (
-      <ProForm layout="vertical" form={form} submitter={false} disabled={readOnly}>
+      <ProForm
+        layout="vertical"
+        form={form}
+        submitter={false}
+        disabled={readOnly}
+      >
         <Row gutter={16}>
           <Col xs={12} md={6}>
             <Form.Item

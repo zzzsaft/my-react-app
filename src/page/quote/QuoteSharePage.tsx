@@ -67,8 +67,8 @@ const QuoteSharePage: React.FC = () => {
   }, [data?.quoteItem]);
 
   return (
-    <Watermark content={`${data.shareUserName} (${data.shareUserId})`}>
-      <div style={{ position: "relative", padding: "0 24px" }}>
+    <Watermark content={`${data.shareUserName}`}>
+      <div style={{ position: "relative", padding: "0 24px"  }}>
         {content}
         {data.editable && (
           <Button

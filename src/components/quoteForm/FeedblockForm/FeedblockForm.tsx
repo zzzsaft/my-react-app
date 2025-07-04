@@ -35,16 +35,11 @@ import {
   IntervalInput,
   IntervalInputFormItem,
 } from "@/components/general/IntervalInput";
+import { MATERIAL_OPTIONS } from "@/util/MATERIAL";
 
 interface PriceFormRef {
   form: FormInstance;
 }
-
-const MATERIAL_OPTIONS = {
-  合金钢: ["1.2311锻件", "1.2714锻件", "SUS420锻件"],
-  不锈钢: ["SUS630锻件", "4Cr13锻件", "S316锻件", "3Cr13锻件"],
-  特殊材料: ["哈氏合金钢材锻件"],
-};
 
 const FeedblockForm = forwardRef(
   (
@@ -142,8 +137,8 @@ const FeedblockForm = forwardRef(
             <Col xs={12} md={6}>
               <Form.Item
                 name="dieMaterial"
-                label="模体材质"
-                rules={[{ required: true, message: "请选择模体材质" }]}
+                label="分配器材质"
+                rules={[{ required: true, message: "请选择分配器材质" }]}
               >
                 <CustomSelect
                   initialGroups={MATERIAL_OPTIONS}
@@ -155,7 +150,7 @@ const FeedblockForm = forwardRef(
             <Col xs={12} md={6}>
               <IntervalInputFormItem
                 name="production"
-                label="产量(kg/h)"
+                label="分配器产量(kg/h)"
                 rules={[{ required: true, message: "请输入产量" }]}
                 unit="kg/h"
               />
