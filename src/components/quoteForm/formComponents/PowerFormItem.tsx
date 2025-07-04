@@ -12,7 +12,8 @@ interface PowerFormItemProps extends FormItemProps {
 }
 
 /**
- * Display power input when heating method includes "加热棒" or "加热板".
+ * Display power input when heating method includes "加热棒"、"加热圈" or
+ * "加热板".
  */
 export const PowerFormItem: React.FC<PowerFormItemProps> = ({
   dependencyName,
@@ -24,8 +25,15 @@ export const PowerFormItem: React.FC<PowerFormItemProps> = ({
       {({ getFieldValue }) => {
         const methods = getFieldValue(dependencyName);
         const showVoltage = Array.isArray(methods)
-          ? methods.some((m: string) => m === '加热棒' || String(m).includes('加热板'))
-          : methods && (methods === '加热棒' || String(methods).includes('加热板'));
+          ? methods.some(
+              (m: string) =>
+                m === '加热棒' || m === '加热圈' || String(m).includes('加热板')
+            )
+          :
+              methods &&
+              (methods === '加热棒' ||
+                methods === '加热圈' ||
+                String(methods).includes('加热板'));
 
         return showVoltage ? (
           <Col {...colProps}>
