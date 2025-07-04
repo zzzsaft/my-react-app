@@ -1,12 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Popover,
-  Button,
-  Switch,
-  Space,
-  DatePicker,
-  message,
-} from "antd";
+import { Popover, Button, Switch, Space, DatePicker, message } from "antd";
 import InputWithButton from "@/components/general/InputWithButton";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useQuoteStore } from "@/store/useQuoteStore";
@@ -35,9 +28,10 @@ const QuoteSharePopover: React.FC<QuoteSharePopoverProps> = ({
   const [isExpired, setIsExpired] = useState(false);
 
   const shareUserName = useAuthStore((s) => s.name) || "";
-  const customerName = useQuoteStore(
-    (s) => s.quotes.find((q) => q.id === quoteId)?.customerName
-  ) || "";
+  const customerName =
+    useQuoteStore(
+      (s) => s.quotes.find((q) => q.id === quoteId)?.customerName
+    ) || "";
   const productName = quoteItem?.productName || "";
 
   const base = typeof window !== "undefined" ? window.location.origin : "";
@@ -86,7 +80,7 @@ const QuoteSharePopover: React.FC<QuoteSharePopoverProps> = ({
     setLoading(true);
     try {
       const info = await QuoteService.getShareLinks(quoteItem.id);
-      if (info) {
+      if (info?.viewUuid) {
         setEnabled(true);
         setViewLink(`${base}/quote/share/${info.viewUuid}?pwd=${info.viewPwd}`);
         setEditLink(`${base}/quote/share/${info.editUuid}?pwd=${info.editPwd}`);
@@ -146,7 +140,6 @@ const QuoteSharePopover: React.FC<QuoteSharePopoverProps> = ({
     }
   }, [visible]);
 
-
   const content = (
     <Space direction="vertical">
       <div>
@@ -171,7 +164,10 @@ const QuoteSharePopover: React.FC<QuoteSharePopoverProps> = ({
                 return diff < 1 || diff > 3;
               }}
             />
-            <Button type="primary" size="small" onClick={handleUpdateExpire}
+            <Button
+              type="primary"
+              size="small"
+              onClick={handleUpdateExpire}
               loading={loading}
             >
               确认
@@ -209,4 +205,3 @@ const QuoteSharePopover: React.FC<QuoteSharePopoverProps> = ({
 };
 
 export default QuoteSharePopover;
-

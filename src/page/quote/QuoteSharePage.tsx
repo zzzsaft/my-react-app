@@ -53,7 +53,7 @@ const QuoteSharePage: React.FC = () => {
   );
 
   return (
-    <Watermark content={`${data.shareUserName} (${data.shareUserId})`}>
+    <Watermark content={`${data.shareUserName}`}>
       <div style={{ position: "relative" }}>
         {content}
         {data.editable && (
