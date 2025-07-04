@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { Spin, Button, Watermark } from "antd";
 import ProductConfigurationForm from "@/components/quote/ProductConfigForm/ProductConfigurationForm";
 import { QuoteItem } from "@/types/types";
@@ -7,6 +7,8 @@ import { QuoteService } from "@/api/services/quote.service";
 
 const QuoteSharePage: React.FC = () => {
   const { uuid } = useParams<{ uuid: string }>();
+  const [search] = useSearchParams();
+  const pwd = search.get("pwd") ?? "";
   const [data, setData] = useState<{
     quoteItem?: QuoteItem;
     quoteId?: number;
@@ -20,14 +22,14 @@ const QuoteSharePage: React.FC = () => {
     const load = async () => {
       if (!uuid) return;
       try {
-        const res = await QuoteService.getShare(uuid);
+        const res = await QuoteService.getShare(uuid, pwd);
         setData(res);
       } catch (e) {
         console.error(e);
       }
     };
     load();
-  }, [uuid]);
+  }, [uuid, pwd]);
 
   if (!data) return <Spin />;
 

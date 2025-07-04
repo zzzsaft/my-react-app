@@ -158,7 +158,7 @@ const ProductConfigModal: React.FC<ProductConfigModalProps> = ({
                 `(${quoteItem.importInfo.id} ${quoteItem.importInfo.name})`}
             </span>
             <div>
-              <QuoteSharePopover quoteItem={quoteItem} />
+              <QuoteSharePopover quoteItem={quoteItem} quoteId={quoteId} />
               <Button
                 type="link"
                 onClick={() => setImportOpen(true)}

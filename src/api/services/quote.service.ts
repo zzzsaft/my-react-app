@@ -103,20 +103,20 @@ export const QuoteService = {
 
   async createShareLink(
     quoteItemId: number,
-    expiresIn: number,
+    expiresAt: Date,
     editable = false
   ) {
     const res = await apiClient.post("/quoteItem/share", {
       quoteItemId,
-      expiresIn,
+      expiresAt,
       editable,
     });
-    return res.data as { uuid: string };
+    return res.data as { uuid: string; pwd: string };
   },
 
-  async getShare(uuid: string) {
+  async getShare(uuid: string, pwd: string) {
     const res = await apiClient.get("/quoteItem/share/detail", {
-      params: { uuid },
+      params: { uuid, pwd },
     });
     return res.data as {
       quoteItem: QuoteItem;
@@ -133,7 +133,13 @@ export const QuoteService = {
     });
     return res.data as
       | undefined
-      | { viewUuid: string; editUuid: string; expireDays?: number };
+      | {
+          viewUuid: string;
+          viewPwd: string;
+          editUuid: string;
+          editPwd: string;
+          expiresAt?: string;
+        };
   },
 
   async disableShare(quoteItemId: number) {
@@ -143,6 +149,14 @@ export const QuoteService = {
     return res.data;
   },
 
+
+  async updateExpire(uuid: string, expiresAt: Date) {
+    const res = await apiClient.post("/quoteItem/share/update", {
+      uuid,
+      expiresAt,
+    });
+    return res.data;
+  },
   async saveShare(
     uuid: string,
     shareUserId: string,
