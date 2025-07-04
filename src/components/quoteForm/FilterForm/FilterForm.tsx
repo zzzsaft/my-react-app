@@ -156,7 +156,6 @@ const FilterForm = forwardRef(
         form={form}
         submitter={false}
         onValuesChange={handleFieldsChange}
-        disabled={readOnly}
       >
         <FilterSelection form={form} filters={filters} />
         <ProCard

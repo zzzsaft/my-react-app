@@ -34,7 +34,6 @@ const ManifoldForm = forwardRef(
         layout="vertical"
         form={form}
         submitter={false}
-        disabled={readOnly}
       >
         <Row gutter={16}>
           <Col xs={12} md={6}>
