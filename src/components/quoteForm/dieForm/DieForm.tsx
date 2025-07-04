@@ -28,6 +28,8 @@ const DieForm = forwardRef(
     const quoteItems = useQuoteStore
       .getState()
       .quotes.find((quote) => quote.id === quoteId)?.items;
+    const category = quoteItems?.find((i) => i.id === quoteItemId)?.productCategory;
+    const isHollow = category?.some((c) => c.includes("中空"));
     const { showProductActionModal } = useProductActionModal();
 
     // 暴露form实例给父组件
@@ -212,7 +214,7 @@ const DieForm = forwardRef(
           />
 
           <Product />
-          <DieBody />
+          <DieBody isHollow={!!isHollow} />
           <DieInstall />
           <TemperatureControl />
           <SurfaceTreatment />

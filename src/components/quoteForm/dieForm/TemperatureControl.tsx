@@ -82,16 +82,29 @@ export const TemperatureControl = () => {
           rules={powerInputRules}
           colProps={{ xs: 24, sm: 12 }}
         />
-        <Col xs={12} sm={12}>
-          <Form.Item
-            name="每区电压"
-            label="每区电压"
-            rules={[{ required: true, message: "请选择热电偶控位" }]}
-            initialValue={"5KW以内"}
-          >
-            <Input />
-          </Form.Item>
-        </Col>
+        <Form.Item noStyle dependencies={["heatingMethod"]}>
+          {({ getFieldValue }) => {
+            const methods = getFieldValue("heatingMethod");
+            const show = Array.isArray(methods)
+              ? methods.some(
+                  (m: string) => m === "加热棒" || String(m).includes("加热板")
+                )
+              : methods &&
+                (methods === "加热棒" || String(methods).includes("加热板"));
+            return show ? (
+              <Col xs={12} sm={12}>
+                <Form.Item
+                  name="每区电压"
+                  label="每区电压"
+                  rules={[{ required: true, message: "请选择热电偶控位" }]}
+                  initialValue={"5KW以内"}
+                >
+                  <Input />
+                </Form.Item>
+              </Col>
+            ) : null;
+          }}
+        </Form.Item>
         <Col xs={12} sm={12}>
           <Form.Item
             name="thermocoupleHoles"

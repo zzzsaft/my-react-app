@@ -31,7 +31,11 @@ const QuoteTermsTab: React.FC<QuoteTermsTabProps> = ({
           </Form.Item>
         </Col>
         <Col xs={12} md={6}>
-          <Form.Item name="quoteValidDays" label="报价有效期（天）">
+          <Form.Item
+            name="quoteValidDays"
+            label="报价有效期（天）"
+            initialValue={30}
+          >
             <InputNumber min={1} style={{ width: "100%" }} />
           </Form.Item>
         </Col>
