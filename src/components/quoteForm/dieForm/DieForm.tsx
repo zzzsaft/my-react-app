@@ -156,6 +156,19 @@ const DieForm = forwardRef(
       if (!result.result) form.setFieldValue("thicknessGauge", true);
     };
 
+    const handleHasManifold = async (value: boolean) => {
+      if (value) {
+        const result = await showProductActionModal(
+          addProp(["合流器"], "hasManifold", false)
+        );
+        if (!result.result) form.setFieldValue("hasManifold", false);
+        return;
+      }
+
+      const result = await showProductActionModal(deleteProp(["合流器"]));
+      if (!result.result) form.setFieldValue("hasManifold", true);
+    };
+
     const handleLowerLipStructure = (value: string) => {
       if (value?.includes("整体")) {
         form.setFieldValue("lipCount", 1);
@@ -187,6 +200,7 @@ const DieForm = forwardRef(
         smartRegulator: handleSmartRegulator,
         haveThermalInsulation: handleThermalInsulation,
         thicknessGauge: handleThicknessGauge,
+        hasManifold: handleHasManifold,
         lowerLipStructure: handleLowerLipStructure,
         lipCount: handleLipCount,
       };

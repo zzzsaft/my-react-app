@@ -1,5 +1,4 @@
 import {
-  AutoComplete,
   Col,
   Form,
   FormInstance,
@@ -9,11 +8,8 @@ import {
   Typography,
 } from "antd";
 import ProForm, { ProFormList, ProFormDependency } from "@ant-design/pro-form";
-import { forwardRef, useImperativeHandle, useEffect, useState } from "react";
-import { useDebounce } from "use-debounce";
-import { DefaultOptionType } from "antd/es/select";
-import { PartService } from "@/api/services/part.service";
-import { PartSearchResult } from "@/types/types";
+import { forwardRef, useImperativeHandle } from "react";
+import PartAutoComplete from "./formComponents/PartAutoComplete";
 import { formatPrice } from "@/util/valueUtil";
 
 interface PartFormRef {
@@ -28,60 +24,6 @@ const PartForm = forwardRef<PartFormRef, PartFormProps>(
   ({ readOnly = false }, ref) => {
     const [form] = Form.useForm();
 
-    const PartAutoComplete: React.FC<{ index: number }> = ({ index }) => {
-      const [search, setSearch] = useState("");
-      const [debouncedSearch] = useDebounce(search, 300);
-      const [options, setOptions] = useState<DefaultOptionType[]>([]);
-
-      useEffect(() => {
-        if (!debouncedSearch) {
-          setOptions([]);
-          return;
-        }
-        let cancelled = false;
-        PartService.searchParts(debouncedSearch).then((data) => {
-          if (cancelled) return;
-          const groups: Record<string, DefaultOptionType> = {};
-          data.forEach((p) => {
-            if (!groups[p.category]) {
-              groups[p.category] = { label: p.category, options: [] } as any;
-            }
-            (groups[p.category].options as DefaultOptionType[]).push({
-              label: (
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <span>{p.name}</span>
-                  <span>
-                    {`${formatPrice(p.price)} / ${p.unit}${
-                      p.type === "M" ? " 自制件" : ""
-                    }`}
-                  </span>
-                </div>
-              ),
-              value: p.name,
-              item: p,
-            });
-          });
-          setOptions(Object.values(groups));
-        });
-        return () => {
-          cancelled = true;
-        };
-      }, [debouncedSearch]);
-
-      return (
-        <AutoComplete
-          options={options}
-          onSearch={setSearch}
-          onSelect={(_, option) => {
-            const item = (option as any).item as PartSearchResult;
-            form.setFieldValue(["parts", index, "unitPrice"], item.price);
-            form.setFieldValue(["parts", index, "unit"], item.unit);
-          }}
-          style={{ width: "100%" }}
-          placeholder="物料名称"
-        />
-      );
-    };
 
     useImperativeHandle(ref, () => ({
       form,
@@ -123,7 +65,7 @@ const PartForm = forwardRef<PartFormRef, PartFormProps>(
                   rules={[{ required: true, message: "请输入物料名称" }]}
                   readonly={readOnly}
                 >
-                  <PartAutoComplete index={index} />
+                  <PartAutoComplete form={form} index={index} />
                 </ProForm.Item>
               </Col>
               <Col xs={12} md={3}>

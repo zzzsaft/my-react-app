@@ -304,6 +304,19 @@ export const DieBody: React.FC<DieBodyProps> = ({ isHollow = false }) => {
             </Radio.Group>
           </Form.Item>
         </Col>
+        <Col xs={12} md={8}>
+          <Form.Item
+            name="hasManifold"
+            label="是否选配合流器"
+            rules={[{ required: true, message: "请选择是否选配合流器" }]}
+            initialValue={false}
+          >
+            <Radio.Group>
+              <Radio value={true}>是</Radio>
+              <Radio value={false}>否</Radio>
+            </Radio.Group>
+          </Form.Item>
+        </Col>
       </Row>
     </ProCard>
   );
