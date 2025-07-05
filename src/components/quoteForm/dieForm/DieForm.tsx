@@ -28,7 +28,9 @@ const DieForm = forwardRef(
     const quoteItems = useQuoteStore
       .getState()
       .quotes.find((quote) => quote.id === quoteId)?.items;
-    const category = quoteItems?.find((i) => i.id === quoteItemId)?.productCategory;
+    const category = quoteItems?.find(
+      (i) => i.id === quoteItemId
+    )?.productCategory;
     const isHollow = category?.some((c) => c.includes("中空"));
     const { showProductActionModal } = useProductActionModal();
 
@@ -159,7 +161,7 @@ const DieForm = forwardRef(
     const handleHasManifold = async (value: boolean) => {
       if (value) {
         const result = await showProductActionModal(
-          addProp(["合流器"], "hasManifold", false)
+          addProp(["配套件", "合流器"], "hasManifold", false)
         );
         if (!result.result) form.setFieldValue("hasManifold", false);
         return;

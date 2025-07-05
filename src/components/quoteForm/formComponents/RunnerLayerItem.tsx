@@ -11,7 +11,7 @@ const RunnerLayerItem: React.FC<RunnerLayerItemProps> = ({ materials }) => {
   return (
     <Row gutter={16}>
       <Col xs={4} md={2}>
-        <ProForm.Item name="level" label="层" readonly>
+        <ProForm.Item name="level" label="层" readOnly>
           <Input disabled />
         </ProForm.Item>
       </Col>

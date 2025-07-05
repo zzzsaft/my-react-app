@@ -45,9 +45,10 @@ const ManifoldForm = forwardRef(
   ) => {
     const [form] = Form.useForm();
     const [modalOpen, setModalOpen] = useState(false);
-
+    const a = useQuoteStore.getState().quotes;
     const quoteItems =
-      useQuoteStore.getState().quotes.find((q) => q.id === quoteId)?.items ?? [];
+      useQuoteStore.getState().quotes.find((q) => q.id === quoteId)?.items ??
+      [];
     const findItemById = useQuoteStore.getState().findItemById;
     const currentItem = findItemById(quoteItems, quoteItemId);
     const linkedName = currentItem?.linkId
@@ -69,11 +70,11 @@ const ManifoldForm = forwardRef(
           runnerLayers,
         } = item.config as any;
         form.setFieldsValue({
-          manualMaterial: material,
-          manualTemperature: temperature,
-          manualRunnerNumber: runnerNumber,
-          manualCompositeStructure: compositeStructure,
-          manualRunnerLayers: runnerLayers,
+          material: material,
+          temperature: temperature,
+          runnerNumber: runnerNumber,
+          compositeStructure: compositeStructure,
+          runnerLayers: runnerLayers,
         });
       }
       setModalOpen(false);
@@ -82,14 +83,22 @@ const ManifoldForm = forwardRef(
     return (
       <ProCard
         title="合流器配置"
-        collapsible
+        // collapsible
         defaultCollapsed={false}
         style={{ marginBottom: 16 }}
         headerBordered
       >
-        <ProForm layout="vertical" form={form} submitter={false} preserve={false}>
+        <ProForm
+          layout="vertical"
+          form={form}
+          submitter={false}
+          preserve={false}
+        >
           {linkedName && (
-            <Typography.Text type="secondary" style={{ display: "block", marginBottom: 16 }}>
+            <Typography.Text
+              type="secondary"
+              style={{ display: "block", marginBottom: 16 }}
+            >
               关联产品：{linkedName}
             </Typography.Text>
           )}
@@ -118,8 +127,14 @@ const ManifoldForm = forwardRef(
             <>
               <Row gutter={16} style={{ marginBottom: 16 }}>
                 <Col xs={24} md={12}>
-                  <Form.Item label="是否与模头互配" colon={false} style={{ marginBottom: 0 }}>
-                    <Button onClick={() => setModalOpen(true)}>选择模头编号</Button>
+                  <Form.Item
+                    label="是否与模头互配"
+                    colon={false}
+                    style={{ marginBottom: 0 }}
+                  >
+                    <Button onClick={() => setModalOpen(true)}>
+                      选择模头编号
+                    </Button>
                   </Form.Item>
                 </Col>
               </Row>
@@ -128,14 +143,16 @@ const ManifoldForm = forwardRef(
                   <Form.Item
                     label="合流器加热分区"
                     name="heatingZone"
-                    rules={[{ required: true, message: "请输入合流器加热分区" }]}
+                    rules={[
+                      { required: true, message: "请输入合流器加热分区" },
+                    ]}
                   >
                     <InputNumber min={0} style={{ width: "100%" }} />
                   </Form.Item>
                 </Col>
                 <Col xs={12} md={6}>
                   <Form.Item
-                    name="manualHeatingMethod"
+                    name="heatingMethod"
                     label="加热方式"
                     rules={[{ required: true, message: "请选择加热方式" }]}
                   >
@@ -143,13 +160,13 @@ const ManifoldForm = forwardRef(
                   </Form.Item>
                 </Col>
                 <PowerFormItem
-                  dependencyName="manualHeatingMethod"
-                  name="manualPower"
+                  dependencyName="heatingMethod"
+                  name="power"
                   label="加热电压"
                 />
                 <Col xs={12} md={6}>
                   <Form.Item
-                    name="manualMaterial"
+                    name="material"
                     label="塑料原料"
                     rules={[{ required: true, message: "请选择原料" }]}
                   >
@@ -158,7 +175,7 @@ const ManifoldForm = forwardRef(
                 </Col>
                 <Col xs={12} md={6}>
                   <Form.Item
-                    name="manualTemperature"
+                    name="temperature"
                     label="工艺温度"
                     rules={[{ required: true, message: "请输入温度" }]}
                   >
@@ -167,7 +184,7 @@ const ManifoldForm = forwardRef(
                 </Col>
                 <Col xs={12} md={6}>
                   <Form.Item
-                    name="manualRunnerNumber"
+                    name="runnerNumber"
                     label="共挤复合层数"
                     rules={[{ required: true, message: "请输入层数" }]}
                   >
@@ -176,7 +193,7 @@ const ManifoldForm = forwardRef(
                 </Col>
                 <Col xs={12} md={6}>
                   <Form.Item
-                    name="manualCompositeStructure"
+                    name="compositeStructure"
                     label="层结构形式"
                     rules={[{ required: true, message: "请输入结构形式" }]}
                   >
@@ -185,7 +202,7 @@ const ManifoldForm = forwardRef(
                 </Col>
                 <Col span={24}>
                   <ProFormListWrapper
-                    name="manualRunnerLayers"
+                    name="runnerLayers"
                     label="每层复合比例"
                     min={1}
                     creatorButtonProps={{ creatorButtonText: "新增" }}
@@ -201,7 +218,7 @@ const ManifoldForm = forwardRef(
                 </Col>
                 <Col xs={12} md={6}>
                   <Form.Item
-                    name="manualDieMaterial"
+                    name="manifoldMaterial"
                     label="合流器材料"
                     initialValue="3Cr13"
                     rules={[{ required: true, message: "请选择材料" }]}
@@ -210,7 +227,7 @@ const ManifoldForm = forwardRef(
                   </Form.Item>
                 </Col>
                 <Col xs={12} md={6}>
-                  <Form.Item name="manualExtruder" label="挤出机分布">
+                  <Form.Item name="extruder" label="挤出机分布">
                     <Input />
                   </Form.Item>
                 </Col>
