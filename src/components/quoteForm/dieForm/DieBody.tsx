@@ -64,7 +64,7 @@ export const DieBody: React.FC<DieBodyProps> = ({ isHollow = false }) => {
   const lowerLipOptions = isHollow
     ? { 默认: ["推式弹性微调（中空专用）"] }
     : LOWER_LIP_OPTIONS;
-  const widthAdjustmentOptions = isHollow
+  const widthAdjustmentOptions: any = isHollow
     ? { 外挡: ["挂钩外挡"], 无: ["无"] }
     : WIDTH_ADJUSTMENT_OPTIONS;
   return (
@@ -105,8 +105,12 @@ export const DieBody: React.FC<DieBodyProps> = ({ isHollow = false }) => {
                   }
                   const innerOptions = widthAdjustmentOptions["内挡"] || [];
                   const outerOptions = widthAdjustmentOptions["外挡"] || [];
-                  const innerCount = selected.filter((v) => innerOptions.includes(v)).length;
-                  const outerCount = selected.filter((v) => outerOptions.includes(v)).length;
+                  const innerCount = selected.filter((v) =>
+                    innerOptions.includes(v)
+                  ).length;
+                  const outerCount = selected.filter((v) =>
+                    outerOptions.includes(v)
+                  ).length;
                   if (innerCount > 1) {
                     return Promise.reject("内挡最多选择一项");
                   }

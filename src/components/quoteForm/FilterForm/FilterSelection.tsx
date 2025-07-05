@@ -16,12 +16,12 @@ interface Props {
   filters: FilterProduct[];
 }
 const FilterSelection = ({ form, filters }: Props) => {
-  const nameOptions = Array.from(new Set(filters.map((f) => f.name))).map(
-    (n) => ({
+  const nameOptions = Array.from(new Set(filters.map((f) => f.name)))
+    .map((n) => ({
       label: n,
       value: n,
-    })
-  );
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label));
 
   return (
     <ProCard
@@ -38,7 +38,7 @@ const FilterSelection = ({ form, filters }: Props) => {
             name="name"
             rules={[{ required: true, message: "请选择过滤器类型" }]}
           >
-            <Select options={nameOptions} allowClear />
+            <Select options={nameOptions} allowClear showSearch />
           </Form.Item>
         </Col>
         <Col xs={12} md={12}>
@@ -57,7 +57,10 @@ const FilterSelection = ({ form, filters }: Props) => {
             const isCustomization = getFieldValue("isCustomization") === "定制";
             let modelOptions = filters
               .filter((f) => f.name === name)
-              .map((f) => ({ label: f.model, value: f.model }));
+              .map((f) => ({ label: f.model, value: f.model }))
+              .sort((a, b) =>
+                a.label.localeCompare(b.label, undefined, { numeric: true })
+              );
 
             if (isCustomization) {
               modelOptions = modelOptions.map((o) => ({
