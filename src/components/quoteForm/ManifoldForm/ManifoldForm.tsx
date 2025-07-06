@@ -9,7 +9,7 @@ import {
   Select,
   Typography,
 } from "antd";
-import { ProCard } from "@ant-design/pro-components";
+import { ProCard, ProFormDependency } from "@ant-design/pro-components";
 import ProForm from "@ant-design/pro-form";
 import { forwardRef, useImperativeHandle, useState } from "react";
 import { useQuoteStore } from "@/store/useQuoteStore";
@@ -17,10 +17,16 @@ import ImportProductModal from "@/components/quote/ProductConfigForm/ImportProdu
 import MaterialSelect from "@/components/general/MaterialSelect";
 import AutoSlashInput from "@/components/general/AutoSlashInput";
 import ProFormListWrapper from "../formComponents/ProFormListWrapper";
+import RunnerLayerItem from "../formComponents/RunnerLayerItem";
 import { HeatingMethodSelect } from "../formComponents/HeatingMethodInput";
 import PowerFormItem from "../formComponents/PowerFormItem";
 import { CustomSelect } from "@/components/general/CustomSelect";
 import { MATERIAL_OPTIONS } from "@/util/MATERIAL";
+import { IntervalInputFormItem } from "@/components/general/IntervalInput";
+
+interface PriceFormRef {
+  form: FormInstance;
+}
 
 export interface ManifoldFormProps {
   quoteId?: number;
@@ -164,57 +170,61 @@ const ManifoldForm = forwardRef(
                   name="power"
                   label="加热电压"
                 />
-                <Col xs={12} md={6}>
+                <Col xs={24} md={19}>
                   <Form.Item
                     name="material"
-                    label="塑料原料"
-                    rules={[{ required: true, message: "请选择原料" }]}
+                    label="适用原料"
+                    rules={[{ required: true, message: "请选择适用原料" }]}
                   >
                     <MaterialSelect />
                   </Form.Item>
                 </Col>
                 <Col xs={12} md={6}>
-                  <Form.Item
+                  <IntervalInputFormItem
                     name="temperature"
-                    label="工艺温度"
-                    rules={[{ required: true, message: "请输入温度" }]}
-                  >
-                    <Input />
-                  </Form.Item>
+                    label="工艺温度(℃)"
+                    rules={[{ required: true, message: "请输入工艺温度" }]}
+                    placeholder={"工艺温度"}
+                    unit="℃"
+                  />
                 </Col>
                 <Col xs={12} md={6}>
                   <Form.Item
                     name="runnerNumber"
-                    label="共挤复合层数"
+                    label="层数"
                     rules={[{ required: true, message: "请输入层数" }]}
                   >
-                    <InputNumber min={1} style={{ width: "100%" }} />
+                    <InputNumber min={2} max={6} style={{ width: "100%" }} />
                   </Form.Item>
                 </Col>
                 <Col xs={12} md={6}>
                   <Form.Item
                     name="compositeStructure"
-                    label="层结构形式"
-                    rules={[{ required: true, message: "请输入结构形式" }]}
+                    label="复合结构"
+                    rules={[{ required: true, message: "请输入复合结构" }]}
                   >
                     <AutoSlashInput />
                   </Form.Item>
                 </Col>
-                <Col span={24}>
-                  <ProFormListWrapper
-                    name="runnerLayers"
-                    label="每层复合比例"
-                    min={1}
-                    creatorButtonProps={{ creatorButtonText: "新增" }}
-                    formItems={
-                      <ProForm.Item
-                        name={[]}
-                        rules={[{ required: true, message: "请输入比例" }]}
-                      >
-                        <Input />
-                      </ProForm.Item>
-                    }
-                  />
+                <Col xs={24} md={24}>
+                  <ProFormDependency name={["runnerNumber", "material"]}>
+                    {({ runnerNumber, material }) => (
+                      <ProFormListWrapper
+                        name="runnerLayers"
+                        label="每层复合比例"
+                        canCreate={false}
+                        canDelete={false}
+                        isHorizontal={false}
+                        formItems={
+                          <RunnerLayerItem
+                            materials={
+                              Array.isArray(material) ? material : [material]
+                            }
+                          />
+                        }
+                      />
+                    )}
+                  </ProFormDependency>
                 </Col>
                 <Col xs={12} md={6}>
                   <Form.Item
