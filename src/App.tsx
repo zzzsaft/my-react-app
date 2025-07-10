@@ -13,6 +13,11 @@ import OpportunitySearchPage from "./page/OpportunitySearch";
 import ProductCascader from "./components/quote/ProductCascader";
 import QuoteItemsTable from "./components/quote/QuoteItemsTable";
 import { ConfigProvider } from "antd";
+import zhCN from "antd/locale/zh_CN";
+import dayjs from "dayjs";
+import "dayjs/locale/zh-cn";
+
+dayjs.locale("zh-cn");
 import TestComponent from "./components/test";
 import AuthCallback from "./page/AuthCallback";
 import MainLayout from "./components/MainLayout";
@@ -27,7 +32,7 @@ import { NoPermissionPage } from "./page/NoPermissionPage";
 
 const App: React.FC = () => {
   return (
-    <ConfigProvider theme={{ cssVar: true }}>
+    <ConfigProvider locale={zhCN} theme={{ cssVar: true }}>
       <BrowserRouter>
         <Routes>
           {/* 需要鉴权的路由 */}
