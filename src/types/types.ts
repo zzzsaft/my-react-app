@@ -74,6 +74,7 @@ export interface Quote {
   senderPhone?: string; // 发送人电话
   telephone?: string; // 电话
   faxNumber?: string; // 传真号
+  remark?: string; // 备注
   companyInfo?: {
     companyAddress?: string; // 单位地址
     legalPersonName?: string; // 法定代表人
