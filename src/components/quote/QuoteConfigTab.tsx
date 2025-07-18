@@ -424,6 +424,21 @@ const QuoteConfigTab: React.FC<QuoteConfigTabProps> = ({
           </Col> */}
         </Row>
       </ProCard>
+      <ProCard
+        title="备注"
+        collapsible
+        defaultCollapsed={false}
+        style={{ marginBottom: 16 }}
+        headerBordered
+      >
+        <Row gutter={16}>
+          <Col span={24}>
+            <Form.Item name="remark" label="备注">
+              <Input.TextArea rows={3} placeholder="请输入备注信息" />
+            </Form.Item>
+          </Col>
+        </Row>
+      </ProCard>
     </>
   );
 };
