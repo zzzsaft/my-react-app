@@ -179,7 +179,7 @@ export const ModelOption = () => {
                       <Form.Item
                         label="泵体加热方式"
                         name="pumpHeatingType"
-                        rules={[{ required: true, message: "请选择加热方式" }]}
+                        // rules={[{ required: true, message: "请选择加热方式" }]}
                       >
                         <HeatingMethodSelect
                           multiple
@@ -191,7 +191,7 @@ export const ModelOption = () => {
                       dependencyName="pumpHeatingType"
                       name="pumpHeatingVoltage"
                       label="泵体加热电压"
-                      rules={[{ required: true, message: "请选择加热方式" }]}
+                      // rules={[{ required: true, message: "请选择加热方式" }]}
                     />
                     <Col xs={12} md={12}>
                       <Form.Item

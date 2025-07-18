@@ -190,6 +190,7 @@ export const DieInstall = () => {
             initialValue={"方形"}
           >
             <Radio.Group>
+              {/* <Radio value="无">无</Radio> */}
               <Radio value="方形">方形</Radio>
               <Radio value="特殊">特殊</Radio>
             </Radio.Group>

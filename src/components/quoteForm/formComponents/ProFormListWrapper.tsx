@@ -66,18 +66,16 @@ const ProFormListWrapper: React.FC<ProFormListWrapperProps> = ({
       alwaysShowItemLabel
       itemRender={({ listDom, action }) =>
         isHorizontal ? (
-          <>
-            <div
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                marginInlineEnd: 25,
-              }}
-            >
-              {listDom}
-              {action}
-            </div>
-          </>
+          <div
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              marginInlineEnd: 25,
+            }}
+          >
+            {listDom}
+            {action}
+          </div>
         ) : (
           <div
             style={{

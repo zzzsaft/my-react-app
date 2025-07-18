@@ -27,40 +27,40 @@ const HydraulicStationForm = forwardRef(
     }: HydraulicStationFormProps & { readOnly?: boolean },
     ref
   ) => {
-  const [form] = Form.useForm();
+    const [form] = Form.useForm();
 
-  useImperativeHandle(ref, () => ({
-    form,
-  }));
+    useImperativeHandle(ref, () => ({
+      form,
+    }));
 
-  const valveCountMap: Record<string, number> = {
-    单: 1,
-    一: 1,
-    双: 2,
-    二: 2,
-    三: 3,
-    四: 4,
-    五: 5,
-    六: 6,
-  };
+    const valveCountMap: Record<string, number> = {
+      单: 1,
+      一: 1,
+      双: 2,
+      二: 2,
+      三: 3,
+      四: 4,
+      五: 5,
+      六: 6,
+    };
 
-  const updatePipeQuantity = (valve: string) => {
-    const count = valveCountMap[valve];
-    if (!count) return;
-    const quantity = count * 2;
-    form.setFieldValue("pipeQuantity", quantity);
-  };
+    const updatePipeQuantity = (valve: string) => {
+      const count = valveCountMap[valve];
+      if (!count) return;
+      const quantity = count * 2;
+      form.setFieldValue("pipeQuantity", quantity);
+    };
 
-  const handleFieldsChange = (changedFields: any) => {
-    if (changedFields.valveShare != null) {
-      updatePipeQuantity(changedFields.valveShare);
-    }
-  };
+    const handleFieldsChange = (changedFields: any) => {
+      if (changedFields.valveShare != null) {
+        updatePipeQuantity(changedFields.valveShare);
+      }
+    };
 
-  useEffect(() => {
-    updatePipeQuantity(form.getFieldValue("valveShare"));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    useEffect(() => {
+      updatePipeQuantity(form.getFieldValue("valveShare"));
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const quoteItems =
       useQuoteStore.getState().quotes.find((q) => q.id === quoteId)?.items ??
@@ -142,7 +142,7 @@ const HydraulicStationForm = forwardRef(
             <Form.Item
               label="功率"
               name="power"
-              rules={[{ required: true, message: "请输入功率" }]}
+              // rules={[{ required: true, message: "请输入功率" }]}
             >
               <InputNumber
                 style={{ width: "100%" }}

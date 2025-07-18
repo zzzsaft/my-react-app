@@ -42,7 +42,7 @@ export const TemperatureControl = () => {
                       tooltip="330以上不可选铸铝加热板"
                     />
                   }
-                  rules={[{ required: true, message: "请选择加热方式" }]}
+                  // rules={[{ required: true, message: "请选择加热方式" }]}
                 >
                   <HeatingMethodSelect
                     multiple={true}
@@ -158,7 +158,7 @@ export const TemperatureControl = () => {
           >
             <InputNumber
               min={0}
-              max={30}
+              // max={30}
               precision={0}
               style={{ width: "100%" }}
             />

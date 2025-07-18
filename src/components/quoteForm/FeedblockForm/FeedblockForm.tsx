@@ -142,6 +142,7 @@ const FeedblockForm = forwardRef(
                 name="dieMaterial"
                 label="分配器材质"
                 rules={[{ required: true, message: "请选择分配器材质" }]}
+                initialValue={"3Cr13锻件"}
               >
                 <CustomSelect
                   initialGroups={MATERIAL_OPTIONS}
@@ -155,7 +156,9 @@ const FeedblockForm = forwardRef(
                 name="production"
                 label="分配器产量(kg/h)"
                 rules={
-                  quoteType !== "history" ? [{ required: true, message: "请输入产量" }] : []
+                  quoteType !== "history"
+                    ? [{ required: true, message: "请输入产量" }]
+                    : []
                 }
                 unit="kg/h"
               />
@@ -284,9 +287,8 @@ const FeedblockForm = forwardRef(
                               // }
                               if (
                                 (value?.value?.front &&
-                                  value?.value?.front >= 100) ||
-                                (value?.value?.rear &&
-                                  value?.value?.rear >= 100)
+                                  value?.value?.front > 100) ||
+                                (value?.value?.rear && value?.value?.rear > 100)
                               ) {
                                 return Promise.reject(
                                   new Error("比例不得超过100")

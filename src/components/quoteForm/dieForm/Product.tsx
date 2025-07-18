@@ -28,6 +28,7 @@ const RUNNER_TYPE_OPTIONS = [
     children: [
       { value: "衣架式", label: "衣架式" },
       { value: "特殊支管式", label: "特殊支管式" },
+      { value: "PVB专用流道", label: "PVB专用流道" },
       { value: "TPU专用流道", label: "TPU专用流道" },
       { value: "EVA专用流道", label: "EVA专用流道" },
       { value: "中空专用流道", label: "中空专用流道" },

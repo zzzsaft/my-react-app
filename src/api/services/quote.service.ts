@@ -22,6 +22,7 @@ export const QuoteService = {
   }) {
     const quote = await apiClient.post("/quote/create", {
       ...params,
+      quoteValidDays: 30,
     });
     return quote.data;
   },
@@ -65,9 +66,7 @@ export const QuoteService = {
     sorters?: { field: string; order: string }[];
   }) {
     const { sorters, ...rest } = params || {};
-    const sortParam = sorters
-      ?.map((s) => `${s.field}:${s.order}`)
-      .join(",");
+    const sortParam = sorters?.map((s) => `${s.field}:${s.order}`).join(",");
     const quote = await apiClient.get("/quote/get", {
       params: { ...rest, sort: sortParam },
     });
@@ -148,7 +147,6 @@ export const QuoteService = {
     });
     return res.data;
   },
-
 
   async updateExpire(uuid: string, expiresAt: Date) {
     const res = await apiClient.post("/quoteItem/share/update", {
