@@ -16,6 +16,7 @@ export const QuoteService = {
     quoteName: string;
     contactName?: string;
     contactPhone?: string;
+    remark?: string;
     senderId?: string;
     senderPhone?: string;
     items?: Partial<QuoteItem>[];
