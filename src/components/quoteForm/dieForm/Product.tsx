@@ -20,6 +20,7 @@ import ProFormListWrapper from "../formComponents/ProFormListWrapper";
 
 import MaterialSelect from "@/components/general/MaterialSelect";
 import RunnerLayerItem from "../formComponents/RunnerLayerItem";
+import { useState } from "react";
 
 const RUNNER_TYPE_OPTIONS = [
   {
@@ -48,6 +49,19 @@ const EXTRUDE_TYPE_OPTIONS = [
 ];
 export const Product = () => {
   const form = Form.useFormInstance();
+  const [ratioUnit, setRatioUnit] = useState<string>(":");
+
+  const handleRatioUnitChange = (unit: string) => {
+    setRatioUnit(unit);
+    const list = (form.getFieldValue("runnerLayers") || []) as any[];
+    form.setFieldValue(
+      "runnerLayers",
+      list.map((item) => ({
+        ...item,
+        ratio: { ...(item.ratio || {}), unit },
+      }))
+    );
+  };
   return (
     <>
       <ProCard
@@ -178,19 +192,24 @@ export const Product = () => {
               unit="mm"
             />
           </Col>
-          <Col xs={12} md={6}>
-            <IntervalInputFormItem
-              name="production"
-              label="适用产量"
-              rules={[{ required: true, message: "请输入适用产量范围" }]}
-              placeholder={"产量"}
-              units={["kg/h", "l/h"]}
-            />
-          </Col>
-
-          <Form.Item noStyle dependencies={["extrudeType", "runnerNumber"]}>
+          <Form.Item noStyle dependencies={["runnerNumber"]}>
             {({ getFieldValue }) =>
-              getFieldValue("extrudeType") === "模内共挤" &&
+              getFieldValue("runnerNumber") > 1 ? null : (
+                <Col xs={12} md={6}>
+                  <IntervalInputFormItem
+                    name="production"
+                    label="适用产量"
+                    rules={[{ required: true, message: "请输入适用产量范围" }]}
+                    placeholder={"产量"}
+                    units={["kg/h", "l/h"]}
+                  />
+                </Col>
+              )
+            }
+          </Form.Item>
+
+          <Form.Item noStyle dependencies={["runnerNumber"]}>
+            {({ getFieldValue }) =>
               getFieldValue("runnerNumber") > 1 ? null : (
                 <Col xs={12} md={6}>
                   <IntervalInputFormItem
@@ -266,8 +285,11 @@ export const Product = () => {
                               materials={
                                 Array.isArray(material) ? material : [material]
                               }
+                              ratioUnit={ratioUnit}
+                              onRatioUnitChange={handleRatioUnitChange}
                             />
                           }
+                          creatorRecord={{ ratio: { unit: ratioUnit } }}
                         />
                       )}
                     </ProFormDependency>
