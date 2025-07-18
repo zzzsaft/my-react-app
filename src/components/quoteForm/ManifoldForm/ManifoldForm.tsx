@@ -51,6 +51,7 @@ const ManifoldForm = forwardRef(
   ) => {
     const [form] = Form.useForm();
     const [modalOpen, setModalOpen] = useState(false);
+    const [ratioUnit, setRatioUnit] = useState<string>(":");
     const a = useQuoteStore.getState().quotes;
     const quoteItems =
       useQuoteStore.getState().quotes.find((q) => q.id === quoteId)?.items ??
@@ -82,8 +83,24 @@ const ManifoldForm = forwardRef(
           compositeStructure: compositeStructure,
           runnerLayers: runnerLayers,
         });
+        if (runnerLayers && runnerLayers.length) {
+          const u = runnerLayers[0]?.ratio?.unit;
+          if (u) setRatioUnit(u);
+        }
       }
       setModalOpen(false);
+    };
+
+    const handleRatioUnitChange = (unit: string) => {
+      setRatioUnit(unit);
+      const list = (form.getFieldValue("runnerLayers") || []) as any[];
+      form.setFieldValue(
+        "runnerLayers",
+        list.map((item) => ({
+          ...item,
+          ratio: { ...(item.ratio || {}), unit },
+        }))
+      );
     };
 
     return (
@@ -220,8 +237,11 @@ const ManifoldForm = forwardRef(
                             materials={
                               Array.isArray(material) ? material : [material]
                             }
+                            ratioUnit={ratioUnit}
+                            onRatioUnitChange={handleRatioUnitChange}
                           />
                         }
+                        creatorRecord={{ ratio: { unit: ratioUnit } }}
                       />
                     )}
                   </ProFormDependency>

@@ -6,8 +6,14 @@ import MaterialSelect from "@/components/general/MaterialSelect";
 interface RunnerLayerItemProps {
   /** 可选材料列表 */
   materials?: string[];
+  ratioUnit?: string;
+  onRatioUnitChange?: (unit: string) => void;
 }
-const RunnerLayerItem: React.FC<RunnerLayerItemProps> = ({ materials }) => {
+const RunnerLayerItem: React.FC<RunnerLayerItemProps> = ({
+  materials,
+  ratioUnit = ":",
+  onRatioUnitChange,
+}) => {
   return (
     <Row gutter={16}>
       <Col xs={4} md={2}>
@@ -47,7 +53,14 @@ const RunnerLayerItem: React.FC<RunnerLayerItemProps> = ({ materials }) => {
             },
           ]}
         >
-          <IntervalInput unit="%" style={{ width: 120 }} />
+          <IntervalInput
+            unit={ratioUnit}
+            units={[":", "%"]}
+            style={{ width: 120 }}
+            onChange={(v) => {
+              if (v.unit !== ratioUnit) onRatioUnitChange?.(v.unit);
+            }}
+          />
         </ProForm.Item>
       </Col>
       <Col xs={8} md={6}>
