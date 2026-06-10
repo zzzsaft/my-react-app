@@ -1,4 +1,4 @@
-import { Form, FormInstance } from "antd";
+import { Form, FormInstance } from "@/components/ui/core";
 import { forwardRef, useImperativeHandle, useState } from "react";
 import { Product } from "./Product";
 import { DieBody } from "./DieBody";
@@ -6,8 +6,8 @@ import { DieInstall } from "./DieInstall";
 import { TemperatureControl } from "./TemperatureControl";
 import { SurfaceTreatment } from "./SurfaceTreatment";
 import { SameProduct } from "./SameProduct";
-import ProForm from "@ant-design/pro-form";
-import TextArea from "antd/es/input/TextArea";
+import TailForm from "@/components/ui/proForm";
+import TextArea from "@/components/ui/TextArea";
 import useProductActionModal from "@/hook/showProductActionModal";
 import { useQuoteStore } from "@/store/useQuoteStore";
 interface PriceFormRef {
@@ -216,7 +216,7 @@ const DieForm = forwardRef(
 
     return (
       <div style={{ position: "relative" }}>
-        <ProForm
+        <TailForm
           layout={"vertical"}
           form={form}
           submitter={false}
@@ -238,7 +238,7 @@ const DieForm = forwardRef(
           <Form.Item label="其他备注" name="remark">
             <TextArea />
           </Form.Item>
-        </ProForm>
+        </TailForm>
         {locked && (
           <div
             style={{

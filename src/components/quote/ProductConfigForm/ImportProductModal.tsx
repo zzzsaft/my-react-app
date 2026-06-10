@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Tabs, Table, Button, Pagination } from "antd";
+import { Modal, Tabs, Table, Button, Pagination } from "@/components/ui/core";
 import { ProductService } from "@/api/services/product.service";
 import ProductSearchBar from "../../general/ProductSearchBar";
 import {

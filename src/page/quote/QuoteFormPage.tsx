@@ -1,11 +1,11 @@
 // pages/QuoteFormPage.tsx
 import React, { useEffect } from "react";
-import { Button, App, Modal, Typography } from "antd";
+import { Button, App, Modal, Typography } from "@/components/ui/core";
 import { useQuoteStore } from "@/store/useQuoteStore";
 import { useNavigate, useParams } from "react-router-dom";
 import dayjs from "dayjs";
 import { debounce, throttle } from "lodash-es";
-import { Form } from "antd";
+import { Form } from "@/components/ui/core";
 import QuoteForm from "@/components/quote/QuoteForm";
 
 const QuoteFormPage = () => {

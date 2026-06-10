@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, Button } from "antd";
+import { Modal, Button } from "@/components/ui/core";
 import ProductConfigurationForm from "../quote/ProductConfigForm/ProductConfigurationForm";
 import { QuoteTemplate } from "@/types/types";
 import { useTemplateStore } from "@/store/useTemplateStore";

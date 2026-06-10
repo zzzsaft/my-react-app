@@ -7,7 +7,7 @@ import {
   Row,
   Select,
   Typography,
-} from "antd";
+} from "@/components/ui/core";
 import { forwardRef, useImperativeHandle } from "react";
 import InputWithButton from "../general/InputWithButton";
 import { formatPrice } from "@/util/valueUtil";

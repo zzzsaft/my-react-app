@@ -1,6 +1,6 @@
 import { forwardRef, useImperativeHandle } from "react";
-import { Form, FormInstance } from "antd";
-import ProForm from "@ant-design/pro-form";
+import { Form, FormInstance } from "@/components/ui/core";
+import TailForm from "@/components/ui/proForm";
 import BasicInfo from "./BasicInfo";
 import LiquidInfo from "./LiquidInfo";
 import ProcessInfo from "./ProcessInfo";
@@ -18,11 +18,11 @@ const CoatingDieForm = forwardRef<CoatingDieFormRef, { quoteId: number; quoteIte
     }));
 
     return (
-      <ProForm layout="vertical" form={form} submitter={false}>
+      <TailForm layout="vertical" form={form} submitter={false}>
         <BasicInfo />
         <LiquidInfo />
         <ProcessInfo />
-      </ProForm>
+      </TailForm>
     );
   }
 );

@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { AuthService } from "../api/services/auth.service";
 import { log } from "console";
-import { message } from "antd";
+import { message } from "@/components/ui/core";
 import { Position } from "../types/types";
 
 interface User {

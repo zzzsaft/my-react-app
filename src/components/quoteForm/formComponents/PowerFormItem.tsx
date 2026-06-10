@@ -1,7 +1,7 @@
 import React from 'react';
-import { Col, Form } from 'antd';
-import type { ColProps } from 'antd';
-import type { FormItemProps } from 'antd';
+import { Col, Form } from '@/components/ui/core';
+import type { ColProps } from '@/components/ui/core';
+import type { FormItemProps } from '@/components/ui/core';
 import { PowerInput } from './PowerInput';
 
 interface PowerFormItemProps extends FormItemProps {

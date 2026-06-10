@@ -1,15 +1,15 @@
 import React from "react";
 import {
-  ProFormList,
-  ProFormGroup,
-  ProFormListProps,
-} from "@ant-design/pro-components";
-import { CloseCircleOutlined, CopyOutlined } from "@ant-design/icons";
-import type { ButtonProps } from "antd";
-import { ProFromListCommonProps } from "@ant-design/pro-form/es/components/List/ListItem";
-import { Layout } from "antd";
+  TailFormList,
+  TailFormGroup,
+  TailFormListProps,
+} from "@/components/ui/proComponents";
+import { CloseCircleOutlined, CopyOutlined } from "@/components/ui/icons";
+import type { ButtonProps } from "@/components/ui/core";
+import { ProFromListCommonProps } from "@/components/ui/types";
+import { Layout } from "@/components/ui/core";
 
-interface ProFormListWrapperProps extends ProFromListCommonProps {
+interface TailFormListWrapperProps extends ProFromListCommonProps {
   name: string;
   label: React.ReactNode;
   canCreate?: boolean;
@@ -22,7 +22,7 @@ interface ProFormListWrapperProps extends ProFromListCommonProps {
   creatorRecord?: any;
 }
 
-const ProFormListWrapper: React.FC<ProFormListWrapperProps> = ({
+const TailFormListWrapper: React.FC<TailFormListWrapperProps> = ({
   name,
   label,
   min,
@@ -38,7 +38,7 @@ const ProFormListWrapper: React.FC<ProFormListWrapperProps> = ({
   creatorRecord,
 }) => {
   return (
-    <ProFormList
+    <TailFormList
       initialValue={initialValue}
       creatorRecord={creatorRecord}
       name={name}
@@ -94,9 +94,9 @@ const ProFormListWrapper: React.FC<ProFormListWrapperProps> = ({
         )
       }
     >
-      <ProFormGroup key="group">{formItems}</ProFormGroup>
-    </ProFormList>
+      <TailFormGroup key="group">{formItems}</TailFormGroup>
+    </TailFormList>
   );
 };
 
-export default ProFormListWrapper;
+export default TailFormListWrapper;

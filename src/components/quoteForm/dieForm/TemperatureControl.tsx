@@ -1,4 +1,4 @@
-import { ProCard } from "@ant-design/pro-components";
+import { TailCard } from "@/components/ui/proComponents";
 import {
   Checkbox,
   Col,
@@ -8,7 +8,7 @@ import {
   InputNumber,
   Radio,
   Row,
-} from "antd";
+} from "@/components/ui/core";
 import { powerInputRules } from "@/util/rules";
 import { PowerInput } from "../formComponents/PowerInput";
 import PowerFormItem from "../formComponents/PowerFormItem";
@@ -20,7 +20,7 @@ export const TemperatureControl = () => {
   const [hasGlassThermocouple, setHasGlassThermocouple] =
     useState<boolean>(false);
   return (
-    <ProCard
+    <TailCard
       title="温控配置"
       collapsible
       defaultCollapsed={false}
@@ -225,6 +225,6 @@ export const TemperatureControl = () => {
           }}
         </Form.Item>
       </Row>
-    </ProCard>
+    </TailCard>
   );
 };

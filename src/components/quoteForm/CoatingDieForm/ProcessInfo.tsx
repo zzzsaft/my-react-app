@@ -7,8 +7,8 @@ import {
   Row,
   AutoComplete,
   Select,
-} from "antd";
-import TextArea from "antd/es/input/TextArea";
+} from "@/components/ui/core";
+import TextArea from "@/components/ui/TextArea";
 import { IntervalInputFormItem } from "@/components/general/IntervalInput";
 import MaterialSelect from "@/components/general/MaterialSelect";
 import { CustomSelect } from "@/components/general/CustomSelect";

@@ -9,15 +9,15 @@ import {
   Segmented,
   Select,
   AutoComplete,
-} from "antd";
+} from "@/components/ui/core";
 
 import { forwardRef, useImperativeHandle } from "react";
-import ProForm, {
-  ProFormDependency,
-  ProFormList,
-  ProFormText,
-} from "@ant-design/pro-form";
-import TextArea from "antd/es/input/TextArea";
+import TailForm, {
+  TailFormDependency,
+  TailFormList,
+  TailFormText,
+} from "@/components/ui/proForm";
+import TextArea from "@/components/ui/TextArea";
 
 import MaterialSelect from "@/components/general/MaterialSelect";
 import AutoSlashInput from "@/components/general/AutoSlashInput";
@@ -30,7 +30,7 @@ import ExtruderForm from "../formComponents/ExtruderForm";
 import { PowerInput } from "../formComponents/PowerInput";
 import PowerFormItem from "../formComponents/PowerFormItem";
 import { HeatingMethodSelect } from "../formComponents/HeatingMethodInput";
-import ProFormListWrapper from "../formComponents/ProFormListWrapper";
+import TailFormListWrapper from "../formComponents/TailFormListWrapper";
 import { CustomSelect } from "@/components/general/CustomSelect";
 import {
   IntervalInput,
@@ -121,7 +121,7 @@ const FeedblockForm = forwardRef(
 
     return (
       <>
-        <ProForm
+        <TailForm
           layout="vertical"
           form={form}
           submitter={false}
@@ -234,7 +234,7 @@ const FeedblockForm = forwardRef(
               }}
             </Form.Item>
             <Col xs={24} md={24}>
-              <ProFormListWrapper
+              <TailFormListWrapper
                 name="compositeList"
                 label="层结构及比例"
                 rules={[{ required: true, message: "请输入层结构及比例" }]}
@@ -250,13 +250,13 @@ const FeedblockForm = forwardRef(
                 creatorRecord={{ ratio: [] }}
                 formItems={
                   <>
-                    <ProForm.Item
+                    <TailForm.Item
                       name="structure"
                       rules={[{ required: true, message: "请输入层结构形式" }]}
                     >
                       <AutoSlashInput style={{ width: "120px" }} />
-                    </ProForm.Item>
-                    <ProFormList
+                    </TailForm.Item>
+                    <TailFormList
                       name="ratio"
                       copyIconProps={false}
                       deleteIconProps={false}
@@ -274,7 +274,7 @@ const FeedblockForm = forwardRef(
                         </div>
                       )}
                     >
-                      <ProForm.Item
+                      <TailForm.Item
                         name={[]}
                         rules={[
                           {
@@ -309,8 +309,8 @@ const FeedblockForm = forwardRef(
                         ]}
                       >
                         <LevelInputNumber style={{ width: 120 }} />
-                      </ProForm.Item>
-                    </ProFormList>
+                      </TailForm.Item>
+                    </TailFormList>
                   </>
                 }
               />
@@ -412,7 +412,7 @@ const FeedblockForm = forwardRef(
           <Form.Item label="其他备注" name="remark">
             <TextArea />
           </Form.Item>
-        </ProForm>
+        </TailForm>
       </>
     );
   }

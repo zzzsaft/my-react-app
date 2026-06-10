@@ -3,7 +3,7 @@ import * as _ from "lodash";
 import { useQuoteStore } from "@/store/useQuoteStore";
 import DesktopQuoteItemsTable from "./DesktopQuoteItemsTable";
 import { QuoteItem } from "@/types/types";
-import { App } from "antd";
+import { App } from "@/components/ui/core";
 import useProductActionModal from "@/hook/showProductActionModal";
 interface QuoteItemsTableProps {
   quoteId: number;

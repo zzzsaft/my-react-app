@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Input, Select, Space, Form, InputNumber, AutoComplete } from "antd";
-import type { FormItemProps } from "antd";
-import { Rule } from "antd/es/form";
+import { Input, Select, Space, Form, InputNumber, AutoComplete } from "@/components/ui/core";
+import type { FormItemProps } from "@/components/ui/core";
+import { Rule } from "@/components/ui/types";
 import { AutoCompleteInput } from "@/components/general/AutoCompleteInput";
 
 const { Option } = Select;

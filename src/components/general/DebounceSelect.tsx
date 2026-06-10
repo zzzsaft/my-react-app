@@ -1,6 +1,6 @@
 import React, { useMemo, useRef, useState } from "react";
-import { Select, Spin } from "antd";
-import type { SelectProps } from "antd";
+import { Select, Spin } from "@/components/ui/core";
+import type { SelectProps } from "@/components/ui/core";
 import debounce from "lodash-es/debounce";
 
 export interface DebounceSelectProps<ValueType = any>

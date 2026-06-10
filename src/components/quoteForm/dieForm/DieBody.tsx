@@ -1,10 +1,10 @@
-import { ProCard, ProFormDependency } from "@ant-design/pro-components";
-import { Badge, Col, Form, Radio, Row, InputNumber } from "antd";
+import { TailCard, TailFormDependency } from "@/components/ui/proComponents";
+import { Badge, Col, Form, Radio, Row, InputNumber } from "@/components/ui/core";
 import { MATERIAL_OPTIONS } from "@/util/MATERIAL";
 import { CustomSelect } from "@/components/general/CustomSelect";
 import { AutoCompleteInput } from "@/components/general/AutoCompleteInput";
 import { IntervalInputFormItem } from "@/components/general/IntervalInput";
-import ProFormListWrapper from "../formComponents/ProFormListWrapper";
+import TailFormListWrapper from "../formComponents/TailFormListWrapper";
 
 interface DieBodyProps {
   isHollow?: boolean;
@@ -68,7 +68,7 @@ export const DieBody: React.FC<DieBodyProps> = ({ isHollow = false }) => {
     ? { 外挡: ["挂钩外挡"], 无: ["无"] }
     : WIDTH_ADJUSTMENT_OPTIONS;
   return (
-    <ProCard
+    <TailCard
       title="模体配置"
       collapsible
       defaultCollapsed={false}
@@ -233,10 +233,10 @@ export const DieBody: React.FC<DieBodyProps> = ({ isHollow = false }) => {
           }
         </Form.Item>
         <Col xs={24} md={24}>
-          <ProFormDependency name={["lipCount"]}>
+          <TailFormDependency name={["lipCount"]}>
             {({ lipCount }) =>
               lipCount > 1 ? (
-                <ProFormListWrapper
+                <TailFormListWrapper
                   name="lipThicknessRange"
                   // rules={[{ require: true }]}
                   label="模唇厚度范围"
@@ -255,7 +255,7 @@ export const DieBody: React.FC<DieBodyProps> = ({ isHollow = false }) => {
                 />
               ) : null
             }
-          </ProFormDependency>
+          </TailFormDependency>
         </Col>
         {isHollow && (
           <Col xs={12} md={6}>
@@ -318,6 +318,6 @@ export const DieBody: React.FC<DieBodyProps> = ({ isHollow = false }) => {
           </Form.Item>
         </Col>
       </Row>
-    </ProCard>
+    </TailCard>
   );
 };

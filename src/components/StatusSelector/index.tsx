@@ -1,7 +1,7 @@
 // src/components/StatusSelector/index.tsx
 import React from "react";
-import { Select, Tag, Typography, Checkbox } from "antd";
-import { SelectProps } from "antd/es/select";
+import { Select, Tag, Typography, Checkbox } from "@/components/ui/core";
+import { SelectProps } from "@/components/ui/types";
 import "./index.less";
 
 const { Text } = Typography;

@@ -1,4 +1,4 @@
-import { ProCard, ProFormDependency } from "@ant-design/pro-components";
+import { TailCard, TailFormDependency } from "@/components/ui/proComponents";
 import {
   AutoComplete,
   Col,
@@ -9,7 +9,7 @@ import {
   Row,
   Segmented,
   Select,
-} from "antd";
+} from "@/components/ui/core";
 import { IntervalInputFormItem } from "@/components/general/IntervalInput";
 import { useEffect, useState } from "react";
 import { MATERIAL } from "@/util/MATERIAL";
@@ -35,7 +35,7 @@ export const ModelSelection = ({
 
   return (
     <>
-      <ProCard
+      <TailCard
         title="计量泵型号选择"
         collapsible
         defaultCollapsed={false}
@@ -203,7 +203,7 @@ export const ModelSelection = ({
 
           <ExtruderForm items={material} />
         </Row> */}
-      </ProCard>
+      </TailCard>
     </>
   );
 };

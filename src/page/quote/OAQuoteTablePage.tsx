@@ -1,5 +1,5 @@
 import React from "react";
-import { Typography } from "antd";
+import { Typography } from "@/components/ui/core";
 import QuoteTable from "@/components/quote/QuoteTable";
 
 const OAQuoteTablePage: React.FC = () => {

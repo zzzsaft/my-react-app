@@ -1,5 +1,5 @@
-import ProForm from "@ant-design/pro-form";
-import { Col, Row, Input, InputNumber, Select } from "antd";
+import TailForm from "@/components/ui/proForm";
+import { Col, Row, Input, InputNumber, Select } from "@/components/ui/core";
 import { IntervalInput } from "@/components/general/IntervalInput";
 import MaterialSelect from "@/components/general/MaterialSelect";
 
@@ -17,12 +17,12 @@ const RunnerLayerItem: React.FC<RunnerLayerItemProps> = ({
   return (
     <Row gutter={16}>
       <Col xs={4} md={2}>
-        <ProForm.Item name="level" label="层" readOnly>
+        <TailForm.Item name="level" label="层" readOnly>
           <Input disabled />
-        </ProForm.Item>
+        </TailForm.Item>
       </Col>
       <Col xs={8} md={6}>
-        <ProForm.Item
+        <TailForm.Item
           name="ratio"
           label="比例"
           rules={[
@@ -61,19 +61,19 @@ const RunnerLayerItem: React.FC<RunnerLayerItemProps> = ({
               if (v.unit !== ratioUnit) onRatioUnitChange?.(v.unit);
             }}
           />
-        </ProForm.Item>
+        </TailForm.Item>
       </Col>
       <Col xs={8} md={6}>
-        <ProForm.Item
+        <TailForm.Item
           name="temperature"
           label="工艺温度(℃)"
           rules={[{ required: true, message: "请输入工艺温度" }]}
         >
           <IntervalInput unit="℃" />
-        </ProForm.Item>
+        </TailForm.Item>
       </Col>
       <Col xs={8} md={10}>
-        <ProForm.Item
+        <TailForm.Item
           name="material"
           label="材料"
           rules={[{ required: true, message: "请选择材料" }]}
@@ -85,7 +85,7 @@ const RunnerLayerItem: React.FC<RunnerLayerItemProps> = ({
             }))}
             placeholder="请选择材料"
           />
-        </ProForm.Item>
+        </TailForm.Item>
       </Col>
     </Row>
   );

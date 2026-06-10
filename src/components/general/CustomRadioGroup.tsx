@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Radio, Input, Space } from "antd";
-import type { RadioChangeEvent, RadioGroupProps } from "antd/es/radio";
+import { Radio, Input, Space } from "@/components/ui/core";
+import type { RadioChangeEvent, RadioGroupProps } from "@/components/ui/types";
 
 interface CustomRadioGroupProps {
   options?: Array<{ label: string; value: string }>;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Input } from "antd";
+import { Input } from "@/components/ui/core";
 
 interface NumericColonInputProps {
   value?: string;

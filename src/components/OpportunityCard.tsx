@@ -1,4 +1,4 @@
-import { Card, Tag, Space, Typography, Divider, Tooltip } from "antd";
+import { Card, Tag, Space, Typography, Divider, Tooltip } from "@/components/ui/core";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";

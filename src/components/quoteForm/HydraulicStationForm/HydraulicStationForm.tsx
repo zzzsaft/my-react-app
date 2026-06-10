@@ -6,9 +6,9 @@ import {
   Row,
   Segmented,
   Typography,
-} from "antd";
+} from "@/components/ui/core";
 import { forwardRef, useImperativeHandle, useEffect } from "react";
-import ProForm from "@ant-design/pro-form";
+import TailForm from "@/components/ui/proForm";
 import { PowerInput } from "../formComponents/PowerInput";
 import { useQuoteStore } from "@/store/useQuoteStore";
 
@@ -72,7 +72,7 @@ const HydraulicStationForm = forwardRef(
       : undefined;
 
     return (
-      <ProForm
+      <TailForm
         layout="vertical"
         form={form}
         submitter={false}
@@ -182,7 +182,7 @@ const HydraulicStationForm = forwardRef(
             </Form.Item>
           </Col>
         </Row>
-      </ProForm>
+      </TailForm>
     );
   }
 );

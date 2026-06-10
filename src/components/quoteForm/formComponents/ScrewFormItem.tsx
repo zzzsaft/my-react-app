@@ -1,14 +1,14 @@
 import { IntervalInput } from "@/components/general/IntervalInput";
-import ProForm from "@ant-design/pro-form";
-import { AutoComplete, Col, Form, InputNumber, Row, Select } from "antd";
-import { DefaultOptionType } from "antd/es/select";
+import TailForm from "@/components/ui/proForm";
+import { AutoComplete, Col, Form, InputNumber, Row, Select } from "@/components/ui/core";
+import { DefaultOptionType } from "@/components/ui/types";
 
 export const ScrewFormItem = ({ items }: { items: string[] }) => {
   return (
     <Row gutter={16}>
       <Col xs={4} sm={3}>
         {/* 1. 层级 (AutoComplete) */}
-        <ProForm.Item
+        <TailForm.Item
           name={"layer"}
           label="层"
           rules={[{ required: true, message: "请选择层" }]}
@@ -25,10 +25,10 @@ export const ScrewFormItem = ({ items }: { items: string[] }) => {
               -1
             }
           />
-        </ProForm.Item>
+        </TailForm.Item>
       </Col>
       <Col xs={10} sm={5}>
-        <ProForm.Item
+        <TailForm.Item
           name={"material"}
           label="原料"
           rules={[{ required: true, message: "请选择原料" }]}
@@ -40,16 +40,16 @@ export const ScrewFormItem = ({ items }: { items: string[] }) => {
               value: item,
             }))}
           />
-        </ProForm.Item>
+        </TailForm.Item>
       </Col>
 
       <Col xs={10} sm={5}>
-        <ProForm.Item name="diameter" label="直径">
+        <TailForm.Item name="diameter" label="直径">
           <InputNumber addonBefore="Φ" min={0} precision={0} controls={false} />
-        </ProForm.Item>
+        </TailForm.Item>
       </Col>
       <Col xs={12} sm={5}>
-        <ProForm.Item name="temperature" label="工艺温度">
+        <TailForm.Item name="temperature" label="工艺温度">
           <InputNumber
             formatter={(value) => `${value}℃`}
             parser={(value) => value?.replace(/℃/g, "") as any}
@@ -58,12 +58,12 @@ export const ScrewFormItem = ({ items }: { items: string[] }) => {
             precision={0}
             controls={false}
           />
-        </ProForm.Item>
+        </TailForm.Item>
       </Col>
       <Col xs={12} sm={5}>
-        <ProForm.Item name="output" label="产量">
+        <TailForm.Item name="output" label="产量">
           <IntervalInput unit={"kg/h"} />
-        </ProForm.Item>
+        </TailForm.Item>
       </Col>
     </Row>
   );

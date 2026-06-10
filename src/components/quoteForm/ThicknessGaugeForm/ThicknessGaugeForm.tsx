@@ -1,5 +1,5 @@
-import { Col, Form, Radio, Row, Segmented, Select } from "antd";
-import ProForm from "@ant-design/pro-form";
+import { Col, Form, Radio, Row, Segmented, Select } from "@/components/ui/core";
+import TailForm from "@/components/ui/proForm";
 import { forwardRef, useImperativeHandle } from "react";
 
 const models = ["WLV5", "ULO3"];
@@ -38,7 +38,7 @@ const ThicknessGaugeForm = forwardRef<
   };
 
   return (
-    <ProForm
+    <TailForm
       layout="vertical"
       form={form}
       submitter={false}
@@ -135,7 +135,7 @@ const ThicknessGaugeForm = forwardRef<
           )}
         </Form.Item>
       </Row>
-    </ProForm>
+    </TailForm>
   );
 });
 

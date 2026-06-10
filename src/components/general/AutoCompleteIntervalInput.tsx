@@ -1,8 +1,8 @@
-import { DefaultOptionType } from "antd/es/select";
+import { DefaultOptionType } from "@/components/ui/types";
 import { IntervalInput } from "./IntervalInput";
 import { useEffect, useState } from "react";
 import type { IntervalValue } from "@/types/types";
-import { AutoComplete } from "antd";
+import { AutoComplete } from "@/components/ui/core";
 import { IntervalInput1 } from "./IntervalInput1";
 
 interface OptionTypeWithLevel extends DefaultOptionType {

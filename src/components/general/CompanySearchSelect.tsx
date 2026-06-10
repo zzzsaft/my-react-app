@@ -1,8 +1,8 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { Select, Spin } from "antd";
-import type { SelectProps } from "antd";
+import { Select, Spin } from "@/components/ui/core";
+import type { SelectProps } from "@/components/ui/core";
 import { useDebounce } from "use-debounce";
-import { SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined } from "@/components/ui/icons";
 import { CompanyOption } from "@/types/types";
 import { CustomerService } from "@/api/services/customer.service";
 

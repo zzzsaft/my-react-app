@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Button, App } from "antd";
+import { Button, App } from "@/components/ui/core";
 import { QuoteTemplate } from "../../types/types";
 import { useTemplateStore } from "../../store/useTemplateStore";
 import TemplateTable from "../../components/template/TemplateTable";

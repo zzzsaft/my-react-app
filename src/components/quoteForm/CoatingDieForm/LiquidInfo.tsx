@@ -1,4 +1,4 @@
-import { Col, Form, Input, InputNumber, Radio, Row, Select, Segmented } from "antd";
+import { Col, Form, Input, InputNumber, Radio, Row, Select, Segmented } from "@/components/ui/core";
 import { IntervalInputFormItem } from "@/components/general/IntervalInput";
 
 const LIQUID_PROPERTIES = ["腐蚀性", "磨蚀性", "毒性", "粘性", "易结晶", "易沉淀"].map(v => ({label:v,value:v}));

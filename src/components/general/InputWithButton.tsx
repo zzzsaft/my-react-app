@@ -1,6 +1,6 @@
 import React from "react";
-import { Input, Button, Space } from "antd";
-import type { InputProps, ButtonProps } from "antd";
+import { Input, Button, Space } from "@/components/ui/core";
+import type { InputProps, ButtonProps } from "@/components/ui/core";
 
 export interface InputWithButtonProps
   extends Omit<InputProps, "value" | "onChange"> {

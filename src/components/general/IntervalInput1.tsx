@@ -5,8 +5,8 @@ import React, {
   forwardRef,
   useImperativeHandle,
 } from "react";
-import { Form, Input, Select } from "antd";
-import type { FormItemProps } from "antd";
+import { Form, Input, Select } from "@/components/ui/core";
+import type { FormItemProps } from "@/components/ui/core";
 import { intervalInputRules } from "@/util/rules";
 import type { IntervalValue } from "@/types/types";
 

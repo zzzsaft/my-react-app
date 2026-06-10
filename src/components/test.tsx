@@ -1,4 +1,4 @@
-import { Button, Modal, message } from "antd";
+import { Button, Modal, message } from "@/components/ui/core";
 
 function TestComponent() {
   const showModal = () => {

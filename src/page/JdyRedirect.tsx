@@ -1,9 +1,9 @@
 // src/pages/AuthCallback.tsx
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Spin } from "antd";
+import { Spin } from "@/components/ui/core";
 import { useAuthStore } from "../store/useAuthStore";
-import useApp from "antd/es/app/useApp";
+import useApp from "@/components/ui/useApp";
 import { AuthService } from "../api/services/auth.service";
 
 export default function AuthCallback() {

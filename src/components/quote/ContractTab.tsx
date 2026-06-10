@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, Switch, Button, Row, Col, Input } from "antd";
+import { Form, Switch, Button, Row, Col, Input } from "@/components/ui/core";
 import TermsTable from "./TermsTable";
 import { Clause } from "@/types/types";
 

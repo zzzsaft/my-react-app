@@ -1,4 +1,4 @@
-import { Col, Form, Input, InputNumber, Radio, Row, AutoComplete, Select } from "antd";
+import { Col, Form, Input, InputNumber, Radio, Row, AutoComplete, Select } from "@/components/ui/core";
 import { IntervalInputFormItem } from "@/components/general/IntervalInput";
 
 const PROCESS_OPTIONS = [

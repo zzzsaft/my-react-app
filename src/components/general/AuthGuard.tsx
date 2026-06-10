@@ -1,6 +1,6 @@
 import { JSX, ReactNode, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { message, Spin } from "antd";
+import { message, Spin } from "@/components/ui/core";
 import { useAuthStore } from "@/store/useAuthStore";
 import {
   generateQywxLoginUrl,

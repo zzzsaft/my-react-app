@@ -1,4 +1,4 @@
-import { Form, FormInstance } from "antd";
+import { Form, FormInstance } from "@/components/ui/core";
 import { forwardRef, useImperativeHandle, useRef } from "react";
 import { Product } from "../dieForm/Product";
 import { DieBody } from "../dieForm/DieBody";
@@ -6,8 +6,8 @@ import { DieInstall } from "../dieForm/DieInstall";
 import { TemperatureControl } from "../dieForm/TemperatureControl";
 import { SurfaceTreatment } from "../dieForm/SurfaceTreatment";
 import { SameProduct } from "../dieForm/SameProduct";
-import ProForm from "@ant-design/pro-form";
-import TextArea from "antd/es/input/TextArea";
+import TailForm from "@/components/ui/proForm";
+import TextArea from "@/components/ui/TextArea";
 import useProductActionModal from "@/hook/showProductActionModal";
 import { useQuoteStore } from "@/store/useQuoteStore";
 import { ModelSelection } from "./ModelSelection";
@@ -191,7 +191,7 @@ const MeteringPumpForm = forwardRef(
 
     return (
       <>
-        <ProForm
+        <TailForm
           layout={"vertical"}
           form={form}
           submitter={false}
@@ -203,7 +203,7 @@ const MeteringPumpForm = forwardRef(
           <Form.Item label="其他备注" name="remark">
             <TextArea />
           </Form.Item>
-        </ProForm>
+        </TailForm>
         {/* <FloatButton.BackTop visibilityHeight={0} /> */}
       </>
     );

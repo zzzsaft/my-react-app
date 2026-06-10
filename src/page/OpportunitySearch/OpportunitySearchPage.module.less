@@ -1,12 +1,10 @@
-// @import '~antd/dist/antd.less'; 
-
-// 主容器
-.opportunitySearchContainer {
+﻿
+// 涓诲鍣?.opportunitySearchContainer {
   max-width: 1200px;
   margin: 0 auto;
   padding: 24px 16px;
 
-  // 搜索标题
+  // 鎼滅储鏍囬
   .searchTitle {
     text-align: center;
     margin-bottom: 24px !important;
@@ -14,7 +12,7 @@
     font-weight: 500;
   }
 
-  // 搜索控制区域
+  // 鎼滅储鎺у埗鍖哄煙
   .searchControls {
     display: flex;
     justify-content: center;
@@ -22,35 +20,31 @@
     width: 100%;
     flex-wrap: wrap;
 
-    // 搜索输入组
-    .searchInputGroup {
+    // 鎼滅储杈撳叆缁?    .searchInputGroup {
       width: 100%;
       max-width: 800px;
       display: flex;
       gap: 16px;
-      justify-content: center; // 添加这行使内容居中
-
-      // 客户搜索输入框
-      .searchInput {
+      justify-content: center; // 娣诲姞杩欒浣垮唴瀹瑰眳涓?
+      // 瀹㈡埛鎼滅储杈撳叆妗?      .searchInput {
         flex: 1;
         min-width: 200px;
         max-width: 300px;
       }
 
-      // 搜索按钮
+      // 鎼滅储鎸夐挳
       .searchButton {
         width: 100px;
       }
     }
   }
 
-  // 分割线
-  .searchDivider {
+  // 鍒嗗壊绾?  .searchDivider {
     margin: 16px 0 !important;
     // border-color: @border-color-split;
   }
 
-  // 商机卡片网格
+  // 鍟嗘満鍗＄墖缃戞牸
   .opportunityGrid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -58,16 +52,14 @@
     margin-top: 16px;
   }
 
-  // 加载状态容器
-  .loadingContainer {
+  // 鍔犺浇鐘舵€佸鍣?  .loadingContainer {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 300px;
   }
 
-  // 空状态容器
-  .emptyContainer {
+  // 绌虹姸鎬佸鍣?  .emptyContainer {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -80,14 +72,14 @@
     }
   }
 
-  // 创建按钮
+  // 鍒涘缓鎸夐挳
   .createButton {
     margin-top: 8px;
     // color: @primary-color;
   }
 }
 
-// 移动端适配
+// 绉诲姩绔€傞厤
 @media (max-width: @screen-sm) {
   .opportunitySearchContainer {
     padding: 16px 12px;

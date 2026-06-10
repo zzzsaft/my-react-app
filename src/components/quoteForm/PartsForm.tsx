@@ -6,8 +6,8 @@ import {
   Row,
   Select,
   Typography,
-} from "antd";
-import ProForm, { ProFormList, ProFormDependency } from "@ant-design/pro-form";
+} from "@/components/ui/core";
+import TailForm, { TailFormList, TailFormDependency } from "@/components/ui/proForm";
 import { forwardRef, useImperativeHandle } from "react";
 import PartAutoComplete from "./formComponents/PartAutoComplete";
 import { formatPrice } from "@/util/valueUtil";
@@ -30,13 +30,13 @@ const PartForm = forwardRef<PartFormRef, PartFormProps>(
     }));
 
     return (
-      <ProForm
+      <TailForm
         layout="vertical"
         form={form}
         submitter={false}
         readonly={readOnly}
       >
-        <ProFormList
+        <TailFormList
           name="parts"
           label="配件明细"
           creatorButtonProps={{ creatorButtonText: "新增物料" }}
@@ -59,17 +59,17 @@ const PartForm = forwardRef<PartFormRef, PartFormProps>(
           {(f, index, action) => (
             <Row gutter={16}>
               <Col xs={24} md={8}>
-                <ProForm.Item
+                <TailForm.Item
                   name={"name"}
                   label="名称"
                   rules={[{ required: true, message: "请输入物料名称" }]}
                   readonly={readOnly}
                 >
                   <PartAutoComplete form={form} index={index} />
-                </ProForm.Item>
+                </TailForm.Item>
               </Col>
               <Col xs={12} md={3}>
-                <ProForm.Item
+                <TailForm.Item
                   name="quantity"
                   label="数量"
                   rules={[{ required: true, message: "请输入数量" }]}
@@ -80,10 +80,10 @@ const PartForm = forwardRef<PartFormRef, PartFormProps>(
                     style={{ width: "100%" }}
                     controls={false}
                   />
-                </ProForm.Item>
+                </TailForm.Item>
               </Col>
               <Col xs={12} md={3}>
-                <ProForm.Item
+                <TailForm.Item
                   name="unit"
                   label="单位"
                   rules={[{ required: true, message: "请选择单位" }]}
@@ -94,10 +94,10 @@ const PartForm = forwardRef<PartFormRef, PartFormProps>(
                     <Select.Option value="套">套</Select.Option>
                     <Select.Option value="个">个</Select.Option>
                   </Select>
-                </ProForm.Item>
+                </TailForm.Item>
               </Col>
               <Col xs={12} md={4}>
-                <ProForm.Item
+                <TailForm.Item
                   name="unitPrice"
                   label="单价"
                   rules={[{ required: true, message: "请输入单价" }]}
@@ -108,10 +108,10 @@ const PartForm = forwardRef<PartFormRef, PartFormProps>(
                     controls={false}
                     style={{ width: "100%" }}
                   />
-                </ProForm.Item>
+                </TailForm.Item>
               </Col>
               <Col xs={12} md={6}>
-                <ProFormDependency name={["quantity", "unitPrice"]}>
+                <TailFormDependency name={["quantity", "unitPrice"]}>
                   {({ quantity, unitPrice }) => (
                     <Form.Item label="合计">
                       <Typography.Text strong>
@@ -121,11 +121,11 @@ const PartForm = forwardRef<PartFormRef, PartFormProps>(
                       </Typography.Text>
                     </Form.Item>
                   )}
-                </ProFormDependency>
+                </TailFormDependency>
               </Col>
             </Row>
           )}
-        </ProFormList>
+        </TailFormList>
         <Form.Item shouldUpdate>
           {({ getFieldValue }) => {
             const parts = getFieldValue("parts") || [];
@@ -142,7 +142,7 @@ const PartForm = forwardRef<PartFormRef, PartFormProps>(
             );
           }}
         </Form.Item>
-      </ProForm>
+      </TailForm>
     );
   }
 );

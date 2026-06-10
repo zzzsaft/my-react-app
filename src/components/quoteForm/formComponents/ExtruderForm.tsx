@@ -1,7 +1,7 @@
 import React from "react";
-import type { ButtonProps } from "antd";
+import type { ButtonProps } from "@/components/ui/core";
 import { ExtruderFormItem } from "./ExtruderFormItem";
-import ProFormListWrapper from "./ProFormListWrapper";
+import TailFormListWrapper from "./TailFormListWrapper";
 
 const ExtruderForm = ({
   items,
@@ -19,7 +19,7 @@ const ExtruderForm = ({
     | undefined;
 }) => {
   return (
-    <ProFormListWrapper
+    <TailFormListWrapper
       name="extruderModel"
       label="挤出机型号"
       min={count}

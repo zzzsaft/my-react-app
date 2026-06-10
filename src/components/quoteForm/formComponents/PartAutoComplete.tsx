@@ -1,11 +1,11 @@
-import { AutoComplete } from "antd";
-import { DefaultOptionType } from "antd/es/select";
+import { AutoComplete } from "@/components/ui/core";
+import { DefaultOptionType } from "@/components/ui/types";
 import { useDebounce } from "use-debounce";
 import { useEffect, useState } from "react";
 import { PartService } from "@/api/services/part.service";
 import { PartSearchResult } from "@/types/types";
 import { formatPrice } from "@/util/valueUtil";
-import type { FormInstance } from "antd";
+import type { FormInstance } from "@/components/ui/core";
 
 interface PartAutoCompleteProps {
   index: number;

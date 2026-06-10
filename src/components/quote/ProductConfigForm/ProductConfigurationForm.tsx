@@ -1,5 +1,5 @@
-import { App, Tabs, Typography } from "antd";
-import { FormInstance } from "antd/lib";
+import { App, Tabs, Typography } from "@/components/ui/core";
+import { FormInstance } from "@/components/ui/core";
 import {
   forwardRef,
   useEffect,
