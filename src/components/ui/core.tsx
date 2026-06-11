@@ -547,22 +547,43 @@ export const Typography = {
 };
 
 export const Modal = Object.assign(
-  ({ open, visible, title, children, footer, onCancel, onOk, width, className, ...props }: AnyProps) => {
+  ({
+    open,
+    visible,
+    title,
+    children,
+    footer,
+    onCancel,
+    onOk,
+    width,
+    className,
+    headerClassName,
+    bodyClassName,
+    footerClassName,
+    ...props
+  }: AnyProps) => {
     if (!(open ?? visible)) return null;
     return (
       <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/40 p-4">
-        <div className={cn("max-h-[90vh] w-full overflow-auto rounded bg-white shadow-xl", className)} style={{ maxWidth: width || 640 }} {...props}>
-          <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
+        <div className={cn("flex max-h-[90vh] w-full flex-col overflow-hidden rounded bg-white shadow-xl", className)} style={{ maxWidth: width || 640 }} {...props}>
+          <div className={cn("shrink-0 flex items-center justify-between border-b border-slate-100 bg-white px-4 py-3", headerClassName)}>
             <h3 className="font-semibold text-slate-900">{title}</h3>
-            <button type="button" className="text-slate-400 hover:text-slate-700" onClick={onCancel}>脳</button>
+            <button
+              type="button"
+              aria-label="关闭"
+              className="inline-flex h-8 w-8 appearance-none items-center justify-center rounded-md border-0 bg-transparent p-0 text-xl leading-none text-slate-400 shadow-none transition hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-200"
+              onClick={onCancel}
+            >
+              &times;
+            </button>
           </div>
-          <div className="p-4">{children}</div>
+          <div className={cn("min-h-0 flex-1 overflow-auto p-4", bodyClassName)}>{children}</div>
           {footer !== null && (
-            <div className="flex justify-end gap-2 border-t border-slate-100 px-4 py-3">
+            <div className={cn("shrink-0 flex justify-end gap-2 border-t border-slate-100 bg-white px-4 py-3", footerClassName)}>
               {footer || (
                 <>
-                  <Button onClick={onCancel}>鍙栨秷</Button>
-                  <Button type="primary" onClick={onOk}>纭畾</Button>
+                  <Button onClick={onCancel}>取消</Button>
+                  <Button type="primary" onClick={onOk}>确定</Button>
                 </>
               )}
             </div>
@@ -692,34 +713,76 @@ export const Pagination = ({ current = 1, pageSize = 10, total = 0, onChange, cl
   </div>
 );
 
-export function Table<T = any>({ columns = [], dataSource = [], rowKey, loading, pagination, className, onChange }: TableProps<T>) {
+export function Table<T = any>({
+  columns = [],
+  dataSource = [],
+  rowKey,
+  loading,
+  pagination,
+  className,
+  onChange,
+  components,
+  onRow,
+}: TableProps<T>) {
   const getKey = (record: any, index: number) => typeof rowKey === "function" ? rowKey(record) : rowKey ? record[rowKey] : record.key ?? index;
+  const HeaderCell = components?.header?.cell || "th";
+  const totalColumnWidth = (columns as ColumnsType<T>).reduce(
+    (sum, column: any) => sum + (Number(column.width) || 0),
+    0,
+  );
   return (
     <div className={cn("overflow-auto rounded border border-slate-200 bg-white", className)}>
       {loading && <div className="p-4"><Spinner /></div>}
-      <table className="min-w-full divide-y divide-slate-200 text-sm">
+      <table
+        className="min-w-full table-fixed divide-y divide-slate-200 text-sm"
+        style={totalColumnWidth ? { width: totalColumnWidth } : undefined}
+      >
+        <colgroup>
+          {(columns as ColumnsType<T>).map((column: any, index) => (
+            <col
+              key={String(column.key ?? column.dataIndex ?? index)}
+              style={column.width ? { width: Number(column.width) } : undefined}
+            />
+          ))}
+        </colgroup>
         <thead className="bg-slate-50">
           <tr>
             {(columns as ColumnsType<T>).map((column: any, index) => (
-              <th key={String(column.key ?? column.dataIndex ?? index)} className={cn("px-3 py-2 text-left font-medium text-slate-600", column.align === "right" && "text-right", column.align === "center" && "text-center")}>
+              <HeaderCell
+                key={String(column.key ?? column.dataIndex ?? index)}
+                className={cn("relative px-3 py-2 text-left font-medium text-slate-600", column.align === "right" && "text-right", column.align === "center" && "text-center")}
+                style={{ width: column.width }}
+                {...column.onHeaderCell?.(column)}
+              >
                 {column.title}
-              </th>
+              </HeaderCell>
             ))}
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100">
-          {dataSource.map((record: any, rowIndex: number) => (
-            <tr key={String(getKey(record, rowIndex))} className="hover:bg-slate-50">
+          {dataSource.map((record: any, rowIndex: number) => {
+            const rowProps = onRow?.(record, rowIndex) ?? {};
+            return (
+            <tr
+              key={String(getKey(record, rowIndex))}
+              {...rowProps}
+              className={cn("hover:bg-slate-50", rowProps.className)}
+            >
               {(columns as ColumnsType<T>).map((column: any, colIndex) => {
                 const value = Array.isArray(column.dataIndex) ? getByPath(record, column.dataIndex) : record[column.dataIndex];
                 return (
-                  <td key={String(column.key ?? column.dataIndex ?? colIndex)} className={cn("px-3 py-2 text-slate-700", column.align === "right" && "text-right", column.align === "center" && "text-center")}>
+                  <td
+                    key={String(column.key ?? column.dataIndex ?? colIndex)}
+                    className={cn("px-3 py-2 text-slate-700", column.align === "right" && "text-right", column.align === "center" && "text-center")}
+                    style={{ width: column.width }}
+                  >
                     {column.render ? column.render(value, record, rowIndex) : value}
                   </td>
                 );
               })}
             </tr>
-          ))}
+            );
+          })}
         </tbody>
       </table>
       {!!pagination && (

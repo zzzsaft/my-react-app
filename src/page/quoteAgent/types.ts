@@ -36,6 +36,30 @@ export interface BatchReviewResponse {
   failedCount?: number;
   affectedDocumentIds?: Array<string | number>;
   candidateRecheckDeferred?: boolean;
+  failures?: Array<Record<string, any>>;
+  failedOperations?: Array<Record<string, any>>;
+  results?: Array<Record<string, any>>;
+  [key: string]: unknown;
+}
+
+export type RenormalizeBatchScope = "all" | "missing_normalized";
+
+export interface RenormalizeBatchParams {
+  scope: RenormalizeBatchScope;
+  limit?: number;
+  batchSize?: number;
+}
+
+export interface RenormalizeBatchResponse {
+  scope?: RenormalizeBatchScope;
+  requestedLimit?: number | null;
+  batchSize?: number;
+  onlyMissingNormalized?: boolean;
+  processedCount?: number;
+  successCount?: number;
+  failedCount?: number;
+  failedResults?: Array<Record<string, any>>;
+  resultPreview?: Array<Record<string, any>>;
   [key: string]: unknown;
 }
 
@@ -179,6 +203,112 @@ export interface CandidatesResponse {
   suggestions?: unknown;
 }
 
+export type CandidateClusterRiskLevel = "low" | "medium" | "high" | string;
+
+export interface CandidateClusterOccurrence {
+  documentId?: string | number;
+  document?: string;
+  documentName?: string;
+  fileName?: string | null;
+  itemIndex?: string | number;
+  item?: string | number;
+  itemName?: string | null;
+  rawFieldName?: string;
+  rawValue?: string | null;
+  context?: string;
+  [key: string]: any;
+}
+
+export interface CandidateClusterSuggestion {
+  recommendedAction?: ReviewAction | string;
+  confidence?: number;
+  riskLevel?: CandidateClusterRiskLevel;
+  needsHumanReview?: boolean;
+  needs_human_review?: boolean;
+  humanReviewSummary?: string;
+  human_review_summary?: string;
+  reason?: string;
+  batchOperationsPreview?: ReviewOperation[];
+  batch_operations_preview?: ReviewOperation[];
+  [key: string]: any;
+}
+
+export interface CandidateCluster {
+  id?: string | number;
+  clusterId?: string | number;
+  clusterKey?: string;
+  candidateType?: CandidateType;
+  termType?: string;
+  normalizedFieldName?: string;
+  normalizedRawValue?: string;
+  candidateIds?: Array<string | number>;
+  documentCount?: number;
+  occurrenceCount?: number;
+  sourceProductType?: string;
+  reason?: string;
+  rawFieldNameSamples?: string[];
+  rawValueSamples?: string[];
+  commonContexts?: string[];
+  sampleOccurrences?: CandidateClusterOccurrence[];
+  reviewSuggestion?: CandidateClusterSuggestion | null;
+  batchOperationsPreview?: ReviewOperation[];
+  invalidSuggestionReason?: string;
+  submitError?: string;
+  [key: string]: any;
+}
+
+export interface CandidateClustersResponse {
+  candidateClusters?: CandidateCluster[];
+  clusters?: CandidateCluster[];
+  items?: CandidateCluster[];
+  data?: CandidateCluster[];
+  summary?: Record<string, unknown>;
+  options?: {
+    productTypes?: ProductTypeOption[];
+    termTypes?: DictionaryTermType[];
+    enumValues?: DictionaryValue[];
+    runPolicy?: Record<string, unknown>;
+    [key: string]: unknown;
+  };
+  productTypes?: ProductTypeOption[];
+  termTypes?: DictionaryTermType[];
+  enumValues?: DictionaryValue[];
+  priorDecisions?: unknown[];
+  runPolicy?: Record<string, unknown>;
+  [key: string]: unknown;
+}
+
+export interface CandidateClusterReviewPromptResponse {
+  prompt?: string;
+  promptTemplate?: string;
+  placeholders?: {
+    productTypes?: string;
+    termTypes?: string;
+    enumValues?: string;
+    candidateClusters?: string;
+    priorDecisions?: string;
+    [key: string]: string | undefined;
+  };
+  systemPrompt?: string;
+  inputShape?: Record<string, unknown>;
+  outputShape?: Record<string, unknown>;
+  content?: string;
+  [key: string]: unknown;
+}
+
+export interface CandidateClusterPromptData {
+  productTypes: unknown[];
+  termTypes: unknown[];
+  enumValues: unknown[];
+  priorDecisions: unknown[];
+}
+
+export interface CandidateClusterFilters {
+  status: CandidateStatus;
+  documentId?: string | number;
+  limit?: number;
+}
+
 export interface DictionaryTermType {
   id?: string | number;
   termType?: string;
@@ -187,8 +317,8 @@ export interface DictionaryTermType {
   category?: string;
   valueKind?: string;
   applicableProductTypes?: string[];
-  aliases?: string[];
-  aliasNames?: string[];
+  aliases?: Array<string | DictionaryAlias>;
+  aliasNames?: Array<string | DictionaryAlias>;
   enumValues?: unknown;
   sortOrder?: number;
   [key: string]: any;
@@ -199,8 +329,20 @@ export interface DictionaryValue {
   termType?: string;
   canonicalValue?: string;
   displayName?: string;
-  aliasNames?: string[];
-  aliases?: string[];
+  aliasNames?: Array<string | DictionaryAlias>;
+  aliases?: Array<string | DictionaryAlias>;
+  [key: string]: any;
+}
+
+export interface DictionaryAlias {
+  id?: string | number;
+  termId?: string | number;
+  termType?: string;
+  aliasValue?: string;
+  aliasName?: string;
+  value?: string;
+  name?: string;
+  isActive?: boolean;
   [key: string]: any;
 }
 

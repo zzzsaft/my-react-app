@@ -6,6 +6,7 @@ import type {
   CandidateType,
   DictionaryOptions,
   DictionaryTermType,
+  DictionaryValue,
   QuoteAgentField,
   ReviewAction,
   ReviewDraft,
@@ -53,6 +54,7 @@ const list = (value: unknown) =>
     .filter(Boolean);
 
 const join = (value: unknown) => (Array.isArray(value) ? value.join("\n") : String(value || ""));
+const valueKeyOf = (item: DictionaryValue) => String(item.id ?? (item as any).termId ?? (item as any).term_id ?? item.canonicalValue ?? "");
 const rawValueOf = (candidate: Candidate, field: QuoteAgentField) =>
   field.raw_value || candidate.rawValue || candidate.evidence?.sourceRawValue || "";
 const normalize = (value: unknown) => String(value || "").trim().toLowerCase();
@@ -156,6 +158,7 @@ function payloadFor(action: ReviewAction, state: FormState) {
   }
   if (action === "create_value") {
     return {
+      termType: state.termType,
       canonicalValue: state.canonicalValue,
       displayName: state.displayName,
       aliasNames: list(state.aliasNamesText),
@@ -204,6 +207,16 @@ export function FieldReviewPanel({ field, candidate, candidateType, options, dra
   );
 
   const update = (key: string, value: unknown) => setState((current) => ({ ...current, [key]: value }));
+  const chooseExistingValue = (valueId: string) => {
+    const selectedValue = values.find((item) => valueKeyOf(item) === valueId);
+    setState((current) => ({
+      ...current,
+      termId: valueId,
+      aliasNamesText: current.aliasNamesText || rawValue,
+      canonicalValue: selectedValue?.canonicalValue || current.canonicalValue,
+      displayName: selectedValue?.displayName || current.displayName,
+    }));
+  };
   const chooseTermType = (termType: string, term?: DictionaryTermType) => {
     const nextValues = options.values.filter((item) => item.termType === termType);
     const nextRawValueAlreadyExists = nextValues.some((item) => {
@@ -406,9 +419,9 @@ export function FieldReviewPanel({ field, candidate, candidateType, options, dra
           {action === "approve_value_as_alias" && (
             <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
               <Field label="已有标准值">
-                <select className={inputClass} value={state.termId} onChange={(event) => update("termId", event.target.value)}>
+                <select className={inputClass} value={state.termId} onChange={(event) => chooseExistingValue(event.target.value)}>
                   <option value="">请选择</option>
-                  {values.map((item) => <option key={String(item.id ?? item.canonicalValue)} value={String(item.id ?? "")}>{item.displayName || item.canonicalValue}</option>)}
+                  {values.map((item) => <option key={valueKeyOf(item)} value={valueKeyOf(item)}>{item.displayName || item.canonicalValue}</option>)}
                 </select>
               </Field>
               <Field label="aliasNames，一行一个"><textarea className={textClass} value={state.aliasNamesText} onChange={(event) => update("aliasNamesText", event.target.value)} /></Field>

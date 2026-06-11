@@ -1,12 +1,19 @@
 import { AxiosInstance } from "axios";
-// import { useAuthStore } from "@/store/auth";
-// import { useAuthStore } from '@/stores/auth'; // 或从context获取
+
+const getStoredToken = () => {
+  if (typeof localStorage === "undefined") return "";
+  try {
+    const authStorage = JSON.parse(localStorage.getItem("auth-storage") || "{}");
+    return authStorage?.state?.token || "";
+  } catch {
+    return "";
+  }
+};
 
 export const setupInterceptors = (instance: AxiosInstance) => {
   // 请求拦截
-  instance.interceptors.request.use(async (config) => {
-    const { useAuthStore } = await import("@/store/useAuthStore");
-    const token = useAuthStore.getState().token;
+  instance.interceptors.request.use((config) => {
+    const token = getStoredToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

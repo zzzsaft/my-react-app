@@ -2,7 +2,7 @@
 import { create } from "zustand";
 import { OpportunityService } from "../api/services/opportunity.service";
 import { ProductCategory, Quote, QuoteItem } from "../types/types";
-import { getFormType } from "../components/quote/ProductConfigForm/formSelector";
+import { getFormType } from "../components/quote/ProductConfigForm/formType";
 import { immer } from "zustand/middleware/immer";
 import { QuoteService } from "../api/services/quote.service";
 

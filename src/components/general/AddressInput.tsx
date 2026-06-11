@@ -3,7 +3,7 @@ import { Cascader, Input, Button, Space, Form, App, AutoComplete } from "@/compo
 import type { CascaderProps } from "@/components/ui/core";
 
 import AddressParse, { AREA, Utils } from "address-parse";
-import _ from "lodash";
+import { findKey } from "lodash-es";
 
 const { TextArea } = Input;
 
@@ -140,18 +140,18 @@ const AddressInput: React.FC<AddressInputProps> = ({
   // 获取当前选择的地区值
   const getCascaderValue = () => {
     if (!value?.province) return undefined;
-    const provinceCode = _.findKey(
+    const provinceCode = findKey(
       AREA.province_list,
       (v) => v === value?.province
     );
     if (!provinceCode) return undefined;
     const result = [provinceCode];
     if (value?.city) {
-      const cityCode = _.findKey(AREA.city_list, (v) => v === value?.city);
+      const cityCode = findKey(AREA.city_list, (v) => v === value?.city);
       if (cityCode) result.push(cityCode);
     }
     if (value?.district) {
-      const areaCode = _.findKey(AREA.area_list, (v) => v === value?.district);
+      const areaCode = findKey(AREA.area_list, (v) => v === value?.district);
       if (areaCode) result.push(areaCode);
     }
     return result;

@@ -1,5 +1,4 @@
 import { isMobile } from "react-device-detect"; // 使用设备检测库
-import * as _ from "lodash";
 import { useQuoteStore } from "@/store/useQuoteStore";
 import DesktopQuoteItemsTable from "./DesktopQuoteItemsTable";
 import { QuoteItem } from "@/types/types";

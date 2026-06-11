@@ -25,7 +25,9 @@ const navItems: NavItem[] = [
   { key: "/quote/oa", label: "OA 报价单", description: "同步 OA 流程单据" },
   { key: "/quote/todo", label: "待办任务", description: "处理待提交与待审批" },
   { key: "/template", label: "模板管理", description: "维护报价模板配置" },
-  { key: "/quote-agent", label: "字典审核", description: "合同解析字典审核" },
+  { key: "/quote-agent", label: "文档审核", description: "按文档逐条审核字典候选" },
+  { key: "/quote-agent/clusters", label: "候选簇审核", description: "按候选簇批量治理字典候选" },
+  { key: "/quote-agent/dictionary", label: "字典管理", description: "维护 termType 与 alias 属性" },
 ];
 
 const MainLayout: React.FC = () => {

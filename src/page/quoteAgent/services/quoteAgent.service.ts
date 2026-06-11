@@ -2,6 +2,9 @@ import { apiClient } from "@/api/http/client";
 import type {
   BatchReviewOptions,
   BatchReviewResponse,
+  CandidateClusterFilters,
+  CandidateClusterReviewPromptResponse,
+  CandidateClustersResponse,
   CandidateStatus,
   CandidatesResponse,
   DictionaryOptions,
@@ -15,6 +18,8 @@ import type {
   ProductMasterDataTermType,
   ProductModelBindingPayload,
   ProductTypeOption,
+  RenormalizeBatchParams,
+  RenormalizeBatchResponse,
   ReviewOperation,
 } from "../types";
 
@@ -45,6 +50,16 @@ const productMasterDataItems = (response: ProductMasterDataSearchResponse | Prod
   if (Array.isArray(value?.data?.results)) return value.data.results;
   return [];
 };
+
+const dictionaryTermTypeFromResponse = (response: DictionaryTermType | { termType: DictionaryTermType }) =>
+  "termType" in response && typeof response.termType === "object" && response.termType !== null
+    ? response.termType
+    : response as DictionaryTermType;
+
+const dictionaryValueFromResponse = (response: DictionaryValue | { value: DictionaryValue }) =>
+  "value" in response && typeof response.value === "object" && response.value !== null
+    ? response.value
+    : response as DictionaryValue;
 
 export const quoteAgentService = {
   async uploadContract(file: File): Promise<ExtractionDetail> {
@@ -81,6 +96,10 @@ export const quoteAgentService = {
     );
   },
 
+  async renormalizeBatch(params: RenormalizeBatchParams): Promise<RenormalizeBatchResponse> {
+    return unwrap(await apiClient.post("/quoteAgent/extractions/renormalize-batch", params, slowRequest));
+  },
+
   async reextract(documentId: string | number, params?: { llmModel?: string }): Promise<ExtractionDetail> {
     return unwrap(await apiClient.post(`/quoteAgent/extractions/${documentId}/reextract`, params ?? {}, slowRequest));
   },
@@ -109,6 +128,23 @@ export const quoteAgentService = {
     return unwrap(await apiClient.get("/quoteAgent/candidates", { params, ...slowRequest }));
   },
 
+  async getCandidateClusterReviewPrompt(): Promise<CandidateClusterReviewPromptResponse | string> {
+    return unwrap(await apiClient.get("/quoteAgent/candidates/clusters/review-prompt", slowRequest));
+  },
+
+  async getCandidateClusters(params: CandidateClusterFilters): Promise<CandidateClustersResponse> {
+    return unwrap(await apiClient.get("/quoteAgent/candidates/clusters", { params, ...slowRequest }));
+  },
+
+  async suggestCandidateClusterReviewsBatch(params: CandidateClusterFilters & {
+    candidateType?: string;
+    clusterIds?: Array<string | number>;
+    force?: boolean;
+    model?: string;
+  }): Promise<unknown> {
+    return unwrap(await apiClient.post("/quoteAgent/candidates/clusters/suggestions/batch", params, slowRequest));
+  },
+
   async getDictionaryOptions(): Promise<DictionaryOptions> {
     const [termTypesResponse, valuesResponse, productTypesResponse] = await Promise.all([
       apiClient.get<{ termTypes: DictionaryTermType[] }>("/quoteAgent/dictionary/term-types", slowRequest),
@@ -127,6 +163,60 @@ export const quoteAgentService = {
         ? productTypesData
         : productTypesData.productTypes ?? [],
     };
+  },
+
+  async getDictionaryValues(termType?: string): Promise<DictionaryValue[]> {
+    const response = await apiClient.get<{ values: DictionaryValue[] }>("/quoteAgent/dictionary/values", {
+      params: termType ? { termType } : undefined,
+      ...slowRequest,
+    });
+    return response.data.values ?? [];
+  },
+
+  async createTermType(payload: Partial<DictionaryTermType>): Promise<DictionaryTermType> {
+    return dictionaryTermTypeFromResponse(
+      unwrap(await apiClient.post<DictionaryTermType | { termType: DictionaryTermType }>(
+        "/quoteAgent/dictionary/term-types",
+        payload,
+        slowRequest,
+      )),
+    );
+  },
+
+  async updateTermType(
+    termTypeId: string | number,
+    payload: Partial<DictionaryTermType>,
+  ): Promise<DictionaryTermType> {
+    return dictionaryTermTypeFromResponse(unwrap(
+      await apiClient.patch(
+        `/quoteAgent/dictionary/term-types/${encodeURIComponent(String(termTypeId))}`,
+        payload,
+        slowRequest,
+      ),
+    ));
+  },
+
+  async createDictionaryValue(payload: Partial<DictionaryValue>): Promise<DictionaryValue> {
+    return dictionaryValueFromResponse(
+      unwrap(await apiClient.post<DictionaryValue | { value: DictionaryValue }>(
+        "/quoteAgent/dictionary/values",
+        payload,
+        slowRequest,
+      )),
+    );
+  },
+
+  async updateDictionaryValue(
+    valueId: string | number,
+    payload: Partial<DictionaryValue>,
+  ): Promise<DictionaryValue> {
+    return dictionaryValueFromResponse(unwrap(
+      await apiClient.patch(
+        `/quoteAgent/dictionary/values/${encodeURIComponent(String(valueId))}`,
+        payload,
+        slowRequest,
+      ),
+    ));
   },
 
   async suggestTermTypeCandidate(

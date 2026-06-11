@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import type { Candidate, ReviewAction, ReviewDraft, ReviewOperation } from "../types";
+import { copyTextToClipboard, extractJsonFromText, readStorageValue, writeStorageValue } from "../utils";
 
 interface PromptCandidate {
   candidate: Candidate;
@@ -28,32 +29,6 @@ const actionMap: Record<string, ReviewAction> = {
   update_term_type_value_kind: "update_term_type_value_kind",
   reject: "reject",
 };
-
-function readStorage(key: string) {
-  try {
-    return localStorage.getItem(key) || "";
-  } catch {
-    return "";
-  }
-}
-
-function extractJson(text: string) {
-  const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
-  const source = (fenced?.[1] || text).trim();
-  if (!source) throw new Error("JSON 为空");
-  try {
-    return JSON.parse(source);
-  } catch {
-    const startCandidates = [
-      source.indexOf("{"),
-      source.indexOf("["),
-    ].filter((item) => item >= 0);
-    const start = Math.min(...startCandidates);
-    const end = Math.max(source.lastIndexOf("}"), source.lastIndexOf("]"));
-    if (!Number.isFinite(start) || end <= start) throw new Error("没有找到可解析的 JSON");
-    return JSON.parse(source.slice(start, end + 1));
-  }
-}
 
 function suggestionsOf(value: any): any[] {
   if (Array.isArray(value)) return value;
@@ -118,7 +93,7 @@ function toDraft(suggestion: any, candidates: PromptCandidate[]): ReviewDraft | 
 }
 
 export function DeepSeekPromptModal({ open, candidates, onClose, onApply }: Props) {
-  const [jsonText, setJsonText] = useState(() => readStorage(draftStorageKey));
+  const [jsonText, setJsonText] = useState(() => readStorageValue(draftStorageKey));
   const [message, setMessage] = useState("");
   const prompt = useMemo(() => {
     const payload = candidates.map((item) => ({
@@ -143,11 +118,11 @@ export function DeepSeekPromptModal({ open, candidates, onClose, onApply }: Prop
 
   const apply = () => {
     try {
-      const parsed = extractJson(jsonText);
+      const parsed = extractJsonFromText(jsonText);
       const drafts = suggestionsOf(parsed).map((item) => toDraft(item, candidates)).filter(Boolean) as ReviewDraft[];
       if (!drafts.length) throw new Error("没有解析到可应用的建议");
-      localStorage.setItem(draftStorageKey, jsonText);
-      localStorage.setItem(appliedStorageKey, JSON.stringify(drafts));
+      writeStorageValue(draftStorageKey, jsonText);
+      writeStorageValue(appliedStorageKey, JSON.stringify(drafts));
       onApply(drafts);
       setMessage(`已应用 ${drafts.length} 条建议`);
     } catch (error) {
@@ -156,7 +131,7 @@ export function DeepSeekPromptModal({ open, candidates, onClose, onApply }: Prop
   };
 
   const copyPrompt = async () => {
-    await navigator.clipboard?.writeText(prompt);
+    await copyTextToClipboard(prompt);
     setMessage("Prompt 已复制");
   };
 
@@ -188,11 +163,7 @@ export function DeepSeekPromptModal({ open, candidates, onClose, onApply }: Prop
               value={jsonText}
               onChange={(event) => {
                 setJsonText(event.target.value);
-                try {
-                  localStorage.setItem(draftStorageKey, event.target.value);
-                } catch {
-                  /* ignore */
-                }
+                writeStorageValue(draftStorageKey, event.target.value);
               }}
               placeholder="支持 ```json fenced block，也支持前后带说明文字的宽松 JSON"
             />
