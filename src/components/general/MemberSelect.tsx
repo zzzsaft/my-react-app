@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Select, Spin, Avatar, Typography } from "antd";
-import type { SelectProps } from "antd";
+import { Select, Spin, Avatar, Typography } from "@/components/ui/core";
+import type { SelectProps } from "@/components/ui/core";
 import { useDebounce } from "use-debounce";
 import MemberAvatar from "./MemberAvatar"; // 假设你已经实现了这个组件
 import { pinyin } from "pinyin-pro"; // 用于拼音搜索

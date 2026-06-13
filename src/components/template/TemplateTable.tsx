@@ -1,6 +1,6 @@
 import React from "react";
-import { Pagination, Table } from "antd";
-import type { TablePaginationConfig } from "antd/es/table";
+import { Pagination, Table } from "@/components/ui/core";
+import type { TablePaginationConfig } from "@/components/ui/types";
 import MemberAvatar from "../general/MemberAvatar";
 import { QuoteTemplate } from "@/types/types";
 

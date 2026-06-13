@@ -1,9 +1,9 @@
-import { ProCard } from "@ant-design/pro-components";
-import { Col, Form, InputNumber, Radio, Row, Space, Tooltip } from "antd";
+import { TailCard } from "@/components/ui/proComponents";
+import { Col, Form, InputNumber, Radio, Row, Space, Tooltip } from "@/components/ui/core";
 import { RadioWithInputRules } from "@/util/rules";
 import { CustomSelect } from "@/components/general/CustomSelect";
 import { RadioWithInput } from "@/components/general/RadioWithInput";
-import { QuestionCircleOutlined } from "@ant-design/icons";
+import { QuestionCircleOutlined } from "@/components/ui/icons";
 
 // 常量定义
 
@@ -36,7 +36,7 @@ const WIRING_METHOD = [
 
 export const DieInstall = () => {
   return (
-    <ProCard
+    <TailCard
       title="模具安装"
       collapsible
       defaultCollapsed={false}
@@ -212,6 +212,6 @@ export const DieInstall = () => {
           </Form.Item>
         </Col>
       </Row>
-    </ProCard>
+    </TailCard>
   );
 };

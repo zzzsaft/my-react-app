@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Select, Input, Button, Divider, Space, Tag } from "antd";
-import type { SelectProps } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { Select, Input, Button, Divider, Space, Tag } from "@/components/ui/core";
+import type { SelectProps } from "@/components/ui/core";
+import { PlusOutlined } from "@/components/ui/icons";
 
 export interface CustomSelectProps {
   value?: string[] | string;

@@ -8,15 +8,15 @@ import {
   Row,
   Select,
   Typography,
-} from "antd";
-import { ProCard, ProFormDependency } from "@ant-design/pro-components";
-import ProForm from "@ant-design/pro-form";
+} from "@/components/ui/core";
+import { TailCard, TailFormDependency } from "@/components/ui/proComponents";
+import TailForm from "@/components/ui/proForm";
 import { forwardRef, useImperativeHandle, useState } from "react";
 import { useQuoteStore } from "@/store/useQuoteStore";
 import ImportProductModal from "@/components/quote/ProductConfigForm/ImportProductModal";
 import MaterialSelect from "@/components/general/MaterialSelect";
 import AutoSlashInput from "@/components/general/AutoSlashInput";
-import ProFormListWrapper from "../formComponents/ProFormListWrapper";
+import TailFormListWrapper from "../formComponents/TailFormListWrapper";
 import RunnerLayerItem from "../formComponents/RunnerLayerItem";
 import { HeatingMethodSelect } from "../formComponents/HeatingMethodInput";
 import PowerFormItem from "../formComponents/PowerFormItem";
@@ -104,14 +104,14 @@ const ManifoldForm = forwardRef(
     };
 
     return (
-      <ProCard
+      <TailCard
         title="合流器配置"
         // collapsible
         defaultCollapsed={false}
         style={{ marginBottom: 16 }}
         headerBordered
       >
-        <ProForm
+        <TailForm
           layout="vertical"
           form={form}
           submitter={false}
@@ -224,9 +224,9 @@ const ManifoldForm = forwardRef(
                   </Form.Item>
                 </Col>
                 <Col xs={24} md={24}>
-                  <ProFormDependency name={["runnerNumber", "material"]}>
+                  <TailFormDependency name={["runnerNumber", "material"]}>
                     {({ runnerNumber, material }) => (
-                      <ProFormListWrapper
+                      <TailFormListWrapper
                         name="runnerLayers"
                         label="每层复合比例"
                         canCreate={false}
@@ -244,7 +244,7 @@ const ManifoldForm = forwardRef(
                         creatorRecord={{ ratio: { unit: ratioUnit } }}
                       />
                     )}
-                  </ProFormDependency>
+                  </TailFormDependency>
                 </Col>
                 <Col xs={12} md={6}>
                   <Form.Item
@@ -273,7 +273,7 @@ const ManifoldForm = forwardRef(
               </Row>
             </>
           )}
-        </ProForm>
+        </TailForm>
         <ImportProductModal
           open={modalOpen}
           onCancel={() => setModalOpen(false)}
@@ -281,7 +281,7 @@ const ManifoldForm = forwardRef(
           formType="DieForm"
           orderOnly
         />
-      </ProCard>
+      </TailCard>
     );
   }
 );

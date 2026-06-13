@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Form, Input, Radio, Space } from "antd";
-import type { FormItemProps, RadioChangeEvent } from "antd";
+import { Form, Input, Radio, Space } from "@/components/ui/core";
+import type { FormItemProps, RadioChangeEvent } from "@/components/ui/core";
 
 interface RadioWithInputProps {
   value?: { value: number | string; inputValue?: string };

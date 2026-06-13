@@ -5,14 +5,14 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Form, Input, Tabs, Select } from "antd";
+import { Form, Input, Tabs, Select } from "@/components/ui/core";
 import MaterialSelect from "../general/MaterialSelect";
 import { CustomSelect } from "../general/CustomSelect";
 
 import { getFormByCategory } from "../quote/ProductConfigForm/formSelector";
 
 import { QuoteTemplate } from "@/types/types";
-import TextArea from "antd/es/input/TextArea";
+import TextArea from "@/components/ui/TextArea";
 
 export interface TemplateCreateRef {
   getData: () => Promise<Partial<QuoteTemplate>>;

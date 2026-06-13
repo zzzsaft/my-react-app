@@ -1,12 +1,12 @@
 // components/quote/QuoteModal.tsx
 import React, { useEffect, useState } from "react";
-import { Modal, Button, Form, App } from "antd";
-import { FullscreenOutlined, FullscreenExitOutlined } from "@ant-design/icons";
+import { Modal, Button, Form, App } from "@/components/ui/core";
+import { FullscreenOutlined, FullscreenExitOutlined } from "@/components/ui/icons";
 import QuoteForm from "./QuoteForm";
 import type { Quote } from "@/types/types";
 import { useQuoteStore } from "@/store/useQuoteStore";
 import dayjs from "dayjs";
-import { Skeleton } from "antd";
+import { Skeleton } from "@/components/ui/core";
 interface QuoteModalProps {
   visible: boolean;
   initialValues?: Quote;

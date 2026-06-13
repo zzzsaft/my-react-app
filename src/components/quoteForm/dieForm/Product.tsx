@@ -1,8 +1,8 @@
 import {
-  ProCard,
-  ProForm,
-  ProFormDependency,
-} from "@ant-design/pro-components";
+  TailCard,
+  TailForm,
+  TailFormDependency,
+} from "@/components/ui/proComponents";
 import {
   Col,
   Form,
@@ -12,11 +12,11 @@ import {
   Row,
   Cascader,
   Select,
-} from "antd";
+} from "@/components/ui/core";
 import { IntervalInputFormItem } from "@/components/general/IntervalInput";
 import ScrewForm from "../formComponents/ScrewForm";
 import AutoSlashInput from "@/components/general/AutoSlashInput";
-import ProFormListWrapper from "../formComponents/ProFormListWrapper";
+import TailFormListWrapper from "../formComponents/TailFormListWrapper";
 
 import MaterialSelect from "@/components/general/MaterialSelect";
 import RunnerLayerItem from "../formComponents/RunnerLayerItem";
@@ -64,7 +64,7 @@ export const Product = () => {
   };
   return (
     <>
-      <ProCard
+      <TailCard
         title="制品信息"
         collapsible
         defaultCollapsed={false}
@@ -272,9 +272,9 @@ export const Product = () => {
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={24}>
-                    <ProFormDependency name={["runnerNumber", "material"]}>
+                    <TailFormDependency name={["runnerNumber", "material"]}>
                       {({ runnerNumber, material }) => (
-                        <ProFormListWrapper
+                        <TailFormListWrapper
                           name="runnerLayers"
                           label="每层复合比例"
                           canCreate={false}
@@ -292,7 +292,7 @@ export const Product = () => {
                           creatorRecord={{ ratio: { unit: ratioUnit } }}
                         />
                       )}
-                    </ProFormDependency>
+                    </TailFormDependency>
                   </Col>
                   <Col xs={12} md={6}>
                     <Form.Item
@@ -311,13 +311,13 @@ export const Product = () => {
             }
           </Form.Item>
         </Row>
-      </ProCard>
+      </TailCard>
       <Form.Item noStyle dependencies={["extrudeType", "material"]}>
         {({ getFieldValue }) =>
           ["模内共挤", "分配器+模内共挤"].includes(
             getFieldValue("extrudeType")
           ) ? (
-            <ProCard
+            <TailCard
               title="螺杆信息"
               collapsible
               defaultCollapsed={false}
@@ -331,7 +331,7 @@ export const Product = () => {
                     : [getFieldValue("material")]
                 }
               />
-            </ProCard>
+            </TailCard>
           ) : null
         }
       </Form.Item>

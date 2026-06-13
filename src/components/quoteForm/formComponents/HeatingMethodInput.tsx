@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
-import { App, Select, Tooltip } from "antd";
-import type { SelectProps } from "antd";
+import { App, Select, Tooltip } from "@/components/ui/core";
+import type { SelectProps } from "@/components/ui/core";
 
 const { Option } = Select;
 

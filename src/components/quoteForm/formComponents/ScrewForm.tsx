@@ -1,6 +1,6 @@
 import React from "react";
 import { ScrewFormItem } from "./ScrewFormItem";
-import ProFormListWrapper from "./ProFormListWrapper";
+import TailFormListWrapper from "./TailFormListWrapper";
 
 const ScrewForm = ({
   items,
@@ -10,7 +10,7 @@ const ScrewForm = ({
   creatorButtonProps?: false | undefined;
 }) => {
   return (
-    <ProFormListWrapper
+    <TailFormListWrapper
       name="screwList"
       label="螺杆明细"
       canCreate={!!creatorButtonProps}

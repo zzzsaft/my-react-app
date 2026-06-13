@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Button, App } from "antd";
+import { Button, App } from "@/components/ui/core";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import TemplateCreate, { TemplateCreateRef } from "@/components/template/TemplateCreate";
 import { TemplateService } from "@/api/services/template.service";

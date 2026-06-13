@@ -1,4 +1,4 @@
-import { Form, Tag } from "antd";
+import { Form, Tag } from "@/components/ui/core";
 import React from "react";
 
 const { CheckableTag } = Tag;

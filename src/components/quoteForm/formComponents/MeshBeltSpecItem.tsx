@@ -1,12 +1,12 @@
 import { AutoCompleteInput } from "@/components/general/AutoCompleteInput";
-import ProForm from "@ant-design/pro-form";
-import { Row, Col, InputNumber, Layout } from "antd";
+import TailForm from "@/components/ui/proForm";
+import { Row, Col, InputNumber, Layout } from "@/components/ui/core";
 
 const MeshBeltSpecItem: React.FC = () => {
   return (
     <Row gutter={16}>
       <Col xs={12} md={6}>
-        <ProForm.Item
+        <TailForm.Item
           name="mesh"
           label="目"
           rules={[{ required: true, message: "请输入目数" }]}
@@ -19,10 +19,10 @@ const MeshBeltSpecItem: React.FC = () => {
               value: String(n),
             }))}
           />
-        </ProForm.Item>
+        </TailForm.Item>
       </Col>
       <Col xs={12} md={6}>
-        <ProForm.Item
+        <TailForm.Item
           name="length"
           label="长度"
           rules={[{ required: true, message: "请输入长度" }]}
@@ -30,20 +30,20 @@ const MeshBeltSpecItem: React.FC = () => {
           layout="vertical"
         >
           <AutoCompleteInput addonAfter="米" />
-        </ProForm.Item>
+        </TailForm.Item>
       </Col>
       <Col xs={12} md={6}>
-        <ProForm.Item
+        <TailForm.Item
           name="width"
           label="宽度"
           rules={[{ required: true, message: "请输入宽度" }]}
           layout="vertical"
         >
           <AutoCompleteInput addonAfter="mm" />
-        </ProForm.Item>
+        </TailForm.Item>
       </Col>
       <Col xs={12} md={6}>
-        <ProForm.Item
+        <TailForm.Item
           name="quantity"
           label="数量"
           rules={[{ required: true, message: "请输入数量" }]}
@@ -51,7 +51,7 @@ const MeshBeltSpecItem: React.FC = () => {
           layout="vertical"
         >
           <InputNumber min={1} addonAfter="卷" style={{ width: "100%" }} />
-        </ProForm.Item>
+        </TailForm.Item>
       </Col>
     </Row>
   );

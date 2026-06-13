@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
-import { Modal, Button } from "antd";
-import { FormInstance } from "antd/lib";
+import { Modal, Button } from "@/components/ui/core";
+import { FormInstance } from "@/components/ui/core";
 import ProductConfigurationForm from "../quote/ProductConfigForm/ProductConfigurationForm";
 import { QuoteTemplate, QuoteItem } from "../../types/types";
 import { TemplateService } from "../../api/services/template.service";

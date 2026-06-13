@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Select } from "antd";
+import { Select } from "@/components/ui/core";
 import { selectOptions } from "@/util/valueUtil";
 
 interface MaterialSelectProps {

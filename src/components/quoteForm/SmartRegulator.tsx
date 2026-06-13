@@ -1,10 +1,10 @@
-import { Col, Form, FormInstance, Input, Radio, Row } from "antd";
+import { Col, Form, FormInstance, Input, Radio, Row } from "@/components/ui/core";
 import { forwardRef, useImperativeHandle, useState } from "react";
 import useProductActionModal from "@/hook/showProductActionModal";
 import { useQuoteStore } from "@/store/useQuoteStore";
 
-import TextArea from "antd/es/input/TextArea";
-import ProForm from "@ant-design/pro-form";
+import TextArea from "@/components/ui/TextArea";
+import TailForm from "@/components/ui/proForm";
 import CustomRadioGroup from "../general/CustomRadioGroup";
 import { TooltipLabel } from "../general/TooltipLabel";
 import { RadioWithInputRules } from "@/util/rules";
@@ -85,7 +85,7 @@ const SmartRegulator = forwardRef<
 
   return (
     <>
-      <ProForm
+      <TailForm
         layout={"vertical"}
         form={form}
         submitter={false}
@@ -160,7 +160,7 @@ const SmartRegulator = forwardRef<
             </Form.Item>
           </Col>
         </Row>
-      </ProForm>
+      </TailForm>
       {/* <FloatButton.BackTop visibilityHeight={0} /> */}
     </>
   );

@@ -1,6 +1,6 @@
-import { ProCard } from "@ant-design/pro-components";
-import { AutoComplete, Col, Form, InputNumber, Radio, Row } from "antd";
-import ProFormListWrapper from "../formComponents/ProFormListWrapper";
+import { TailCard } from "@/components/ui/proComponents";
+import { AutoComplete, Col, Form, InputNumber, Radio, Row } from "@/components/ui/core";
+import TailFormListWrapper from "../formComponents/TailFormListWrapper";
 import MeshBeltSpecItem from "../formComponents/MeshBeltSpecItem";
 
 const MeshBeltControlCard: React.FC = () => {
@@ -10,7 +10,7 @@ const MeshBeltControlCard: React.FC = () => {
         const name = getFieldValue("name") as string;
         if (!name?.includes("走带式")) return null;
         return (
-          <ProCard
+          <TailCard
             title="配套设置"
             collapsible
             defaultCollapsed={false}
@@ -39,7 +39,7 @@ const MeshBeltControlCard: React.FC = () => {
                   const width = match ? Number(match[1]) + 6 : undefined;
                   return (
                     <Col span={24}>
-                      <ProFormListWrapper
+                      <TailFormListWrapper
                         name="meshBeltSpec"
                         label="网带规格"
                         isHorizontal
@@ -92,7 +92,7 @@ const MeshBeltControlCard: React.FC = () => {
                 }
               </Form.Item>
             </Row>
-          </ProCard>
+          </TailCard>
         );
       }}
     </Form.Item>

@@ -1,4 +1,4 @@
-import { InputNumber, InputNumberProps, Select } from "antd";
+import { InputNumber, InputNumberProps, Select } from "@/components/ui/core";
 import { useQuoteStore } from "@/store/useQuoteStore";
 import { formatPrice } from "@/util/valueUtil";
 interface MoneyInputProps extends Omit<InputNumberProps, "value" | "onChange"> {

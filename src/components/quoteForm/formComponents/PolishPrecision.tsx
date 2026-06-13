@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Radio, InputNumber, Form, Space } from "antd";
+import { Radio, InputNumber, Form, Space } from "@/components/ui/core";
 
 interface PolishingPrecisionProps {
   value?: any;

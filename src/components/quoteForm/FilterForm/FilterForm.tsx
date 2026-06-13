@@ -1,6 +1,6 @@
-import { AutoComplete, Col, Form, InputNumber, Radio, Row } from "antd";
+import { AutoComplete, Col, Form, InputNumber, Radio, Row } from "@/components/ui/core";
 
-import ProForm from "@ant-design/pro-form";
+import TailForm from "@/components/ui/proForm";
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 
 import { PowerInput } from "../formComponents/PowerInput";
@@ -11,9 +11,9 @@ import { useQuoteStore } from "@/store/useQuoteStore";
 import useProductActionModal from "@/hook/showProductActionModal";
 
 import FilterSelection from "./FilterSelection";
-import TextArea from "antd/es/input/TextArea";
+import TextArea from "@/components/ui/TextArea";
 import MeshBeltControlCard from "./MeshBeltControlCard";
-import { ProCard } from "@ant-design/pro-components";
+import { TailCard } from "@/components/ui/proComponents";
 import MaterialSelect from "@/components/general/MaterialSelect";
 import { IntervalInputFormItem } from "@/components/general/IntervalInput";
 
@@ -151,14 +151,14 @@ const FilterForm = forwardRef(
     };
 
     return (
-      <ProForm
+      <TailForm
         layout="vertical"
         form={form}
         submitter={false}
         onValuesChange={handleFieldsChange}
       >
         <FilterSelection form={form} filters={filters} />
-        <ProCard
+        <TailCard
           title="过滤器参数"
           collapsible
           defaultCollapsed={false}
@@ -309,13 +309,13 @@ const FilterForm = forwardRef(
               }
             </Form.Item>
           </Row>
-        </ProCard>
+        </TailCard>
 
         <MeshBeltControlCard />
         <Form.Item name="remark" label="备注">
           <TextArea />
         </Form.Item>
-      </ProForm>
+      </TailForm>
     );
   }
 );

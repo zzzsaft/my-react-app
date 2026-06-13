@@ -7,12 +7,12 @@ import {
   DatePicker,
   Row,
   message,
-} from "antd";
+} from "@/components/ui/core";
 import InputWithButton from "@/components/general/InputWithButton";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useQuoteStore } from "@/store/useQuoteStore";
 import dayjs, { Dayjs } from "dayjs";
-import { ShareAltOutlined } from "@ant-design/icons";
+import { ShareAltOutlined } from "@/components/ui/icons";
 import { QuoteItem } from "@/types/types";
 import { QuoteService } from "@/api/services/quote.service";
 

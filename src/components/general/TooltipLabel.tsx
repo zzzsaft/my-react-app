@@ -1,5 +1,5 @@
-import { QuestionCircleOutlined } from "@ant-design/icons";
-import { Space, Tooltip } from "antd";
+import { QuestionCircleOutlined } from "@/components/ui/icons";
+import { Space, Tooltip } from "@/components/ui/core";
 
 export const TooltipLabel = ({
   label,

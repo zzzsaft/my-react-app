@@ -1,6 +1,6 @@
-import { Form, FormInstance } from "antd";
+import { Form, FormInstance } from "@/components/ui/core";
 import { forwardRef, useImperativeHandle, useState } from "react";
-import TextArea from "antd/es/input/TextArea";
+import TextArea from "@/components/ui/TextArea";
 interface OtherFormRef {
   form: FormInstance; // 明确定义暴露的form实例
 }

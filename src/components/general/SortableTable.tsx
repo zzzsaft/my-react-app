@@ -1,6 +1,6 @@
 // SortableTable.tsx
 import React, { useContext, useMemo, useState, useEffect } from "react";
-import { HolderOutlined } from "@ant-design/icons";
+import { HolderOutlined } from "@/components/ui/icons";
 import type { DragEndEvent, UniqueIdentifier } from "@dnd-kit/core";
 import { DndContext } from "@dnd-kit/core";
 import type { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
@@ -12,8 +12,8 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Button, Table, TableProps } from "antd";
-import type { ColumnsType } from "antd/es/table";
+import { Button, Table, TableProps } from "@/components/ui/core";
+import type { ColumnsType } from "@/components/ui/types";
 import { Resizable } from "react-resizable";
 import "react-resizable/css/styles.css";
 

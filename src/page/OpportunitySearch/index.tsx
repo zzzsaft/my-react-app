@@ -11,8 +11,8 @@ import {
   Tag,
   message,
   Spin,
-} from "antd";
-import { SearchOutlined, PlusOutlined } from "@ant-design/icons";
+} from "@/components/ui/core";
+import { SearchOutlined, PlusOutlined } from "@/components/ui/icons";
 import OpportunityCard from "@/components/OpportunityCard";
 import styles from "./OpportunitySearchPage.module.less";
 import StatusSelector from "@/components/StatusSelector";

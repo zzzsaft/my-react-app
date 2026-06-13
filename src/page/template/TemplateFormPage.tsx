@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, App } from "antd";
+import { Button, App } from "@/components/ui/core";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import ProductConfigurationForm from "@/components/quote/ProductConfigForm/ProductConfigurationForm";
 import { QuoteTemplate } from "@/types/types";

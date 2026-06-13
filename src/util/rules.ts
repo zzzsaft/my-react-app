@@ -1,4 +1,4 @@
-import { Rule } from "antd/es/form";
+import { Rule } from "@/components/ui/types";
 
 const DELIMITER = "~";
 

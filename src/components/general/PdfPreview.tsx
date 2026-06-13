@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Modal } from "antd";
+import { Modal } from "@/components/ui/core";
 
 
 interface PdfPreviewProps {

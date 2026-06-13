@@ -1,4 +1,4 @@
-import { Button, Result, Space, Typography } from "antd";
+import { Button, Result, Space, Typography } from "@/components/ui/core";
 import { useNavigate } from "react-router-dom";
 const { Title, Text } = Typography;
 interface ErrorPageProps {

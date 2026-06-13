@@ -1,4 +1,4 @@
-import { ProCard } from "@ant-design/pro-components";
+import { TailCard } from "@/components/ui/proComponents";
 import {
   AutoComplete,
   Col,
@@ -8,7 +8,7 @@ import {
   Select,
   Segmented,
   FormInstance,
-} from "antd";
+} from "@/components/ui/core";
 import { FilterProduct } from "@/types/types";
 
 interface Props {
@@ -24,7 +24,7 @@ const FilterSelection = ({ form, filters }: Props) => {
     .sort((a, b) => a.label.localeCompare(b.label));
 
   return (
-    <ProCard
+    <TailCard
       title="过滤器选型"
       collapsible
       defaultCollapsed={false}
@@ -131,7 +131,7 @@ const FilterSelection = ({ form, filters }: Props) => {
           }}
         </Form.Item>
       </Row>
-    </ProCard>
+    </TailCard>
   );
 };
 

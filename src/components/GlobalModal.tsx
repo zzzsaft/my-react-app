@@ -1,5 +1,5 @@
 // components/GlobalModal.tsx
-import { Modal } from "antd";
+import { Modal } from "@/components/ui/core";
 import { modalStore } from "../store/modalStore";
 
 export const GlobalModal = () => {

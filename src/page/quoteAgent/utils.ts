@@ -1,0 +1,242 @@
+import type {
+  BatchReviewResponse,
+  Candidate,
+  CandidateType,
+  ExtractionDetail,
+  QuoteAgentDocument,
+  QuoteAgentField,
+  QuoteAgentItem,
+  ProductMasterDataTermType,
+} from "./types";
+
+export const asArray = <T,>(value: T[] | undefined | null): T[] => (Array.isArray(value) ? value : []);
+export const docId = (document?: QuoteAgentDocument | null) => document?.documentId ?? document?.id ?? "";
+export const docName = (document?: QuoteAgentDocument | null) => String(document?.fileName ?? document?.filePath ?? `文档 #${docId(document)}`);
+export const responseDocs = (value: any): QuoteAgentDocument[] => value?.items ?? value?.documents ?? value?.data ?? [];
+export const errorText = (error: unknown) =>
+  (error as any)?.response?.data?.error ?? (error as any)?.response?.data?.message ?? (error as any)?.message ?? String(error);
+export const draftKey = (type: CandidateType, id: string | number) => `${type}:${id}`;
+export const json = (value: unknown) => JSON.stringify(value ?? null, null, 2);
+
+export const readStorageValue = (key: string) => {
+  try {
+    return localStorage.getItem(key) || "";
+  } catch {
+    return "";
+  }
+};
+
+export const writeStorageValue = (key: string, value: string) => {
+  try {
+    localStorage.setItem(key, value);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+export function extractJsonFromText(text: string) {
+  const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  const source = (fenced?.[1] || text).trim();
+  if (!source) throw new Error("JSON 为空");
+  try {
+    return JSON.parse(source);
+  } catch {
+    const startCandidates = [
+      source.indexOf("{"),
+      source.indexOf("["),
+    ].filter((item) => item >= 0);
+    const start = Math.min(...startCandidates);
+    const end = Math.max(source.lastIndexOf("}"), source.lastIndexOf("]"));
+    if (!Number.isFinite(start) || end <= start) throw new Error("没有找到可解析的 JSON");
+    return JSON.parse(source.slice(start, end + 1));
+  }
+}
+
+export async function copyTextToClipboard(text: string) {
+  try {
+    await navigator.clipboard?.writeText(text);
+    return true;
+  } catch {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.setAttribute("readonly", "true");
+    textarea.style.position = "fixed";
+    textarea.style.left = "-9999px";
+    textarea.style.top = "0";
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    try {
+      return document.execCommand("copy");
+    } finally {
+      document.body.removeChild(textarea);
+    }
+  }
+}
+
+export const detailItems = (detail?: ExtractionDetail | null): QuoteAgentItem[] =>
+  asArray(
+    detail?.items ||
+      (detail as any)?.dictionary_proposals?.items ||
+      (detail as any)?.dictionary?.items ||
+      (detail as any)?.extraction?.items ||
+      (detail as any)?.data?.items,
+  );
+export const detailWarnings = (detail?: ExtractionDetail | null) =>
+  asArray(detail?.warnings || (detail as any)?.dictionary_proposals?.warnings || (detail as any)?.dictionary?.warnings || (detail as any)?.data?.warnings);
+
+export function resultMessage(result: BatchReviewResponse) {
+  if (result?.successCount !== undefined || result?.failedCount !== undefined) {
+    const affected = Array.isArray(result.affectedDocumentIds) ? result.affectedDocumentIds.length : 0;
+    return `提交完成：成功 ${result.successCount ?? 0}，失败 ${result.failedCount ?? 0}，影响文档 ${affected} 个。`;
+  }
+  if (Array.isArray(result?.affectedDocumentIds)) return `提交完成：影响文档 ${result.affectedDocumentIds.length} 个。`;
+  return "操作完成。";
+}
+
+export function batchResultMessage(result: BatchReviewResponse) {
+  const base = resultMessage(result);
+  return result?.candidateRecheckDeferred
+    ? `${base}审核已提交，相关文档将在后台刷新。`
+    : base;
+}
+
+export function dictionaryValue(field: QuoteAgentField) {
+  const dictionary = field.dictionary || {};
+  const values = Array.isArray(dictionary.values) ? dictionary.values : [];
+  if (values.length) {
+    return values
+      .map((value: any) => value.display_name || value.displayName || value.canonical_value || value.canonicalValue || value.raw_value || value.rawValue)
+      .filter(Boolean)
+      .join(" / ");
+  }
+  return dictionary.canonical_value || dictionary.canonicalValue || dictionary.display_name || dictionary.displayName || "";
+}
+
+export function productMasterDataTermType(field: QuoteAgentField): ProductMasterDataTermType | null {
+  const termType = String(
+    field.dictionary?.term_type ||
+      field.dictionary?.termType ||
+      field.dictionary?.normalized_field_name ||
+      field.dictionary?.normalizedFieldName ||
+      "",
+  );
+  if (termType === "metering_pump_model" || termType === "filter_model") return termType;
+  return null;
+}
+
+export function isProductMasterDataField(field: QuoteAgentField) {
+  return productMasterDataTermType(field) !== null;
+}
+
+export function productMasterDataNoMatchWarning(field: QuoteAgentField) {
+  return asArray(field.warnings).find((warning: any) => warning.type === "master_data_no_match") as any;
+}
+
+export function productMasterDataMatch(field: QuoteAgentField) {
+  return (field.masterDataMatch || field.master_data_match || (field as any).master_data || null) as Record<string, any> | null;
+}
+
+export function fieldStatus(field: QuoteAgentField) {
+  const warningTypes = new Set(asArray(field.warnings).map((warning: any) => warning.type));
+  const masterDataMatch = productMasterDataMatch(field);
+  if (isProductMasterDataField(field) && masterDataMatch?.matched) return { label: "主数据已匹配", tone: "good" };
+  if (isProductMasterDataField(field) && warningTypes.has("master_data_no_match")) return { label: "主数据待选", tone: "warn" };
+  if (field.dictionary?.matched) return { label: "已匹配", tone: "good" };
+  if (field.candidate) return { label: "待审核", tone: "warn" };
+  if (warningTypes.has("split_original_retained") || warningTypes.has("split_value_retained")) return { label: "已拆分", tone: "info" };
+  if (warningTypes.has("skipped") || field.dictionary?.skipped) return { label: "已跳过", tone: "muted" };
+  if (field.warnings?.length) return { label: "有警告", tone: "bad" };
+  return { label: "未匹配", tone: "warn" };
+}
+
+export function toneClass(tone: string) {
+  if (tone === "good") return "border-emerald-200 bg-emerald-50 text-emerald-700";
+  if (tone === "bad") return "border-rose-200 bg-rose-50 text-rose-700";
+  if (tone === "info") return "border-blue-200 bg-blue-50 text-blue-700";
+  if (tone === "muted") return "border-slate-200 bg-slate-50 text-slate-500";
+  return "border-amber-200 bg-amber-50 text-amber-700";
+}
+
+export function candidateTypeOf(field: QuoteAgentField, candidate?: Candidate): CandidateType | null {
+  const direct = field.candidate?.candidate_type ?? candidate?.candidateType;
+  if (direct === "term_type" || direct === "term-type") return "term_type";
+  if (direct === "value") return "value";
+  if (candidate?.rawFieldName && !candidate?.rawValue) return "term_type";
+  return candidate ? "value" : null;
+}
+
+export function fieldCandidateId(field: QuoteAgentField) {
+  return field.candidate?.candidate_id ?? field.candidate?.id ?? "";
+}
+
+export function matchCandidate(
+  field: QuoteAgentField,
+  item: QuoteAgentItem,
+  candidates: Candidate[],
+  currentDocumentId?: string | number,
+  excludedFallbackCandidateIds: Set<string> = new Set(),
+) {
+  const fieldName = String(field.field_name || "");
+  const rawValue = String(field.raw_value || "");
+  const candidateFitsField = (candidate: Candidate) => {
+    const sameDocument = !currentDocumentId || !candidate.documentId || String(candidate.documentId) === String(currentDocumentId);
+    const sameItem = candidate.itemIndex === undefined || item.item_index === undefined || String(candidate.itemIndex) === String(item.item_index);
+    const sameField = !candidate.rawFieldName || candidate.rawFieldName === fieldName;
+    const sameValue = !candidate.rawValue || candidate.rawValue === rawValue;
+    return sameDocument && sameItem && sameField && sameValue;
+  };
+  const directId = fieldCandidateId(field);
+  if (directId) {
+    const direct = candidates.find((candidate) => String(candidate.id) === String(directId));
+    if (direct && candidateFitsField(direct)) return direct;
+    return undefined;
+  }
+
+  return candidates.find((candidate) => {
+    if (excludedFallbackCandidateIds.has(String(candidate.id))) return false;
+    return candidateFitsField(candidate);
+  });
+}
+
+export function applicabilityWarning(field: QuoteAgentField) {
+  return asArray(field.warnings).find((warning: any) => warning.type === "term_type_not_applicable_to_product") as any;
+}
+
+export function applicabilityTermType(field: QuoteAgentField, candidate?: Candidate) {
+  const warning = applicabilityWarning(field);
+  return String(
+    warning?.term_type ||
+      (candidate as any)?.proposedTermType ||
+      candidate?.termType ||
+      field.dictionary?.term_type ||
+      field.dictionary?.normalized_field_name ||
+      "",
+  );
+}
+
+export function reviewKind(type: CandidateType | null, needsProductApplicability: boolean) {
+  if (needsProductApplicability) {
+    return { statusLabel: "\u9002\u7528\u5f85\u5ba1", buttonLabel: "\u52a0\u4ea7\u54c1", tone: "info" };
+  }
+  if (type === "term_type") {
+    return { statusLabel: "Key 待审", buttonLabel: "处理 Key", tone: "warn" };
+  }
+  if (type === "value") {
+    return { statusLabel: "值待审", buttonLabel: "处理值", tone: "warn" };
+  }
+  return null;
+}
+
+export function statsOf(items: QuoteAgentItem[], candidates: Candidate[]) {
+  const fields = items.flatMap((item) => asArray(item.fields));
+  return {
+    items: items.length,
+    fields: fields.length,
+    matched: fields.filter((field) => field.dictionary?.matched).length,
+    unmatched: fields.filter((field) => !field.dictionary?.matched).length,
+    candidates: candidates.length,
+    warnings: fields.reduce((sum, field) => sum + asArray(field.warnings).length, 0) + items.reduce((sum, item) => sum + asArray(item.warnings).length, 0),
+  };
+}

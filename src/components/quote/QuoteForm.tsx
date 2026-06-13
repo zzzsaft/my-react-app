@@ -10,7 +10,7 @@ import {
   Dropdown,
   MenuProps,
   Spin,
-} from "antd";
+} from "@/components/ui/core";
 import { Quote, Clause } from "@/types/types";
 import QuoteConfigTab from "./QuoteConfigTab";
 import QuoteTermsTab from "./QuoteTermsTab";
@@ -18,7 +18,7 @@ import ContractTab from "./ContractTab";
 import { debounce, throttle } from "lodash-es";
 import { useQuoteStore } from "@/store/useQuoteStore";
 import { CustomerService } from "@/api/services/customer.service";
-import { DownOutlined } from "@ant-design/icons";
+import { DownOutlined } from "@/components/ui/icons";
 import { useAuthStore } from "@/store/useAuthStore";
 import { QuoteService } from "@/api/services/quote.service";
 import PdfPreview from "../general/PdfPreview";

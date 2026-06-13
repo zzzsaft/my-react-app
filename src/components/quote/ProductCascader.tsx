@@ -1,9 +1,9 @@
-import { Cascader, Spin } from "antd";
-import type { CascaderProps } from "antd";
+import { Cascader, Spin } from "@/components/ui/core";
+import type { CascaderProps } from "@/components/ui/core";
 import * as _ from "lodash-es";
 import { useEffect, useMemo, useState } from "react";
 import { useQuoteStore } from "@/store/useQuoteStore";
-import { SizeType } from "antd/es/config-provider/SizeContext";
+import { SizeType } from "@/components/ui/types";
 import { camelCase, groupBy, filter, map, isEmpty } from "lodash-es";
 import { ProductCategory } from "@/types/types";
 import { useProductStore } from "@/store/useProductStore";

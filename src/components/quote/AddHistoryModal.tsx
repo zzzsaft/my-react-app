@@ -8,7 +8,7 @@ import {
   Col,
   App,
   Spin,
-} from "antd";
+} from "@/components/ui/core";
 import InputWithButton from "../general/InputWithButton";
 import { CustomerService } from "@/api/services/customer.service";
 import { OrderService } from "@/api/services/order.service";

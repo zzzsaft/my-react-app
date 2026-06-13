@@ -8,8 +8,8 @@ import {
   AutoComplete,
   DatePicker,
   Switch,
-} from "antd";
-import { ProCard } from "@ant-design/pro-components";
+} from "@/components/ui/core";
+import { TailCard } from "@/components/ui/proComponents";
 import dayjs from "dayjs";
 import MaterialSelect from "../general/MaterialSelect";
 import CompanySearchSelect from "../general/CompanySearchSelect";
@@ -107,7 +107,7 @@ const QuoteConfigTab: React.FC<QuoteConfigTabProps> = ({
   return (
     <>
       <Row gutter={16}></Row>
-      <ProCard
+      <TailCard
         title="基础信息"
         collapsible
         defaultCollapsed={false}
@@ -232,8 +232,8 @@ const QuoteConfigTab: React.FC<QuoteConfigTabProps> = ({
             </Form.Item>
           </Col>
         </Row>
-      </ProCard>
-      <ProCard
+      </TailCard>
+      <TailCard
         title="报价单价格"
         collapsible
         defaultCollapsed={false}
@@ -299,8 +299,8 @@ const QuoteConfigTab: React.FC<QuoteConfigTabProps> = ({
             </Form.Item>
           </Col>
         </Row>
-      </ProCard>
-      <ProCard
+      </TailCard>
+      <TailCard
         title="联系信息"
         collapsible
         defaultCollapsed={false}
@@ -372,8 +372,8 @@ const QuoteConfigTab: React.FC<QuoteConfigTabProps> = ({
             </Form.Item>
           </Col>
         </Row>
-      </ProCard>
-      <ProCard
+      </TailCard>
+      <TailCard
         title="负责人信息"
         collapsible
         defaultCollapsed={false}
@@ -423,8 +423,8 @@ const QuoteConfigTab: React.FC<QuoteConfigTabProps> = ({
             </Form.Item>
           </Col> */}
         </Row>
-      </ProCard>
-      <ProCard
+      </TailCard>
+      <TailCard
         title="备注"
         collapsible
         defaultCollapsed={false}
@@ -438,7 +438,7 @@ const QuoteConfigTab: React.FC<QuoteConfigTabProps> = ({
             </Form.Item>
           </Col>
         </Row>
-      </ProCard>
+      </TailCard>
     </>
   );
 };

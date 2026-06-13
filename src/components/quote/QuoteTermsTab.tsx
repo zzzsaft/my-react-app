@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Row, Col, Form, InputNumber, DatePicker } from "antd";
+import { Button, Row, Col, Form, InputNumber, DatePicker } from "@/components/ui/core";
 import TermsTable from "./TermsTable";
 import { Clause } from "@/types/types";
 

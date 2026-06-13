@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
-import { Spin, Button, Watermark } from "antd";
+import { Spin, Button, Watermark } from "@/components/ui/core";
 import ProductConfigurationForm from "@/components/quote/ProductConfigForm/ProductConfigurationForm";
 import { QuoteItem } from "@/types/types";
 import { QuoteService } from "@/api/services/quote.service";

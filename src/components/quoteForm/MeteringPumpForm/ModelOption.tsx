@@ -1,4 +1,4 @@
-import { ProCard, ProFormDependency } from "@ant-design/pro-components";
+import { TailCard, TailFormDependency } from "@/components/ui/proComponents";
 import {
   AutoComplete,
   Checkbox,
@@ -12,7 +12,7 @@ import {
   Segmented,
   Select,
   Tag,
-} from "antd";
+} from "@/components/ui/core";
 import { useEffect, useState } from "react";
 import ScrewForm from "../formComponents/ScrewForm";
 import { MATERIAL } from "@/util/MATERIAL";
@@ -35,7 +35,7 @@ export const ModelOption = () => {
 
   return (
     <>
-      <ProCard
+      <TailCard
         title="计量泵参数"
         collapsible
         defaultCollapsed={false}
@@ -436,7 +436,7 @@ export const ModelOption = () => {
             }}
           </Form.Item>
         </Row>
-      </ProCard>
+      </TailCard>
     </>
   );
 };

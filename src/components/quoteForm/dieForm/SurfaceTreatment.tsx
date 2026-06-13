@@ -1,10 +1,10 @@
-import { ProCard } from "@ant-design/pro-components";
-import { AutoComplete, Col, Form, Radio, Row } from "antd";
+import { TailCard } from "@/components/ui/proComponents";
+import { AutoComplete, Col, Form, Radio, Row } from "@/components/ui/core";
 import {
   autoCompleteIntervalInputRules,
   RadioWithInputRules,
 } from "@/util/rules";
-import TextArea from "antd/es/input/TextArea";
+import TextArea from "@/components/ui/TextArea";
 import { AutoCompleteIntervalInput } from "@/components/general/AutoCompleteIntervalInput";
 import { RadioWithInput } from "@/components/general/RadioWithInput";
 
@@ -69,7 +69,7 @@ const PLATING_REQUIREMENT = [
 
 export const SurfaceTreatment = () => {
   return (
-    <ProCard
+    <TailCard
       title="表面处理"
       collapsible
       defaultCollapsed={false}
@@ -278,6 +278,6 @@ export const SurfaceTreatment = () => {
           }}
         </Form.Item>
       </Row>
-    </ProCard>
+    </TailCard>
   );
 };

@@ -1,9 +1,9 @@
-import { Modal, Button, Skeleton } from "antd";
+import { Modal, Button, Skeleton } from "@/components/ui/core";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useQuoteStore } from "@/store/useQuoteStore";
-import { FormInstance } from "antd/lib";
+import { FormInstance } from "@/components/ui/core";
 import ProductConfigurationForm from "./ProductConfigurationForm";
-import { CheckOutlined, EditOutlined } from "@ant-design/icons";
+import { CheckOutlined, EditOutlined } from "@/components/ui/icons";
 import { QuoteItem } from "@/types/types";
 import ImportProductModal from "./ImportProductModal";
 import QuoteSharePopover from "../Share/QuoteSharePopover";

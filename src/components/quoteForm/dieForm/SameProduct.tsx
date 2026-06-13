@@ -1,4 +1,4 @@
-import { Button, Col, Form, Input, Row } from "antd";
+import { Button, Col, Form, Input, Row } from "@/components/ui/core";
 import { useState } from "react";
 import ImportProductModal from "@/components/quote/ProductConfigForm/ImportProductModal";
 

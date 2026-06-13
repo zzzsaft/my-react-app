@@ -14,15 +14,14 @@ import {
   Switch,
   Radio,
   Checkbox,
-} from "antd";
-import { UserOutlined, SearchOutlined } from "@ant-design/icons";
+} from "@/components/ui/core";
+import { UserOutlined, SearchOutlined } from "@/components/ui/icons";
 import "./style.less";
 import * as ww from "@wecom/jssdk";
-import Layout, { Content } from "antd/es/layout/layout";
+import Layout, { Content } from "@/components/ui/core";
 import { CustomerService } from "@/api/services/customer.service";
 import { DebounceSelect } from "@/components/general/DebounceSelect";
 import { AuthService } from "@/api/services/auth.service";
-import { values } from "lodash";
 import { useAuthStore } from "@/store/useAuthStore";
 import { getContext, register } from "@/util/wecom";
 

@@ -1,5 +1,5 @@
-import { AutoComplete, Input, InputNumber } from "antd";
-import { DefaultOptionType } from "antd/es/select";
+import { AutoComplete, Input, InputNumber } from "@/components/ui/core";
+import { DefaultOptionType } from "@/components/ui/types";
 
 interface AutoCompleteInputProps {
   id?: string;

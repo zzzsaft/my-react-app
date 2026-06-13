@@ -1,6 +1,6 @@
 import React from "react";
-import { Select, Space, Form } from "antd";
-import type { SelectProps, FormItemProps } from "antd";
+import { Select, Space, Form } from "@/components/ui/core";
+import type { SelectProps, FormItemProps } from "@/components/ui/core";
 import {
   IntervalInput,
   IntervalInputProps,

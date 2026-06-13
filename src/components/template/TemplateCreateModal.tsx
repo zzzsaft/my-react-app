@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Modal, Button } from "antd";
+import { Modal, Button } from "@/components/ui/core";
 import TemplateCreate, { TemplateCreateRef } from "./TemplateCreate";
 import { TemplateService } from "@/api/services/template.service";
 import { useTemplateStore } from "@/store/useTemplateStore";

@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
-import { Avatar, Button, Popover, Tag } from "antd";
-import type { PopoverProps } from "antd";
+import { Avatar, Button, Popover, Tag } from "@/components/ui/core";
+import type { PopoverProps } from "@/components/ui/core";
 import { useMemberStore } from "@/store/useMemberStore";
 import { getLocation } from "@/util/wecom";
 

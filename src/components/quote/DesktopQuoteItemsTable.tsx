@@ -1,15 +1,16 @@
-import { Button, Typography, App, Tooltip, Dropdown } from "antd";
-import { PlusOutlined, DeleteOutlined, LinkOutlined } from "@ant-design/icons";
+import { Button, Typography, App, Tooltip, Dropdown } from "@/components/ui/core";
+import { PlusOutlined, DeleteOutlined, LinkOutlined } from "@/components/ui/icons";
 import { useQuoteStore } from "@/store/useQuoteStore";
 import ProductCascader from "./ProductCascader";
 import { formatPrice } from "@/util/valueUtil";
 import { isTextSelecting } from "@/util/domUtil";
-import ProductConfigModal from "./ProductConfigForm/ProductConfigModal";
 import { QuoteItem } from "@/types/types";
-import { getFormType } from "./ProductConfigForm/formSelector";
-import { useMemo, useState } from "react";
+import { getFormType } from "./ProductConfigForm/formType";
+import { lazy, Suspense, useMemo, useState } from "react";
 import SortableTable, { DragHandle } from "../general/SortableTable";
 import { SortableColumn } from "../general/SortableColumn";
+
+const ProductConfigModal = lazy(() => import("./ProductConfigForm/ProductConfigModal"));
 interface QuoteItemsTableProps {
   quoteId: number;
   items: QuoteItem[];
@@ -385,13 +386,17 @@ const DesktopQuoteItemsTable: React.FC<QuoteItemsTableProps> = ({
       >
         <div />
       </Dropdown>
-      <ProductConfigModal
-        open={open}
-        setOpen={setOpen}
-        quoteId={quoteId}
-        quoteItem={currentItem ?? items[0]}
-        isClosed={isClosed}
-      />
+      {open && (
+        <Suspense fallback={null}>
+          <ProductConfigModal
+            open={open}
+            setOpen={setOpen}
+            quoteId={quoteId}
+            quoteItem={currentItem ?? items[0]}
+            isClosed={isClosed}
+          />
+        </Suspense>
+      )}
     </>
   );
 };
