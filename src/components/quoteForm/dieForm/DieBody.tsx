@@ -187,7 +187,7 @@ export const DieBody: React.FC<DieBodyProps> = ({ isHollow = false }) => {
         <Col xs={12} md={6}>
           <Form.Item
             name="topFlowRestrictor"
-            label="上模阻流棒"
+            label="阻流棒"
             rules={[
               { required: true, message: "请选择上模阻流棒" },
               // ...RadioWithInputRules,
@@ -195,13 +195,13 @@ export const DieBody: React.FC<DieBodyProps> = ({ isHollow = false }) => {
           >
             <AutoCompleteInput
               options={UPPER_OPTIONS}
-              placeholder="上模阻流棒"
+              placeholder="阻流棒"
               type="text"
               addonAfter={null}
             />
           </Form.Item>
         </Col>
-        <Col xs={12} md={6}>
+        {/* <Col xs={12} md={6}>
           <Form.Item
             name="bottomFlowRestrictor"
             label="下模阻流棒"
@@ -215,7 +215,7 @@ export const DieBody: React.FC<DieBodyProps> = ({ isHollow = false }) => {
               // disabled={true}
             />
           </Form.Item>
-        </Col>
+        </Col> */}
         <Form.Item noStyle dependencies={["lowerLipStructure"]}>
           {({ getFieldValue }) =>
             getFieldValue("lowerLipStructure")?.includes("整体") ? null : (
