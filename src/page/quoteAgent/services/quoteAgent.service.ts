@@ -7,6 +7,12 @@ import type {
   CandidateClustersResponse,
   CandidateStatus,
   CandidatesResponse,
+  ContractArchiveDetailResponse,
+  ContractArchiveReadinessResponse,
+  ContractArchiveVersionResponse,
+  ContractArchiveVersionsResponse,
+  ContractListResponse,
+  ContractSummary,
   DictionaryOptions,
   DictionaryTermType,
   DictionaryValue,
@@ -17,10 +23,19 @@ import type {
   ProductMasterDataSearchResponse,
   ProductMasterDataTermType,
   ProductModelBindingPayload,
+  ProductBindingPayload,
+  ProductConfigSearchResponse,
   ProductTypeOption,
   RenormalizeBatchParams,
   RenormalizeBatchResponse,
   ReviewOperation,
+  SplitTermTypeCandidatePayload,
+  UnitAlias,
+  UnitAliasPayload,
+  UnitAliasesResponse,
+  UnitCandidate,
+  UnitCandidateReviewPromptResponse,
+  UnitCandidatesResponse,
 } from "../types";
 
 const unwrap = <T>(response: { data: T }) => response.data;
@@ -61,12 +76,64 @@ const dictionaryValueFromResponse = (response: DictionaryValue | { value: Dictio
     ? response.value
     : response as DictionaryValue;
 
+const unitAliasesFromResponse = (response: UnitAliasesResponse | UnitAlias[] | unknown): UnitAlias[] => {
+  if (Array.isArray(response)) return response;
+  const value = response as UnitAliasesResponse;
+  if (Array.isArray(value?.aliases)) return value.aliases;
+  if (Array.isArray(value?.unitAliases)) return value.unitAliases;
+  if (Array.isArray(value?.items)) return value.items;
+  if (Array.isArray(value?.data)) return value.data;
+  if (value?.data && !Array.isArray(value.data)) {
+    if (Array.isArray(value.data.aliases)) return value.data.aliases;
+    if (Array.isArray(value.data.items)) return value.data.items;
+  }
+  return [];
+};
+
+const unitCandidatesFromResponse = (response: UnitCandidatesResponse | UnitCandidate[] | unknown): UnitCandidate[] => {
+  if (Array.isArray(response)) return response;
+  const value = response as UnitCandidatesResponse;
+  if (Array.isArray(value?.candidates)) return value.candidates;
+  if (Array.isArray(value?.unitCandidates)) return value.unitCandidates;
+  if (Array.isArray(value?.items)) return value.items;
+  if (Array.isArray(value?.data)) return value.data;
+  if (value?.data && !Array.isArray(value.data)) {
+    if (Array.isArray(value.data.candidates)) return value.data.candidates;
+    if (Array.isArray(value.data.items)) return value.data.items;
+  }
+  return [];
+};
+
 export const quoteAgentService = {
+  async getContractSummary(): Promise<ContractSummary> {
+    return unwrap(await apiClient.get("/productConfigAgent/contracts/summary", slowRequest));
+  },
+
+  async listContracts(params: {
+    page?: number;
+    pageSize?: number;
+    status?: "uploaded" | "normalized" | "archived" | "";
+    q?: string;
+    productNumber?: string;
+    customerId?: string;
+  }): Promise<ContractListResponse> {
+    const { status, ...rest } = params;
+    return unwrap(
+      await apiClient.get("/productConfigAgent/contracts", {
+        params: {
+          ...rest,
+          status: status || undefined,
+        },
+        ...slowRequest,
+      }),
+    );
+  },
+
   async uploadContract(file: File): Promise<ExtractionDetail> {
     const formData = new FormData();
     formData.append("file", file);
     return unwrap(
-      await apiClient.post("/quoteAgent/contracts/upload", formData, {
+      await apiClient.post("/productConfigAgent/contracts/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
         timeout: 120000,
       }),
@@ -79,33 +146,96 @@ export const quoteAgentService = {
     status?: string;
     q?: string;
   }): Promise<DocumentListResponse> {
-    return unwrap(await apiClient.get("/quoteAgent/extractions", { params, ...slowRequest }));
+    return unwrap(await apiClient.get("/productConfigAgent/extractions", { params, ...slowRequest }));
   },
 
   async getExtraction(documentId: string | number): Promise<ExtractionDetail> {
-    return unwrap(await apiClient.get(`/quoteAgent/extractions/${documentId}`, slowRequest));
+    return unwrap(await apiClient.get(`/productConfigAgent/extractions/${documentId}`, slowRequest));
   },
 
   async getContract(documentId: string | number): Promise<ExtractionDetail> {
-    return unwrap(await apiClient.get(`/quoteAgent/contracts/${documentId}`, slowRequest));
+    return unwrap(await apiClient.get(`/productConfigAgent/contracts/${documentId}`, slowRequest));
+  },
+
+  async archiveContract(
+    documentId: string | number,
+    body: { archivedBy?: string; reviewedBy?: string; force?: boolean } = {},
+  ): Promise<ContractArchiveDetailResponse> {
+    return unwrap(await apiClient.post(`/productConfigAgent/contracts/${documentId}/archive`, body, slowRequest));
+  },
+
+  async getContractArchiveReadiness(documentId: string | number): Promise<ContractArchiveReadinessResponse> {
+    return unwrap(await apiClient.get(`/productConfigAgent/contracts/${documentId}/archive-readiness`, slowRequest));
+  },
+
+  async getContractArchive(archiveId: string | number): Promise<ContractArchiveDetailResponse> {
+    return unwrap(await apiClient.get(`/productConfigAgent/contract-archives/${archiveId}`, slowRequest));
+  },
+
+  async updateContractArchive(
+    archiveId: string | number,
+    body: {
+      editedBy?: string;
+      changes: Array<{ path: string; value: unknown }>;
+    },
+  ): Promise<ContractArchiveDetailResponse> {
+    return unwrap(await apiClient.patch(`/productConfigAgent/contract-archives/${archiveId}`, body, slowRequest));
+  },
+
+  async listContractArchiveVersions(
+    archiveId: string | number,
+  ): Promise<ContractArchiveVersionsResponse> {
+    return unwrap(await apiClient.get(`/productConfigAgent/contract-archives/${archiveId}/versions`, slowRequest));
+  },
+
+  async getContractArchiveVersion(
+    archiveId: string | number,
+    version: string | number,
+  ): Promise<ContractArchiveVersionResponse> {
+    return unwrap(await apiClient.get(`/productConfigAgent/contract-archives/${archiveId}/versions/${version}`, slowRequest));
+  },
+
+  async updateItemProductBindings(
+    archiveId: string | number,
+    itemId: string | number,
+    body: {
+      editedBy?: string;
+      bindings: ProductBindingPayload[];
+    },
+  ): Promise<ContractArchiveDetailResponse> {
+    return unwrap(
+      await apiClient.put(
+        `/productConfigAgent/contract-archives/${archiveId}/items/${itemId}/product-bindings`,
+        body,
+        slowRequest,
+      ),
+    );
+  },
+
+  async searchProductConfigs(params: {
+    productNumber: string;
+    customerId?: string;
+    includeErp?: boolean;
+  }): Promise<ProductConfigSearchResponse> {
+    return unwrap(await apiClient.get("/productConfigAgent/product-configs/search", { params, ...slowRequest }));
   },
 
   async renormalize(documentId: string | number): Promise<ExtractionDetail> {
     return unwrap(
-      await apiClient.post(`/quoteAgent/extractions/${documentId}/renormalize`, undefined, slowRequest),
+      await apiClient.post(`/productConfigAgent/extractions/${documentId}/renormalize`, undefined, slowRequest),
     );
   },
 
   async renormalizeBatch(params: RenormalizeBatchParams): Promise<RenormalizeBatchResponse> {
-    return unwrap(await apiClient.post("/quoteAgent/extractions/renormalize-batch", params, slowRequest));
+    return unwrap(await apiClient.post("/productConfigAgent/extractions/renormalize-batch", params, slowRequest));
   },
 
   async reextract(documentId: string | number, params?: { llmModel?: string }): Promise<ExtractionDetail> {
-    return unwrap(await apiClient.post(`/quoteAgent/extractions/${documentId}/reextract`, params ?? {}, slowRequest));
+    return unwrap(await apiClient.post(`/productConfigAgent/extractions/${documentId}/reextract`, params ?? {}, slowRequest));
   },
 
   async openDocumentFile(documentId: string | number): Promise<Record<string, unknown>> {
-    return unwrap(await apiClient.post(`/quoteAgent/documents/${documentId}/open-file`));
+    return unwrap(await apiClient.post(`/productConfigAgent/documents/${documentId}/open-file`));
   },
 
   async startPendingLlmUpload(params?: {
@@ -113,11 +243,11 @@ export const quoteAgentService = {
     llmModel?: string;
     concurrency?: number;
   }): Promise<{ job: PendingLlmUploadJob }> {
-    return unwrap(await apiClient.post("/quoteAgent/documents/pending-llm-upload/start", params ?? {}, slowRequest));
+    return unwrap(await apiClient.post("/productConfigAgent/documents/pending-llm-upload/start", params ?? {}, slowRequest));
   },
 
   async getPendingLlmUploadStatus(): Promise<{ job: PendingLlmUploadJob | null }> {
-    return unwrap(await apiClient.get("/quoteAgent/documents/pending-llm-upload/status"));
+    return unwrap(await apiClient.get("/productConfigAgent/documents/pending-llm-upload/status"));
   },
 
   async getCandidates(params: {
@@ -125,32 +255,99 @@ export const quoteAgentService = {
     documentId?: string | number;
     recheckPendingCandidates?: boolean;
   }): Promise<CandidatesResponse> {
-    return unwrap(await apiClient.get("/quoteAgent/candidates", { params, ...slowRequest }));
+    return unwrap(await apiClient.get("/productConfigAgent/candidates", { params, ...slowRequest }));
+  },
+
+  async getUnitAliases(): Promise<UnitAlias[]> {
+    return unitAliasesFromResponse(
+      unwrap(await apiClient.get<UnitAliasesResponse | UnitAlias[]>("/productConfigAgent/dictionary/unit-aliases", slowRequest)),
+    );
+  },
+
+  async createUnitAlias(payload: UnitAliasPayload): Promise<UnitAlias> {
+    const response = unwrap<UnitAlias | { alias: UnitAlias; unitAlias?: UnitAlias } | { unitAlias: UnitAlias }>(
+      await apiClient.post("/productConfigAgent/dictionary/unit-aliases", payload, slowRequest),
+    );
+    if ("unitAlias" in response && response.unitAlias) return response.unitAlias;
+    if ("alias" in response && response.alias) return response.alias;
+    return response as UnitAlias;
+  },
+
+  async updateUnitAlias(id: string | number, payload: Partial<UnitAliasPayload>): Promise<UnitAlias> {
+    const response = unwrap<UnitAlias | { alias: UnitAlias; unitAlias?: UnitAlias } | { unitAlias: UnitAlias }>(
+      await apiClient.patch(
+        `/productConfigAgent/dictionary/unit-aliases/${encodeURIComponent(String(id))}`,
+        payload,
+        slowRequest,
+      ),
+    );
+    if ("unitAlias" in response && response.unitAlias) return response.unitAlias;
+    if ("alias" in response && response.alias) return response.alias;
+    return response as UnitAlias;
+  },
+
+  async getUnitCandidates(params: { status: CandidateStatus }): Promise<UnitCandidate[]> {
+    return unitCandidatesFromResponse(
+      unwrap(
+        await apiClient.get<UnitCandidatesResponse | UnitCandidate[]>("/productConfigAgent/candidates/units", {
+          params,
+          ...slowRequest,
+        }),
+      ),
+    );
+  },
+
+  async approveUnitCandidate(candidateId: string | number, payload: UnitAliasPayload): Promise<unknown> {
+    return unwrap(
+      await apiClient.post(
+        `/productConfigAgent/candidates/units/${encodeURIComponent(String(candidateId))}/approve`,
+        payload,
+        slowRequest,
+      ),
+    );
+  },
+
+  async rejectUnitCandidate(
+    candidateId: string | number,
+    payload: { reason?: string; reviewedBy?: string } = { reviewedBy: defaultReviewer },
+  ): Promise<unknown> {
+    return unwrap(
+      await apiClient.post(
+        `/productConfigAgent/candidates/units/${encodeURIComponent(String(candidateId))}/reject`,
+        payload,
+        slowRequest,
+      ),
+    );
+  },
+
+  async getUnitCandidateReviewPrompt(): Promise<UnitCandidateReviewPromptResponse | string> {
+    return unwrap(await apiClient.get("/productConfigAgent/candidates/units/review-prompt", slowRequest));
   },
 
   async getCandidateClusterReviewPrompt(): Promise<CandidateClusterReviewPromptResponse | string> {
-    return unwrap(await apiClient.get("/quoteAgent/candidates/clusters/review-prompt", slowRequest));
+    return unwrap(await apiClient.get("/productConfigAgent/candidates/clusters/review-prompt", slowRequest));
   },
 
   async getCandidateClusters(params: CandidateClusterFilters): Promise<CandidateClustersResponse> {
-    return unwrap(await apiClient.get("/quoteAgent/candidates/clusters", { params, ...slowRequest }));
+    return unwrap(await apiClient.get("/productConfigAgent/candidates/clusters", { params, ...slowRequest }));
   },
 
-  async suggestCandidateClusterReviewsBatch(params: CandidateClusterFilters & {
-    candidateType?: string;
+  async suggestCandidateClusterReviewsBatch(params: {
     clusterIds?: Array<string | number>;
-    force?: boolean;
+    status?: CandidateStatus;
     model?: string;
+    priorDecisions?: unknown[];
+    runPolicy?: Record<string, unknown>;
   }): Promise<unknown> {
-    return unwrap(await apiClient.post("/quoteAgent/candidates/clusters/suggestions/batch", params, slowRequest));
+    return unwrap(await apiClient.post("/productConfigAgent/candidates/clusters/suggestions/batch", params, slowRequest));
   },
 
   async getDictionaryOptions(): Promise<DictionaryOptions> {
     const [termTypesResponse, valuesResponse, productTypesResponse] = await Promise.all([
-      apiClient.get<{ termTypes: DictionaryTermType[] }>("/quoteAgent/dictionary/term-types", slowRequest),
-      apiClient.get<{ values: DictionaryValue[] }>("/quoteAgent/dictionary/values", slowRequest),
+      apiClient.get<{ termTypes: DictionaryTermType[] }>("/productConfigAgent/dictionary/term-types", slowRequest),
+      apiClient.get<{ values: DictionaryValue[] }>("/productConfigAgent/dictionary/values", slowRequest),
       apiClient.get<ProductTypeOption[] | { productTypes: ProductTypeOption[] }>(
-        "/quoteAgent/dictionary/product-types",
+        "/productConfigAgent/dictionary/product-types",
         slowRequest,
       ),
     ]);
@@ -166,7 +363,7 @@ export const quoteAgentService = {
   },
 
   async getDictionaryValues(termType?: string): Promise<DictionaryValue[]> {
-    const response = await apiClient.get<{ values: DictionaryValue[] }>("/quoteAgent/dictionary/values", {
+    const response = await apiClient.get<{ values: DictionaryValue[] }>("/productConfigAgent/dictionary/values", {
       params: termType ? { termType } : undefined,
       ...slowRequest,
     });
@@ -176,7 +373,7 @@ export const quoteAgentService = {
   async createTermType(payload: Partial<DictionaryTermType>): Promise<DictionaryTermType> {
     return dictionaryTermTypeFromResponse(
       unwrap(await apiClient.post<DictionaryTermType | { termType: DictionaryTermType }>(
-        "/quoteAgent/dictionary/term-types",
+        "/productConfigAgent/dictionary/term-types",
         payload,
         slowRequest,
       )),
@@ -189,7 +386,7 @@ export const quoteAgentService = {
   ): Promise<DictionaryTermType> {
     return dictionaryTermTypeFromResponse(unwrap(
       await apiClient.patch(
-        `/quoteAgent/dictionary/term-types/${encodeURIComponent(String(termTypeId))}`,
+        `/productConfigAgent/dictionary/term-types/${encodeURIComponent(String(termTypeId))}`,
         payload,
         slowRequest,
       ),
@@ -199,7 +396,7 @@ export const quoteAgentService = {
   async createDictionaryValue(payload: Partial<DictionaryValue>): Promise<DictionaryValue> {
     return dictionaryValueFromResponse(
       unwrap(await apiClient.post<DictionaryValue | { value: DictionaryValue }>(
-        "/quoteAgent/dictionary/values",
+        "/productConfigAgent/dictionary/values",
         payload,
         slowRequest,
       )),
@@ -212,7 +409,7 @@ export const quoteAgentService = {
   ): Promise<DictionaryValue> {
     return dictionaryValueFromResponse(unwrap(
       await apiClient.patch(
-        `/quoteAgent/dictionary/values/${encodeURIComponent(String(valueId))}`,
+        `/productConfigAgent/dictionary/values/${encodeURIComponent(String(valueId))}`,
         payload,
         slowRequest,
       ),
@@ -224,7 +421,16 @@ export const quoteAgentService = {
     params?: { model?: string; force?: boolean },
   ): Promise<unknown> {
     return unwrap(
-      await apiClient.post(`/quoteAgent/candidates/term-type/${candidateId}/suggest`, params ?? {}, slowRequest),
+      await apiClient.post(`/productConfigAgent/candidates/term-type/${candidateId}/suggest`, params ?? {}, slowRequest),
+    );
+  },
+
+  async splitTermTypeCandidate(
+    candidateId: string | number,
+    payload: SplitTermTypeCandidatePayload,
+  ): Promise<unknown> {
+    return unwrap(
+      await apiClient.post(`/productConfigAgent/candidates/term-type/${candidateId}/split`, payload, slowRequest),
     );
   },
 
@@ -233,7 +439,7 @@ export const quoteAgentService = {
     params?: { model?: string; force?: boolean },
   ): Promise<unknown> {
     return unwrap(
-      await apiClient.post(`/quoteAgent/candidates/value/${candidateId}/split-suggest`, params ?? {}, slowRequest),
+      await apiClient.post(`/productConfigAgent/candidates/value/${candidateId}/split-suggest`, params ?? {}, slowRequest),
     );
   },
 
@@ -243,7 +449,7 @@ export const quoteAgentService = {
     model?: string;
     force?: boolean;
   }): Promise<unknown> {
-    return unwrap(await apiClient.post("/quoteAgent/candidates/suggestions/batch", params, slowRequest));
+    return unwrap(await apiClient.post("/productConfigAgent/candidates/suggestions/batch", params, slowRequest));
   },
 
   async searchProductMasterData(
@@ -263,7 +469,7 @@ export const quoteAgentService = {
     const { sourceTable, candidate, ...rest } = payload;
     return unwrap(
       await apiClient.post(
-        "/quoteAgent/master-data/model-binding",
+        "/productConfigAgent/master-data/model-binding",
         {
           ...rest,
           source: sourceTable,
@@ -283,7 +489,7 @@ export const quoteAgentService = {
     options: BatchReviewOptions = { deferCandidateRecheck: true },
   ): Promise<BatchReviewResponse> {
     return unwrap(
-      await apiClient.post("/quoteAgent/candidates/reviews/batch", {
+      await apiClient.post("/productConfigAgent/candidates/reviews/batch", {
         ...options,
         operations: operations.map(withReviewer),
       }, slowRequest),

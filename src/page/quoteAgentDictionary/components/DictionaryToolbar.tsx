@@ -30,7 +30,7 @@ export function DictionaryToolbar({
         </div>
       </div>
       <div className="flex flex-wrap gap-2">
-        <Button onClick={onReload} loading={loading}>刷新</Button>
+        <Button onClick={() => onReload()} loading={loading}>刷新</Button>
         <Button
           type="primary"
           icon={<PlusOutlined />}

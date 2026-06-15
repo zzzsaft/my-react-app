@@ -26,11 +26,12 @@ interface Props {
 
 type FormState = Record<string, any>;
 
-const valueKinds = ["enum", "enums", "text", "number", "boolean", "date"];
+const valueKinds = ["enum", "enums", "text", "number", "number_unit", "boolean", "date"];
 
 const termActions: Array<{ value: ReviewAction; label: string; hint: string }> = [
   { value: "create_term_type", label: "新增字段 Key", hint: "把原文字段加入字段字典" },
   { value: "approve_term_type_as_alias", label: "作为已有 Key alias", hint: "归并到已有字段 Key" },
+  { value: "split_term_type", label: "拆分复合字段", hint: "把复合字段名拆成多个字段 Key" },
   { value: "reject", label: "拒绝", hint: "标记为无效候选" },
 ];
 
@@ -74,6 +75,18 @@ function initialState(candidate: Candidate, field: QuoteAgentField, candidateTyp
       splitsText: Array.isArray(draft.payload.splits)
         ? draft.payload.splits.map((item: any) => `${item.termType || ""} | ${item.rawValue || ""}`).join("\n")
         : "",
+      termTypeSplitsText: Array.isArray(draft.payload.splits)
+        ? draft.payload.splits
+            .map((item: any) => [
+              item.termType,
+              item.displayName,
+              item.valueKind,
+              item.rawValue,
+              join(item.aliasNames),
+              item.canonicalValue,
+            ].filter((value) => value !== undefined && value !== null && value !== "").join(" | "))
+            .join("\n")
+        : "",
     };
   }
 
@@ -100,6 +113,7 @@ function initialState(candidate: Candidate, field: QuoteAgentField, candidateTyp
     termId: "",
     valuesText: `${raw} | ${raw} | ${raw}`,
     splitsText: `${candidate.termType || ""} | ${raw}`,
+    termTypeSplitsText: `${candidate.termType || ""} | ${name} | ${candidate.valueKind || "text"} | ${raw} | ${name}`,
     applicableProductTypes: [],
     editTermTypeSettings: false,
     appendApplicableProductType: true,
@@ -125,6 +139,23 @@ function parseSplits(text: string) {
       return { termType, rawValue };
     })
     .filter((item) => item.termType && item.rawValue);
+}
+
+function parseTermTypeSplits(text: string) {
+  return text
+    .split(/\n+/)
+    .map((line) => {
+      const [termType, displayName, valueKind, rawValue, aliases, canonicalValue] = line.split("|").map((item) => item.trim());
+      return {
+        termType,
+        displayName: displayName || undefined,
+        valueKind: valueKind || "text",
+        rawValue: rawValue || undefined,
+        aliasNames: list(aliases),
+        canonicalValue: canonicalValue || undefined,
+      };
+    })
+    .filter((item) => item.termType);
 }
 
 function payloadFor(action: ReviewAction, state: FormState) {
@@ -156,6 +187,7 @@ function payloadFor(action: ReviewAction, state: FormState) {
       appendApplicableProductType: state.appendApplicableProductType === true,
     };
   }
+  if (action === "split_term_type") return { splits: parseTermTypeSplits(state.termTypeSplitsText || "") };
   if (action === "create_value") {
     return {
       termType: state.termType,
@@ -402,6 +434,12 @@ export function FieldReviewPanel({ field, candidate, candidateType, options, dra
                 </div>
               )}
             </div>
+          )}
+
+          {action === "split_term_type" && (
+            <Field label="拆分行，格式：termType | 中文名 | valueKind | rawValue | alias1,alias2 | canonicalValue">
+              <textarea className="min-h-36 w-full resize-y border border-slate-300 bg-white px-2 py-1.5 text-xs outline-none focus:border-blue-500" value={state.termTypeSplitsText} onChange={(event) => update("termTypeSplitsText", event.target.value)} />
+            </Field>
           )}
 
           {action === "create_value" && (

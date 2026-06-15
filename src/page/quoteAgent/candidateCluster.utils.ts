@@ -42,6 +42,7 @@ const normalizeReviewAction = (action: unknown, candidateType: unknown): ReviewA
   if (
     value === "create_term_type" ||
     value === "approve_term_type_as_alias" ||
+    value === "split_term_type" ||
     value === "create_value" ||
     value === "approve_value_as_alias" ||
     value === "split_value" ||
@@ -179,6 +180,7 @@ export function promptDataFromClusterResponse(response: unknown): CandidateClust
     termTypes: asArray(value?.options?.termTypes ?? value?.termTypes),
     enumValues: asArray(value?.options?.enumValues ?? value?.enumValues),
     priorDecisions: asArray(value?.priorDecisions ?? value?.prior_decisions),
+    runPolicy: value?.options?.runPolicy ?? value?.runPolicy ?? value?.run_policy,
   };
 }
 
@@ -194,7 +196,7 @@ const requiresTermType = (action: ReviewAction) =>
   action === "update_term_type_value_kind";
 
 const allowedActionsByCandidateType: Record<CandidateType, Set<ReviewAction>> = {
-  term_type: new Set(["create_term_type", "approve_term_type_as_alias", "reject"]),
+  term_type: new Set(["create_term_type", "approve_term_type_as_alias", "split_term_type", "reject"]),
   value: new Set([
     "create_value",
     "approve_value_as_alias",

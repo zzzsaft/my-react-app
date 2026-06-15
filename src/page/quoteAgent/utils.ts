@@ -1,8 +1,12 @@
 import type {
+  ArchiveItemField,
   BatchReviewResponse,
   Candidate,
   CandidateType,
+  DictionaryOptions,
   ExtractionDetail,
+  ProductBinding,
+  ProductBindingPayload,
   QuoteAgentDocument,
   QuoteAgentField,
   QuoteAgentItem,
@@ -17,6 +21,302 @@ export const errorText = (error: unknown) =>
   (error as any)?.response?.data?.error ?? (error as any)?.response?.data?.message ?? (error as any)?.message ?? String(error);
 export const draftKey = (type: CandidateType, id: string | number) => `${type}:${id}`;
 export const json = (value: unknown) => JSON.stringify(value ?? null, null, 2);
+export const textValue = (value: unknown, fallback = "-") =>
+  value === undefined || value === null || value === "" ? fallback : String(value);
+
+export const formatDateTime = (value?: string | null) => {
+  if (!value) return "-";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleString("zh-CN", { hour12: false });
+};
+
+export const getByDotPath = (source: unknown, path: string) => {
+  if (!path) return source;
+  return path.split(".").reduce<any>((current, segment) => {
+    if (current == null) return undefined;
+    const key = /^\d+$/.test(segment) ? Number(segment) : segment;
+    return current[key];
+  }, source as any);
+};
+
+export const setByDotPath = <T,>(source: T, path: string, value: unknown): T => {
+  const segments = path.split(".");
+  const root: any = Array.isArray(source) ? [...source] : { ...(source as any) };
+  let cursor = root;
+  segments.forEach((segment, index) => {
+    const key: string | number = /^\d+$/.test(segment) ? Number(segment) : segment;
+    if (index === segments.length - 1) {
+      cursor[key] = value;
+      return;
+    }
+    const nextSegment = segments[index + 1];
+    const next = cursor[key];
+    cursor[key] = Array.isArray(next)
+      ? [...next]
+      : next && typeof next === "object"
+        ? { ...next }
+        : /^\d+$/.test(nextSegment)
+          ? []
+          : {};
+    cursor = cursor[key];
+  });
+  return root;
+};
+
+export const hasEvidence = (value: unknown) => {
+  if (value == null) return false;
+  if (Array.isArray(value)) return value.length > 0;
+  if (typeof value === "object") return Object.keys(value as Record<string, unknown>).length > 0;
+  return String(value).trim() !== "";
+};
+
+export const fieldConfidence = (field: ArchiveItemField | QuoteAgentField) => {
+  const raw = (field as any).confidence ?? (field as any).dictionary?.confidence ?? (field as any).matchConfidence;
+  const value = Number(raw);
+  return Number.isFinite(value) ? value : null;
+};
+
+export const isLowConfidence = (field: ArchiveItemField | QuoteAgentField) => {
+  const confidence = fieldConfidence(field);
+  return confidence !== null && confidence < 0.75;
+};
+
+export const fieldOriginalName = (field: ArchiveItemField | QuoteAgentField) =>
+  String(
+    (field as any).field_name ||
+      (field as any).fieldName ||
+      (field as any).name ||
+      (field as any).dictionary?.term_type ||
+      (field as any).dictionary?.termType ||
+      "字段",
+  );
+
+export function fieldDisplayName(field: ArchiveItemField | QuoteAgentField, options?: DictionaryOptions) {
+  const dictionary = (field as any).dictionary || {};
+  const termType = fieldTermType(field);
+  const term = options?.termTypes.find((item) => String(item.termType ?? (item as any).term_type ?? "") === termType);
+  return String(
+    dictionary.quote_display_name ||
+      dictionary.quoteDisplayName ||
+      dictionary.display_name ||
+      dictionary.displayName ||
+      fieldOriginalName(field) ||
+      term?.quoteDisplayName ||
+      term?.displayName ||
+      dictionary.term_display_name ||
+      dictionary.termDisplayName ||
+      dictionary.field_display_name ||
+      dictionary.fieldDisplayName,
+  );
+}
+
+export const fieldRawValue = (field: ArchiveItemField | QuoteAgentField) =>
+  (field as any).raw_value ?? (field as any).rawValue ?? (field as any).value ?? "";
+
+export function hasMeaningfulRawValue(field: ArchiveItemField | QuoteAgentField) {
+  const value = String(fieldRawValue(field) ?? "").trim();
+  return Boolean(value && value !== "-" && value.toUpperCase() !== "UNKNOWN");
+}
+
+export const fieldWarnings = (field: ArchiveItemField | QuoteAgentField) => asArray((field as any).warnings);
+
+export function fieldDictionaryMatched(field: ArchiveItemField | QuoteAgentField) {
+  return Boolean((field as any).dictionary?.field_matched === true || (field as any).dictionary?.matched === true);
+}
+
+export function fieldDictionaryDisplayName(field: ArchiveItemField | QuoteAgentField) {
+  const dictionary = (field as any).dictionary || {};
+  const values = Array.isArray(dictionary.values) ? dictionary.values : [];
+  if (values.length) {
+    return values
+      .map((value: any) => value.displayName || value.display_name || value.canonicalValue || value.canonical_value || value.rawValue || value.raw_value)
+      .filter(Boolean)
+      .join(" / ");
+  }
+  return dictionary.display_name || dictionary.displayName || dictionary.canonical_value || dictionary.canonicalValue || "";
+}
+
+export function fieldDisplayValue(field: ArchiveItemField | QuoteAgentField) {
+  const displayName = fieldDictionaryDisplayName(field);
+  if (fieldDictionaryMatched(field) && displayName) return displayName;
+  return hasMeaningfulRawValue(field) ? fieldRawValue(field) : "";
+}
+
+export function fieldTermType(field: ArchiveItemField | QuoteAgentField) {
+  const dictionary = (field as any).dictionary || {};
+  return String(dictionary.term_type || dictionary.termType || dictionary.normalized_field_name || dictionary.normalizedFieldName || "");
+}
+
+export function fieldValueKind(field: ArchiveItemField | QuoteAgentField, options?: DictionaryOptions) {
+  const dictionary = (field as any).dictionary || {};
+  const directValueKind = dictionary.value_kind || dictionary.valueKind || (field as any).value_kind || (field as any).valueKind;
+  if (directValueKind) return String(directValueKind);
+  const termType = fieldTermType(field);
+  return String(options?.termTypes.find((item) => String(item.termType ?? "") === termType)?.valueKind ?? "");
+}
+
+export function isEnumField(field: ArchiveItemField | QuoteAgentField, options?: DictionaryOptions) {
+  const valueKind = fieldValueKind(field, options);
+  return valueKind === "enum" || valueKind === "enums";
+}
+
+export function fieldEnumOptions(field: ArchiveItemField | QuoteAgentField, options?: DictionaryOptions) {
+  const dictionary = (field as any).dictionary || {};
+  const termType = fieldTermType(field);
+  const values = [
+    ...asArray(dictionary.values || dictionary.enumValues || (field as any).enumValues),
+    ...asArray(options?.values).filter((value: any) => String(value?.termType ?? value?.term_type ?? "") === termType),
+  ];
+  return values
+    .map((value: any) => ({
+      canonicalValue: String(value?.canonical_value ?? value?.canonicalValue ?? value?.value ?? value?.enumValue ?? ""),
+      displayName: String(value?.display_name ?? value?.displayName ?? value?.label ?? value?.canonical_value ?? value?.canonicalValue ?? value?.value ?? ""),
+    }))
+    .filter((value) => value.displayName)
+    .filter((value, index, array) => array.findIndex((item) => item.displayName === value.displayName) === index);
+}
+
+export function isSplitOriginalRetainedField(field: ArchiveItemField | QuoteAgentField) {
+  const warningTypes = new Set(fieldWarnings(field).map((warning: any) => warning?.type));
+  return (field as any).original === true || warningTypes.has("split_original_retained");
+}
+
+export const hiddenWarningTypes = new Set([
+  "split_original_retained",
+  "empty_value",
+  "unknown_value",
+  "term_type_candidate_previously_rejected",
+  "value_candidate_previously_rejected",
+]);
+
+export const docInfoFieldTypes = new Set([
+  "business_owner",
+  "contract_creator",
+  "product_number",
+  "contract_number",
+  "order_number",
+  "customer",
+  "customer_name",
+  "customer_id",
+  "date",
+  "order_date",
+  "delivery_date",
+]);
+
+export function hideInMainConfig(field: ArchiveItemField | QuoteAgentField) {
+  const dictionary = (field as any).dictionary || {};
+  const termType = String(dictionary.term_type || "");
+  return (
+    (field as any).original === true ||
+    dictionary.field_matched !== true ||
+    !termType ||
+    docInfoFieldTypes.has(termType) ||
+    fieldWarnings(field).some((warning: any) => hiddenWarningTypes.has(String(warning?.type ?? "")))
+  );
+}
+
+export function isMainConfigField(field: ArchiveItemField | QuoteAgentField) {
+  return !hideInMainConfig(field);
+}
+
+export function isUnmatchedConfigField(field: ArchiveItemField | QuoteAgentField) {
+  const dictionary = (field as any).dictionary || {};
+  const termType = String(dictionary.term_type || "");
+  const blockedByWarning = fieldWarnings(field).some((warning: any) => hiddenWarningTypes.has(String(warning?.type ?? "")));
+  return (
+    (field as any).original !== true &&
+    !blockedByWarning &&
+    !docInfoFieldTypes.has(termType) &&
+    (dictionary.field_matched !== true || !termType)
+  );
+}
+
+export const bindingToPayload = (binding: ProductBinding): ProductBindingPayload => ({
+  productNumber: String(binding.productNumber ?? "").trim(),
+  role: binding.role || "unknown",
+  quantity: binding.quantity ?? null,
+  bindingSource: binding.bindingSource || "manual",
+  confidence: binding.confidence ?? null,
+  erpProductId: binding.erpProductId ?? null,
+  erpParentProductNumber: binding.erpParentProductNumber ?? null,
+  erpMatchStatus: binding.erpMatchStatus || "manual",
+  priceAmount: binding.price?.amount ?? null,
+  priceCurrency: binding.price?.currency ?? null,
+  priceSource: binding.price?.source ?? null,
+  evidence: binding.evidence,
+  note: binding.note ?? null,
+});
+
+export const changeSummaryText = (value: unknown) => {
+  if (!value) return "-";
+  if (typeof value === "string") return value;
+  if (Array.isArray(value)) return value.map((item) => changeSummaryText(item)).join("；");
+  if (typeof value === "object") {
+    const record = value as Record<string, unknown>;
+    const path = textValue(record.path, "");
+    if (path) {
+      const after = record.after ?? record.value;
+      if (/^items\.\d+\.fields$/.test(path)) {
+        const before = record.before;
+        if (Array.isArray(before) && Array.isArray(after)) {
+          const maxLength = Math.max(before.length, after.length);
+          const changedCount = Array.from({ length: maxLength }).filter((_, index) => JSON.stringify(before[index] ?? null) !== JSON.stringify(after[index] ?? null)).length;
+          return `${path}: 更新字段${changedCount ? ` ${changedCount} 项` : ""}`;
+        }
+        return `${path}: 更新字段列表`;
+      }
+      if (Array.isArray(after)) return `${path}: 更新列表 ${after.length} 项`;
+      if (after && typeof after === "object") return `${path}: 更新对象`;
+      return `${path}: ${textValue(after)}`;
+    }
+    return Object.entries(record).map(([key, item]) => {
+      if (Array.isArray(item)) return `${key}: 列表 ${item.length} 项`;
+      if (item && typeof item === "object") return `${key}: 对象`;
+      return `${key}: ${textValue(item)}`;
+    }).join("；");
+  }
+  return String(value);
+};
+
+export type ChangeSummaryDetail = {
+  label: string;
+  before: string;
+  after: string;
+};
+
+export function changeSummaryDetails(value: unknown): ChangeSummaryDetail[] {
+  const entries = Array.isArray(value) ? value : value ? [value] : [];
+  return entries.flatMap((entry) => {
+    if (!entry || typeof entry !== "object") return [];
+    const record = entry as Record<string, unknown>;
+    const path = textValue(record.path, "");
+    const before = record.before;
+    const after = record.after ?? record.value;
+    if (/^items\.\d+\.fields$/.test(path) && Array.isArray(before) && Array.isArray(after)) {
+      const maxLength = Math.max(before.length, after.length);
+      return Array.from({ length: maxLength }).flatMap((_, index) => {
+        const beforeField = before[index] as ArchiveItemField | QuoteAgentField | undefined;
+        const afterField = after[index] as ArchiveItemField | QuoteAgentField | undefined;
+        if (JSON.stringify(beforeField ?? null) === JSON.stringify(afterField ?? null)) return [];
+        const field = afterField || beforeField;
+        return [{
+          label: field ? fieldDisplayName(field) : `${path}.${index}`,
+          before: beforeField ? textValue(fieldDisplayValue(beforeField), "空") : "空",
+          after: afterField ? textValue(fieldDisplayValue(afterField), "空") : "空",
+        }];
+      });
+    }
+    if (path) {
+      return [{
+        label: path,
+        before: textValue(before, "空"),
+        after: textValue(after, "空"),
+      }];
+    }
+    return [];
+  });
+}
 
 export const readStorageValue = (key: string) => {
   try {
@@ -103,15 +403,7 @@ export function batchResultMessage(result: BatchReviewResponse) {
 }
 
 export function dictionaryValue(field: QuoteAgentField) {
-  const dictionary = field.dictionary || {};
-  const values = Array.isArray(dictionary.values) ? dictionary.values : [];
-  if (values.length) {
-    return values
-      .map((value: any) => value.display_name || value.displayName || value.canonical_value || value.canonicalValue || value.raw_value || value.rawValue)
-      .filter(Boolean)
-      .join(" / ");
-  }
-  return dictionary.canonical_value || dictionary.canonicalValue || dictionary.display_name || dictionary.displayName || "";
+  return fieldDisplayValue(field);
 }
 
 export function productMasterDataTermType(field: QuoteAgentField): ProductMasterDataTermType | null {

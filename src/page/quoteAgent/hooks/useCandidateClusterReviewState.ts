@@ -22,6 +22,7 @@ import type {
   CandidateCluster,
   CandidateClusterPromptData,
   CandidateClusterReviewPromptResponse,
+  CandidateClustersResponse,
   CandidateStatus,
   CandidateType,
   DictionaryOptions,
@@ -32,6 +33,7 @@ import type {
 import { asArray, errorText } from "../utils";
 
 type CandidateTypeFilter = CandidateType | "";
+type CandidateClusterSummary = NonNullable<CandidateClustersResponse["summary"]>;
 
 const renormalizeBatchText = (result: RenormalizeBatchResponse) => {
   const processed = result.processedCount ?? 0;
@@ -39,6 +41,9 @@ const renormalizeBatchText = (result: RenormalizeBatchResponse) => {
   const failed = result.failedCount ?? 0;
   return `归一化重跑完成：处理 ${processed} 条，成功 ${success} 条，失败 ${failed} 条。`;
 };
+
+const clusterSummaryFromResponse = (response: CandidateClustersResponse): CandidateClusterSummary =>
+  response.summary ?? {};
 
 export function useCandidateClusterReviewState() {
   const requestIdRef = useRef(0);
@@ -56,6 +61,7 @@ export function useCandidateClusterReviewState() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [reviewPrompt, setReviewPrompt] = useState<CandidateClusterReviewPromptResponse | string>("");
+  const [clusterSummary, setClusterSummary] = useState<CandidateClusterSummary>({});
   const [knownTermTypes, setKnownTermTypes] = useState<Set<string>>(() => new Set());
   const [options, setOptions] = useState<DictionaryOptions>({ termTypes: [], values: [], productTypes: [] });
   const [promptData, setPromptData] = useState<CandidateClusterPromptData>({
@@ -98,19 +104,21 @@ export function useCandidateClusterReviewState() {
     try {
       const response = await quoteAgentService.getCandidateClusters({
         status,
+        candidateType: candidateType || "all",
         documentId: documentId.trim() || undefined,
         limit,
       });
       if (requestId !== requestIdRef.current) return;
       if (!hasClusterListPayload(response)) {
         throw new Error(
-          "候选簇接口返回结构不正确，未找到 clusters/items/data 列表。请检查后端 /quoteAgent/candidates/clusters 路由。",
+          "候选簇接口返回结构不正确，未找到 clusters/items/data 列表。请检查后端 /productConfigAgent/candidates/clusters 路由。",
         );
       }
       const nextKnownTermTypes = termTypeSetFromClusterResponse(response);
       setKnownTermTypes(nextKnownTermTypes);
       setOptions(dictionaryOptionsFromClusterResponse(response));
       setPromptData(promptDataFromClusterResponse(response));
+      setClusterSummary(clusterSummaryFromResponse(response));
       setClusters(annotateClusterSuggestions(clustersFromResponse(response), nextKnownTermTypes));
       setSelectedClusterIds([]);
       setExpandedClusterIds([]);
@@ -120,7 +128,7 @@ export function useCandidateClusterReviewState() {
     } finally {
       if (requestId === requestIdRef.current) setLoading(false);
     }
-  }, [documentId, limit, status]);
+  }, [candidateType, documentId, limit, status]);
 
   const generateSuggestions = useCallback(async () => {
     setSuggesting(true);
@@ -130,10 +138,9 @@ export function useCandidateClusterReviewState() {
       const response =
         await quoteAgentService.suggestCandidateClusterReviewsBatch({
           status,
-          documentId: documentId.trim() || undefined,
-          limit,
-          candidateType: candidateType || undefined,
           clusterIds: visibleClusters.map(clusterIdentity).filter(Boolean),
+          priorDecisions: promptData.priorDecisions,
+          runPolicy: promptData.runPolicy as Record<string, unknown> | undefined,
         });
       const nextClusters = annotateClusterSuggestions(mergeSuggestionResponse(clusters, response), knownTermTypes);
       setClusters(nextClusters);
@@ -144,7 +151,7 @@ export function useCandidateClusterReviewState() {
     } finally {
       setSuggesting(false);
     }
-  }, [candidateType, clusters, documentId, knownTermTypes, limit, status, visibleClusters]);
+  }, [clusters, knownTermTypes, promptData.priorDecisions, promptData.runPolicy, status, visibleClusters]);
 
   const applyManualSuggestions = useCallback((suggestions: unknown) => {
     const nextClusters = annotateClusterSuggestions(mergeSuggestionResponse(clusters, suggestions), knownTermTypes);
@@ -273,7 +280,9 @@ export function useCandidateClusterReviewState() {
     const confirmed = window.confirm(
       payload.scope === "all"
         ? "将按当前字典重跑所有匹配 extraction 的 normalization。是否继续？"
-        : "将只处理还没有 normalized 结果的 extraction。是否继续？",
+        : payload.scope === "with_pending_candidates"
+          ? "将只处理仍有 pending candidates 的 extraction。是否继续？"
+          : "将只处理还没有 normalized 结果的 extraction。是否继续？",
     );
     if (!confirmed) return;
 
@@ -322,6 +331,7 @@ export function useCandidateClusterReviewState() {
 
   return {
     candidateType,
+    clusterSummary,
     documentId,
     error,
     expandedClusterIds,

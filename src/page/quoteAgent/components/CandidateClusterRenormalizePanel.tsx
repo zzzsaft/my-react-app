@@ -107,6 +107,7 @@ export function CandidateClusterRenormalizePanel({ disabled, renormalizing, onRe
 
 const scopeOptions: Array<{ value: RenormalizeBatchScope; label: string }> = [
   { value: "missing_normalized", label: "只补缺失 normalized" },
+  { value: "with_pending_candidates", label: "只处理 pending candidates" },
   { value: "all", label: "全部重跑 normalization" },
 ];
 
