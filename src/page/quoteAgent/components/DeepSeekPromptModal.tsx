@@ -21,6 +21,7 @@ const appliedStorageKey = "quoteAgent.manualSuggestionApplied";
 const actionMap: Record<string, ReviewAction> = {
   create_term_type: "create_term_type",
   approve_term_type_as_alias: "approve_term_type_as_alias",
+  split_term_type: "split_term_type",
   create_value: "create_value",
   approve_value_as_alias: "approve_value_as_alias",
   move_to_other_term_type: "move_value_to_other_term_type",
@@ -28,6 +29,18 @@ const actionMap: Record<string, ReviewAction> = {
   split_value: "split_value",
   update_term_type_value_kind: "update_term_type_value_kind",
   reject: "reject",
+};
+
+const allowedActionsByCandidateType: Record<PromptCandidate["candidateType"], Set<ReviewAction>> = {
+  term_type: new Set(["create_term_type", "approve_term_type_as_alias", "split_term_type", "reject"]),
+  value: new Set([
+    "create_value",
+    "approve_value_as_alias",
+    "move_value_to_other_term_type",
+    "split_value",
+    "update_term_type_value_kind",
+    "reject",
+  ]),
 };
 
 function suggestionsOf(value: any): any[] {
@@ -45,6 +58,7 @@ function toDraft(suggestion: any, candidates: PromptCandidate[]): ReviewDraft | 
   const recommended = String(suggestion.recommendedAction || suggestion.action || "");
   const action = actionMap[recommended];
   if (!action) return null;
+  if (!allowedActionsByCandidateType[target.candidateType].has(action)) return null;
   const payload = suggestion.payload || {};
   const base: ReviewOperation = {
     candidateId,
@@ -72,7 +86,9 @@ function toDraft(suggestion: any, candidates: PromptCandidate[]): ReviewDraft | 
               aliasNames: suggestion.aliasNames || payload.aliasNames || [target.fieldName],
               appendApplicableProductType: true,
             }
-          : action === "create_value"
+          : action === "split_term_type"
+            ? { splits: suggestion.splits || payload.splits || [] }
+            : action === "create_value"
             ? {
                 canonicalValue: suggestion.canonicalValue || payload.canonicalValue || target.rawValue,
                 displayName: suggestion.displayName || payload.displayName || target.rawValue,
@@ -108,7 +124,9 @@ export function DeepSeekPromptModal({ open, candidates, onClose, onApply }: Prop
     return [
       "你是合同/生产明细字段字典审核助手。请只返回 JSON，不要返回解释文字。",
       "对每个候选给出 candidateId、action/recommendedAction、payload。",
-      "可用动作：create_term_type、approve_term_type_as_alias、create_value、approve_value_as_alias、move_value_to_other_term_type、split_value、update_term_type_value_kind、reject。",
+      "term_type 候选可用动作：create_term_type、approve_term_type_as_alias、split_term_type、reject；如果原文字段名是复合字段名，请使用 split_term_type，不要使用 split_value。",
+      "value 候选可用动作：create_value、approve_value_as_alias、move_value_to_other_term_type、split_value、update_term_type_value_kind、reject。",
+      "split_term_type 的 payload.splits 每项格式：{ termType, displayName, valueKind, rawValue, aliasNames, canonicalValue? }。",
       "",
       JSON.stringify({ candidates: payload }, null, 2),
     ].join("\n");

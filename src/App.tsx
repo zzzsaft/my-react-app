@@ -14,7 +14,8 @@ const OAQuoteTablePage = lazy(() => import("./page/quote/OAQuoteTablePage"));
 const NoPermissionPage = lazy(() =>
   import("./page/NoPermissionPage").then((module) => ({ default: module.NoPermissionPage })),
 );
-const QuoteAgentPage = lazy(() => import("./page/quoteAgent"));
+const QuoteAgentArchivePage = lazy(() => import("./page/quoteAgent/archive"));
+const QuoteAgentReviewPage = lazy(() => import("./page/quoteAgent"));
 const QuoteAgentDictionaryPage = lazy(() => import("./page/quoteAgentDictionary"));
 const QuoteFormPage = lazy(() => import("./page/quote/QuoteFormPage"));
 const QuoteSharePage = lazy(() => import("./page/quote/QuoteSharePage"));
@@ -48,10 +49,11 @@ const App: React.FC = () => {
               <Route path="template" element={<Outlet />}>
                 <Route index element={<TemplateListPage />} />
               </Route>
-              <Route path="quote-agent" element={<QuoteAgentPage />} />
+              <Route path="quote-agent/*" element={<QuoteAgentArchivePage />} />
+              <Route path="quote-agent/review" element={<QuoteAgentReviewPage />} />
+              <Route path="quote-agent/review/:documentId" element={<QuoteAgentReviewPage />} />
               <Route path="quote-agent/clusters" element={<CandidateClusterReviewPage />} />
               <Route path="quote-agent/dictionary" element={<QuoteAgentDictionaryPage />} />
-              <Route path="quote-agent/:documentId" element={<QuoteAgentPage />} />
             </Route>
             <Route path="/jdy_redirect" element={<JdyRedirect />} />
           </Route>

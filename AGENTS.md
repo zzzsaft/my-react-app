@@ -63,6 +63,7 @@
 - 全局样式只放基础变量、reset、通用组件样式。
 - 大量 Tailwind class 可以保留在 JSX 中，但重复出现的稳定样式应抽成 CSS 类或小组件。
 - 不要为了一个页面把大量私有样式写进 `src/index.css`。
+- quoteAgent / productConfigAgent 这类后台页面的页内功能 tab，统一复用候选簇页面的 `qa-review-tabs`、`qa-review-tabs-track`、`qa-review-tab` 样式；不要在 JSX 中临时拼 `border-b` / `text-blue` 等零散 Tailwind class 做 tab。若其他模块复用这套 tab，必须显式引入承载这些类的样式文件，避免出现无样式 tab。
 
 ## 重构要求
 

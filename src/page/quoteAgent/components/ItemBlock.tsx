@@ -1,3 +1,4 @@
+import { QuestionCircleOutlined } from "@/components/ui/icons";
 import { FieldReviewPanel } from "./FieldReviewPanel";
 import { ProductMasterDataPanel } from "./ProductMasterDataPanel";
 import { ProductApplicabilityPanel } from "./ProductApplicabilityPanel";
@@ -8,6 +9,8 @@ import {
   candidateTypeOf,
   dictionaryValue,
   draftKey,
+  fieldDisplayName,
+  fieldOriginalName,
   fieldStatus,
   json,
   matchCandidate,
@@ -109,6 +112,9 @@ export function ItemBlock(props: {
           const active = props.activeFieldKey === fieldKey;
           const expanded = props.expandedFieldKey === fieldKey;
           const masterDataMatch = productMasterDataMatch(field);
+          const fieldName = fieldDisplayName(field, props.options);
+          const originalFieldName = fieldOriginalName(field);
+          const showOriginalFieldName = fieldName !== originalFieldName;
           const displayValue = productTermType
             ? String(masterDataMatch?.model || masterDataMatch?.matchedModel || masterDataMatch?.matched_model || dictionaryValue(field) || "-")
             : dictionaryValue(field) || "-";
@@ -119,7 +125,17 @@ export function ItemBlock(props: {
                 {draft && <input type="checkbox" checked={props.selectedDraftKeys.includes(candidateDraftKey)} onChange={() => props.onToggleDraft(candidateDraftKey)} />}
               </div>
               <div className="min-w-0">
-                <div className="truncate font-medium text-slate-800">{String(field.field_name || candidate?.rawFieldName || "-")}</div>
+                <div className="inline-flex max-w-full items-center gap-1 font-medium text-slate-800">
+                  <span className="truncate">{fieldName}</span>
+                  {showOriginalFieldName && (
+                    <span className="group relative inline-flex shrink-0">
+                      <QuestionCircleOutlined className="text-xs text-slate-400" />
+                      <span className="pointer-events-none absolute left-1/2 top-full z-20 mt-1 hidden -translate-x-1/2 whitespace-nowrap rounded border border-slate-200 bg-white px-2 py-1 text-xs font-normal text-slate-700 shadow group-hover:block">
+                        原值：{originalFieldName}
+                      </span>
+                    </span>
+                  )}
+                </div>
                 <div className="text-[11px] text-slate-400">字段名</div>
               </div>
               <div className="min-w-0">

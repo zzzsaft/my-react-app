@@ -560,11 +560,17 @@ export const Modal = Object.assign(
     headerClassName,
     bodyClassName,
     footerClassName,
+    maskClosable,
     ...props
   }: AnyProps) => {
     if (!(open ?? visible)) return null;
     return (
-      <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/40 p-4">
+      <div
+        className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/40 p-4"
+        onMouseDown={(event) => {
+          if (maskClosable && event.target === event.currentTarget) onCancel?.();
+        }}
+      >
         <div className={cn("flex max-h-[90vh] w-full flex-col overflow-hidden rounded bg-white shadow-xl", className)} style={{ maxWidth: width || 640 }} {...props}>
           <div className={cn("shrink-0 flex items-center justify-between border-b border-slate-100 bg-white px-4 py-3", headerClassName)}>
             <h3 className="font-semibold text-slate-900">{title}</h3>

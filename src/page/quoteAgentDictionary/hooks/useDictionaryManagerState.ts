@@ -1,5 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { quoteAgentService } from "../../quoteAgent/services/quoteAgent.service";
+import {
+  isDictionaryOptionsCacheFresh,
+  readDictionaryOptionsCache,
+  writeDictionaryOptionsCache,
+} from "../dictionaryCache";
 import type { DictionaryTermType, DictionaryValue, ProductTypeOption } from "../../quoteAgent/types";
 import type {
   DictionaryEditorState,
@@ -17,24 +22,52 @@ import {
 } from "../utils";
 
 export function useDictionaryManagerState() {
+  const [initialCache] = useState(() => readDictionaryOptionsCache());
   const [keyword, setKeyword] = useState("");
-  const [termTypes, setTermTypes] = useState<DictionaryTermType[]>([]);
-  const [values, setValues] = useState<DictionaryValue[]>([]);
-  const [productTypes, setProductTypes] = useState<ProductTypeOption[]>([]);
+  const [termTypes, setTermTypes] = useState<DictionaryTermType[]>(initialCache?.options.termTypes ?? []);
+  const [values, setValues] = useState<DictionaryValue[]>(initialCache?.options.values ?? []);
+  const [productTypes, setProductTypes] = useState<ProductTypeOption[]>(initialCache?.options.productTypes ?? []);
   const [editor, setEditor] = useState<DictionaryEditorState>(null);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
-  const reload = useCallback(async () => {
+  const cacheDictionaryOptions = useCallback(
+    (nextTermTypes: DictionaryTermType[], nextValues: DictionaryValue[], nextProductTypes = productTypes) => {
+      writeDictionaryOptionsCache({
+        termTypes: nextTermTypes,
+        values: nextValues,
+        productTypes: nextProductTypes,
+      });
+    },
+    [productTypes],
+  );
+
+  const reload = useCallback(async (options?: { force?: boolean }) => {
+    const cached = readDictionaryOptionsCache();
+    if (!options?.force && isDictionaryOptionsCacheFresh(cached)) {
+      setTermTypes(cached?.options.termTypes ?? []);
+      setValues(cached?.options.values ?? []);
+      setProductTypes(cached?.options.productTypes ?? []);
+      return;
+    }
+
     setLoading(true);
     setError("");
     try {
-      const options = await quoteAgentService.getDictionaryOptions();
-      setTermTypes(options.termTypes ?? []);
-      setValues(options.values ?? []);
-      setProductTypes(options.productTypes ?? []);
+      const dictionaryOptions = await quoteAgentService.getDictionaryOptions();
+      const nextTermTypes = dictionaryOptions.termTypes ?? [];
+      const nextValues = dictionaryOptions.values ?? [];
+      const nextProductTypes = dictionaryOptions.productTypes ?? [];
+      setTermTypes(nextTermTypes);
+      setValues(nextValues);
+      setProductTypes(nextProductTypes);
+      writeDictionaryOptionsCache({
+        termTypes: nextTermTypes,
+        values: nextValues,
+        productTypes: nextProductTypes,
+      });
     } catch (error) {
       setError(errorText(error));
     } finally {
@@ -98,9 +131,13 @@ export function useDictionaryManagerState() {
         sortOrder: patch.sortOrder ?? record.sortOrder,
       };
       const saved = await quoteAgentService.updateTermType(id, payload);
-      setTermTypes((current) =>
-        current.map((item) => (String(item.id) === String(id) ? { ...item, ...payload, ...saved } : item)),
-      );
+      setTermTypes((current) => {
+        const nextTermTypes = current.map((item) =>
+          String(item.id) === String(id) ? { ...item, ...payload, ...saved } : item,
+        );
+        cacheDictionaryOptions(nextTermTypes, values);
+        return nextTermTypes;
+      });
       setMessage("保存成功");
     } catch (error) {
       setError(errorText(error));
@@ -130,9 +167,13 @@ export function useDictionaryManagerState() {
         ]),
       };
       const saved = await quoteAgentService.updateDictionaryValue(id, payload);
-      setValues((current) =>
-        current.map((item) => (String(item.id) === String(id) ? { ...item, ...payload, ...saved } : item)),
-      );
+      setValues((current) => {
+        const nextValues = current.map((item) =>
+          String(item.id) === String(id) ? { ...item, ...payload, ...saved } : item,
+        );
+        cacheDictionaryOptions(termTypes, nextValues);
+        return nextValues;
+      });
       setMessage("保存成功");
     } catch (error) {
       setError(errorText(error));
@@ -173,7 +214,7 @@ export function useDictionaryManagerState() {
       }
       setEditor(null);
       setMessage("保存成功");
-      await reload();
+      await reload({ force: true });
     } catch (error) {
       setError(errorText(error));
     } finally {

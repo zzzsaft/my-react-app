@@ -37,7 +37,7 @@ export type DictionaryManagerState = {
   filteredTermTypes: DictionaryTermType[];
   editor: DictionaryEditorState;
   setKeyword: (keyword: string) => void;
-  reload: () => Promise<void>;
+  reload: (options?: { force?: boolean }) => Promise<void>;
   openCreateTermType: () => void;
   openEditTermType: (record: DictionaryTermType) => void;
   openCreateValue: (termType?: string) => void;

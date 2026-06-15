@@ -33,7 +33,7 @@ const operationsWithReviewer = (operations: ReviewOperation[]) =>
 const requestPayloadForCluster = (cluster: CandidateCluster) => {
   const operations = operationsFromClusters([cluster]);
   return {
-    endpoint: "POST /quoteAgent/candidates/reviews/batch",
+    endpoint: "POST /productConfigAgent/candidates/reviews/batch",
     requestBody: {
       deferCandidateRecheck: true,
       operations: operationsWithReviewer(operations),
