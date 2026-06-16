@@ -416,6 +416,15 @@ export const quoteAgentService = {
     ));
   },
 
+  async deleteDictionaryValue(valueId: string | number): Promise<unknown> {
+    return unwrap(
+      await apiClient.delete(
+        `/productConfigAgent/dictionary/values/${encodeURIComponent(String(valueId))}`,
+        slowRequest,
+      ),
+    );
+  },
+
   async suggestTermTypeCandidate(
     candidateId: string | number,
     params?: { model?: string; force?: boolean },

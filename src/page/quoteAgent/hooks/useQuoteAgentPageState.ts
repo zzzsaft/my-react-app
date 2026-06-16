@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { usePersistentFilterState } from "@/hook/usePersistentFilterState";
 import { emptyOptions, pageSize } from "../constants";
 import { quoteAgentService } from "../services/quoteAgent.service";
 import type {
@@ -27,6 +28,21 @@ import {
   statsOf,
 } from "../utils";
 
+type StateUpdate<T> = T | ((current: T) => T);
+
+const defaultQuoteAgentFilters = {
+  documentStatus: "dictionary_dirty" as DocumentStatus | "",
+  candidateStatus: "pending" as CandidateStatus,
+  search: "",
+  page: 1,
+  globalCandidates: false,
+  hideNonReviewFields: true,
+  hideTasksWithoutCandidates: true,
+};
+
+const nextValue = <T>(value: StateUpdate<T>, current: T) =>
+  typeof value === "function" ? (value as (current: T) => T)(current) : value;
+
 export function useQuoteAgentPageState() {
   const navigate = useNavigate();
   const { documentId: routeDocumentId = "" } = useParams<{ documentId?: string }>();
@@ -39,14 +55,15 @@ export function useQuoteAgentPageState() {
   const [detail, setDetail] = useState<ExtractionDetail | null>(null);
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [options, setOptions] = useState<DictionaryOptions>(emptyOptions);
-  const [documentStatus, setDocumentStatus] = useState<DocumentStatus | "">("dictionary_dirty");
-  const [candidateStatus, setCandidateStatus] = useState<CandidateStatus>("pending");
-  const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
+  const { filters, setFilters } = usePersistentFilterState("quoteAgent.documentReview", defaultQuoteAgentFilters);
+  const documentStatus = filters.documentStatus;
+  const candidateStatus = filters.candidateStatus;
+  const search = filters.search;
+  const page = Number(filters.page) || defaultQuoteAgentFilters.page;
+  const globalCandidates = Boolean(filters.globalCandidates);
+  const hideNonReviewFields = Boolean(filters.hideNonReviewFields);
+  const hideTasksWithoutCandidates = Boolean(filters.hideTasksWithoutCandidates);
   const [total, setTotal] = useState(0);
-  const [globalCandidates, setGlobalCandidates] = useState(false);
-  const [hideNonReviewFields, setHideNonReviewFields] = useState(true);
-  const [hideTasksWithoutCandidates, setHideTasksWithoutCandidates] = useState(true);
   const [loadingDocuments, setLoadingDocuments] = useState(false);
   const [loadingDetail, setLoadingDetail] = useState(false);
   const [loadingCandidates, setLoadingCandidates] = useState(false);
@@ -65,6 +82,13 @@ export function useQuoteAgentPageState() {
   const [llmJob, setLlmJob] = useState<PendingLlmUploadJob | null>(null);
   const [deepSeekOpen, setDeepSeekOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const setDocumentStatus = (value: DocumentStatus | "") => setFilters({ documentStatus: value });
+  const setCandidateStatus = (value: CandidateStatus) => setFilters({ candidateStatus: value });
+  const setSearch = (value: string) => setFilters({ search: value });
+  const setPage = (value: StateUpdate<number>) => setFilters({ page: nextValue(value, page) });
+  const setGlobalCandidates = (value: StateUpdate<boolean>) => setFilters({ globalCandidates: nextValue(value, globalCandidates) });
+  const setHideNonReviewFields = (value: StateUpdate<boolean>) => setFilters({ hideNonReviewFields: nextValue(value, hideNonReviewFields) });
+  const setHideTasksWithoutCandidates = (value: StateUpdate<boolean>) => setFilters({ hideTasksWithoutCandidates: nextValue(value, hideTasksWithoutCandidates) });
 
   const selectedId = selectedDocumentId || routeDocumentId;
   const detailDocumentId = docId(detail?.document);

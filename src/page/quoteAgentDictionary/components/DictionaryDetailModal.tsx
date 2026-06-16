@@ -31,6 +31,7 @@ type Props = {
   onEditValue?: (value: DictionaryValue) => void;
   onUpdateTermType?: (patch: Partial<DictionaryTermType>) => Promise<void>;
   onUpdateValue?: (value: DictionaryValue, patch: Partial<DictionaryValue>) => Promise<void>;
+  onDeleteValue?: (value: DictionaryValue) => Promise<void>;
 };
 
 type EditingValueCell = {
@@ -118,6 +119,7 @@ export function DictionaryDetailModal({
   onCreateValue,
   onUpdateTermType,
   onUpdateValue,
+  onDeleteValue,
 }: Props) {
   const [editingValueCell, setEditingValueCell] = useState<EditingValueCell | null>(null);
   const [editingTermField, setEditingTermField] = useState<EditingTermField | null>(null);
@@ -153,8 +155,12 @@ export function DictionaryDetailModal({
     [termType?.valueKind],
   );
 
+  const canDeleteValues = Boolean(onDeleteValue);
   const valueTableWidth =
-    valueColumnWidths.canonicalValue + valueColumnWidths.displayName + valueColumnWidths.aliasNames;
+    valueColumnWidths.canonicalValue +
+    valueColumnWidths.displayName +
+    valueColumnWidths.aliasNames +
+    (canDeleteValues ? 110 : 0);
 
   const startValueColumnResize = (field: ValueField, event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -349,6 +355,20 @@ export function DictionaryDetailModal({
     }
   };
 
+  const deleteValue = async (value: DictionaryValue) => {
+    if (!onDeleteValue) return;
+    const label = [value.displayName, value.canonicalValue].filter(Boolean).join(" / ") || "该标准值";
+    if (!window.confirm(`确认删除标准值「${label}」？删除后不可在前端恢复。`)) return;
+
+    setSavingKey(`delete:${rowKeyOf(value)}`);
+    try {
+      await onDeleteValue(value);
+      if (editingValueCell?.rowKey === rowKeyOf(value)) setEditingValueCell(null);
+    } finally {
+      setSavingKey("");
+    }
+  };
+
   const editableValueCell = (value: DictionaryValue, field: ValueField, text: string) => {
     const rowKey = rowKeyOf(value);
     const isEditing = editingValueCell?.rowKey === rowKey && editingValueCell.field === field;
@@ -487,6 +507,7 @@ export function DictionaryDetailModal({
                   <col style={{ width: valueColumnWidths.canonicalValue }} />
                   <col style={{ width: valueColumnWidths.displayName }} />
                   <col style={{ width: valueColumnWidths.aliasNames }} />
+                  {canDeleteValues && <col style={{ width: 110 }} />}
                 </colgroup>
                 <thead className="bg-slate-50">
                   <tr>
@@ -512,6 +533,11 @@ export function DictionaryDetailModal({
                         />
                       </th>
                     ))}
+                    {canDeleteValues && (
+                      <th className="px-3 py-2 text-left font-medium text-slate-600" style={{ width: 110 }}>
+                        操作
+                      </th>
+                    )}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -535,6 +561,19 @@ export function DictionaryDetailModal({
                       >
                         {editableValueCell(value, "aliasNames", valueAliases(value).join("、"))}
                       </td>
+                      {canDeleteValues && (
+                        <td className="px-3 py-2 align-top" style={{ width: 110 }}>
+                          <Button
+                            danger
+                            className="min-h-8 px-2 py-1 text-xs"
+                            loading={savingKey === `delete:${rowKeyOf(value)}`}
+                            disabled={!value.id}
+                            onClick={() => void deleteValue(value)}
+                          >
+                            删除
+                          </Button>
+                        </td>
+                      )}
                     </tr>
                   ))}
                 </tbody>

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { usePersistentFilterState } from "@/hook/usePersistentFilterState";
 import { quoteAgentService } from "../../quoteAgent/services/quoteAgent.service";
 import {
   isDictionaryOptionsCacheFresh,
@@ -12,6 +13,7 @@ import type {
   TermTypeFormValues,
 } from "../types";
 import {
+  dedupeDictionaryValues,
   dictionaryValueForm,
   dictionaryValuePayload,
   errorText,
@@ -21,11 +23,21 @@ import {
   termTypePayload,
 } from "../utils";
 
+const defaultDictionaryFilters = {
+  keyword: "",
+};
+
 export function useDictionaryManagerState() {
   const [initialCache] = useState(() => readDictionaryOptionsCache());
-  const [keyword, setKeyword] = useState("");
+  const { filters, setFilters } = usePersistentFilterState(
+    "quoteAgent.dictionaryManager",
+    defaultDictionaryFilters,
+  );
+  const keyword = filters.keyword;
   const [termTypes, setTermTypes] = useState<DictionaryTermType[]>(initialCache?.options.termTypes ?? []);
-  const [values, setValues] = useState<DictionaryValue[]>(initialCache?.options.values ?? []);
+  const [values, setValues] = useState<DictionaryValue[]>(
+    dedupeDictionaryValues(initialCache?.options.values ?? []),
+  );
   const [productTypes, setProductTypes] = useState<ProductTypeOption[]>(initialCache?.options.productTypes ?? []);
   const [editor, setEditor] = useState<DictionaryEditorState>(null);
   const [loading, setLoading] = useState(false);
@@ -37,7 +49,7 @@ export function useDictionaryManagerState() {
     (nextTermTypes: DictionaryTermType[], nextValues: DictionaryValue[], nextProductTypes = productTypes) => {
       writeDictionaryOptionsCache({
         termTypes: nextTermTypes,
-        values: nextValues,
+        values: dedupeDictionaryValues(nextValues),
         productTypes: nextProductTypes,
       });
     },
@@ -48,9 +60,8 @@ export function useDictionaryManagerState() {
     const cached = readDictionaryOptionsCache();
     if (!options?.force && isDictionaryOptionsCacheFresh(cached)) {
       setTermTypes(cached?.options.termTypes ?? []);
-      setValues(cached?.options.values ?? []);
+      setValues(dedupeDictionaryValues(cached?.options.values ?? []));
       setProductTypes(cached?.options.productTypes ?? []);
-      return;
     }
 
     setLoading(true);
@@ -58,7 +69,7 @@ export function useDictionaryManagerState() {
     try {
       const dictionaryOptions = await quoteAgentService.getDictionaryOptions();
       const nextTermTypes = dictionaryOptions.termTypes ?? [];
-      const nextValues = dictionaryOptions.values ?? [];
+      const nextValues = dedupeDictionaryValues(dictionaryOptions.values ?? []);
       const nextProductTypes = dictionaryOptions.productTypes ?? [];
       setTermTypes(nextTermTypes);
       setValues(nextValues);
@@ -183,6 +194,29 @@ export function useDictionaryManagerState() {
     }
   };
 
+  const deleteDictionaryValue = async (record: DictionaryValue) => {
+    const id = record.id;
+    if (id == null || id === "") throw new Error("缺少字典标准值 id，无法删除");
+
+    setSaving(true);
+    setError("");
+    setMessage("");
+    try {
+      await quoteAgentService.deleteDictionaryValue(id);
+      setValues((current) => {
+        const nextValues = current.filter((item) => String(item.id) !== String(id));
+        cacheDictionaryOptions(termTypes, nextValues);
+        return nextValues;
+      });
+      setMessage("删除成功");
+    } catch (error) {
+      setError(errorText(error));
+      throw error;
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const updateEditorValues = (values: Partial<TermTypeFormValues> | Partial<DictionaryValueFormValues>) => {
     setEditor((current) => current ? { ...current, values: { ...current.values, ...values } as any } : current);
   };
@@ -233,7 +267,7 @@ export function useDictionaryManagerState() {
     productTypes,
     filteredTermTypes,
     editor,
-    setKeyword,
+    setKeyword: (value: string) => setFilters({ keyword: value }),
     reload,
     openCreateTermType,
     openEditTermType,
@@ -241,6 +275,7 @@ export function useDictionaryManagerState() {
     openEditValue,
     updateDictionaryTermTypeField,
     updateDictionaryValueField,
+    deleteDictionaryValue,
     closeEditor: () => setEditor(null),
     updateEditorValues,
     submitEditor,

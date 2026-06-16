@@ -17,6 +17,7 @@ import {
   shouldAutoSelectSuggestion,
   termTypeSetFromClusterResponse,
 } from "../candidateCluster.utils";
+import { usePersistentFilterState } from "@/hook/usePersistentFilterState";
 import { quoteAgentService } from "../services/quoteAgent.service";
 import type {
   CandidateCluster,
@@ -32,8 +33,15 @@ import type {
 } from "../types";
 import { asArray, errorText } from "../utils";
 
-type CandidateTypeFilter = CandidateType | "";
 type CandidateClusterSummary = NonNullable<CandidateClustersResponse["summary"]>;
+type CandidateTypeFilter = CandidateType | "";
+
+const defaultCandidateClusterFilters = {
+  status: "pending" as CandidateStatus,
+  documentId: "",
+  limit: 10,
+  candidateType: "" as CandidateTypeFilter,
+};
 
 const renormalizeBatchText = (result: RenormalizeBatchResponse) => {
   const processed = result.processedCount ?? 0;
@@ -47,10 +55,14 @@ const clusterSummaryFromResponse = (response: CandidateClustersResponse): Candid
 
 export function useCandidateClusterReviewState() {
   const requestIdRef = useRef(0);
-  const [status, setStatus] = useState<CandidateStatus>("pending");
-  const [documentId, setDocumentId] = useState("");
-  const [limit, setLimit] = useState(10);
-  const [candidateType, setCandidateType] = useState<CandidateTypeFilter>("");
+  const { filters, setFilters } = usePersistentFilterState(
+    "quoteAgent.candidateClusterReview",
+    defaultCandidateClusterFilters,
+  );
+  const status = filters.status;
+  const documentId = filters.documentId;
+  const limit = Number(filters.limit) || defaultCandidateClusterFilters.limit;
+  const candidateType = filters.candidateType;
   const [clusters, setClusters] = useState<CandidateCluster[]>([]);
   const [expandedClusterIds, setExpandedClusterIds] = useState<string[]>([]);
   const [selectedClusterIds, setSelectedClusterIds] = useState<string[]>([]);
@@ -353,10 +365,10 @@ export function useCandidateClusterReviewState() {
     loadClusters,
     renormalizeBatch,
     saveManualOperation,
-    setCandidateType,
-    setDocumentId,
-    setLimit,
-    setStatus,
+    setCandidateType: (value: CandidateType | "") => setFilters({ candidateType: value }),
+    setDocumentId: (value: string) => setFilters({ documentId: value }),
+    setLimit: (value: number) => setFilters({ limit: value }),
+    setStatus: (value: CandidateStatus) => setFilters({ status: value }),
     submitClusters,
     submitManualOperation,
     submitSelectedClusters,

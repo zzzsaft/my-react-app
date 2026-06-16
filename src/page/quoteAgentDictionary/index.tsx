@@ -86,6 +86,7 @@ export function QuoteAgentDictionaryManager({ embedded = false }: Props) {
                 onEditValue={state.openEditValue}
                 onUpdateTermType={state.updateDictionaryTermTypeField}
                 onUpdateValue={state.updateDictionaryValueField}
+                onDeleteValue={state.deleteDictionaryValue}
               />
             </div>
           </>

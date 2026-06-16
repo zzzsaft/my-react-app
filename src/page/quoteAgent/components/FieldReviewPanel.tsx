@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
+import { StandardValueListEditor, type StandardValueListItem } from "./StandardValueListEditor";
 import { TermTypePicker } from "./TermTypePicker";
 import type {
   Candidate,
@@ -25,7 +26,6 @@ interface Props {
 }
 
 type FormState = Record<string, any>;
-
 const valueKinds = ["enum", "enums", "text", "number", "number_unit", "boolean", "date"];
 
 const termActions: Array<{ value: ReviewAction; label: string; hint: string }> = [
@@ -59,6 +59,33 @@ const valueKeyOf = (item: DictionaryValue) => String(item.id ?? (item as any).te
 const rawValueOf = (candidate: Candidate, field: QuoteAgentField) =>
   field.raw_value || candidate.rawValue || candidate.evidence?.sourceRawValue || "";
 const normalize = (value: unknown) => String(value || "").trim().toLowerCase();
+const valueListItemId = () => `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
+const valueListItem = (
+  canonicalValue = "",
+  displayName = canonicalValue,
+  aliasNames: unknown = canonicalValue,
+): StandardValueListItem => ({
+  id: valueListItemId(),
+  canonicalValue: String(canonicalValue || ""),
+  displayName: String(displayName || canonicalValue || ""),
+  aliasNamesText: join(aliasNames),
+});
+
+const valuesTextFromPayload = (values: unknown) =>
+  Array.isArray(values)
+    ? values
+        .map((item: any) => [item.canonicalValue, item.displayName, join(item.aliasNames)].filter(Boolean).join(" | "))
+        .join("\n")
+    : "";
+
+const valueListFromPayload = (values: unknown, fallbackRaw = ""): StandardValueListItem[] => {
+  if (!Array.isArray(values)) return fallbackRaw ? [valueListItem(fallbackRaw, fallbackRaw, fallbackRaw)] : [valueListItem()];
+  const nextValues = values
+    .map((item: any) => valueListItem(item?.canonicalValue, item?.displayName, item?.aliasNames))
+    .filter((item) => item.canonicalValue || item.displayName || item.aliasNamesText);
+  return nextValues.length ? nextValues : [valueListItem(fallbackRaw, fallbackRaw, fallbackRaw)];
+};
 
 function initialState(candidate: Candidate, field: QuoteAgentField, candidateType: CandidateType, draft?: ReviewDraft): FormState {
   if (draft) {
@@ -67,11 +94,8 @@ function initialState(candidate: Candidate, field: QuoteAgentField, candidateTyp
       addEnumValue: draft.payload.valueCanonicalValue !== undefined,
       aliasNamesText: join(draft.payload.aliasNames),
       valueAliasNamesText: join(draft.payload.valueAliasNames),
-      valuesText: Array.isArray(draft.payload.values)
-        ? draft.payload.values
-            .map((item: any) => [item.canonicalValue, item.displayName, join(item.aliasNames)].filter(Boolean).join(" | "))
-            .join("\n")
-        : "",
+      valuesText: valuesTextFromPayload(draft.payload.values),
+      valuesList: valueListFromPayload(draft.payload.values, String(draft.payload.canonicalValue || "")),
       splitsText: Array.isArray(draft.payload.splits)
         ? draft.payload.splits.map((item: any) => `${item.termType || ""} | ${item.rawValue || ""}`).join("\n")
         : "",
@@ -112,6 +136,7 @@ function initialState(candidate: Candidate, field: QuoteAgentField, candidateTyp
     reason: candidate.reason || "",
     termId: "",
     valuesText: `${raw} | ${raw} | ${raw}`,
+    valuesList: [valueListItem(String(raw), String(raw), String(raw))],
     splitsText: `${candidate.termType || ""} | ${raw}`,
     termTypeSplitsText: `${candidate.termType || ""} | ${name} | ${candidate.valueKind || "text"} | ${raw} | ${name}`,
     applicableProductTypes: [],
@@ -129,6 +154,23 @@ function parseValues(text: string) {
       return { canonicalValue, displayName: displayName || undefined, aliasNames: list(aliases) };
     })
     .filter((item) => item.canonicalValue);
+}
+
+function valuesFromState(state: FormState) {
+  if (Array.isArray(state.valuesList)) {
+    return state.valuesList
+      .map((item: StandardValueListItem) => {
+        const canonicalValue = String(item.canonicalValue || "").trim();
+        return {
+          canonicalValue,
+          displayName: String(item.displayName || "").trim() || canonicalValue,
+          aliasNames: list(item.aliasNamesText),
+        };
+      })
+      .filter((item) => item.canonicalValue);
+  }
+
+  return parseValues(state.valuesText || "");
 }
 
 function parseSplits(text: string) {
@@ -189,12 +231,14 @@ function payloadFor(action: ReviewAction, state: FormState) {
   }
   if (action === "split_term_type") return { splits: parseTermTypeSplits(state.termTypeSplitsText || "") };
   if (action === "create_value") {
+    const values = valuesFromState(state);
+    const primaryValue = values[0];
     return {
       termType: state.termType,
-      canonicalValue: state.canonicalValue,
-      displayName: state.displayName,
-      aliasNames: list(state.aliasNamesText),
-      values: parseValues(state.valuesText || ""),
+      canonicalValue: primaryValue?.canonicalValue || state.canonicalValue,
+      displayName: primaryValue?.displayName || state.displayName,
+      aliasNames: primaryValue?.aliasNames?.length ? primaryValue.aliasNames : list(state.aliasNamesText),
+      values,
       suppressCandidateRawAlias: state.suppressRawAlias === true,
     };
   }
@@ -444,9 +488,10 @@ export function FieldReviewPanel({ field, candidate, candidateType, options, dra
 
           {action === "create_value" && (
             <div className="space-y-3">
-              <Field label="多行标准值，格式：canonicalValue | displayName | alias1,alias2">
-                <textarea className="min-h-36 w-full resize-y border border-slate-300 bg-white px-2 py-1.5 text-xs outline-none focus:border-blue-500" value={state.valuesText} onChange={(event) => update("valuesText", event.target.value)} />
-              </Field>
+              <StandardValueListEditor
+                values={Array.isArray(state.valuesList) ? state.valuesList : valueListFromPayload(parseValues(state.valuesText || ""))}
+                onChange={(values) => update("valuesList", values)}
+              />
               <label className="inline-flex items-center gap-2 text-xs text-slate-600">
                 <input type="checkbox" checked={state.suppressRawAlias === true} onChange={(event) => update("suppressRawAlias", event.target.checked)} />
                 不自动把原始值作为 alias

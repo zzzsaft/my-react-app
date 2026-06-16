@@ -33,6 +33,23 @@ const clusterIdentityKeys = (cluster: CandidateCluster) =>
 
 const stringArray = (value: unknown): string[] => asArray(value as string[]).map((item) => String(item)).filter(Boolean);
 
+const termTypeFromClusterId = (value: unknown) => {
+  const parts = safeDecode(value).split(":");
+  return parts[0] === "value" ? parts[1] ?? "" : "";
+};
+
+const firstText = (...values: unknown[]) =>
+  values.map((value) => String(value ?? "").trim()).find(Boolean) ?? "";
+
+const clusterTermType = (cluster: CandidateCluster) =>
+  firstText(
+    cluster.termType,
+    cluster.term_type,
+    cluster.normalizedFieldName,
+    cluster.normalized_field_name,
+    termTypeFromClusterId(cluster.clusterId ?? cluster.id ?? cluster.clusterKey),
+  );
+
 const normalizeReviewAction = (action: unknown, candidateType: unknown): ReviewAction | null => {
   const value = String(action ?? "");
   if (value === "approve_as_alias" || value === "approve_alias" || value === "alias") {
@@ -55,24 +72,32 @@ const normalizeReviewAction = (action: unknown, candidateType: unknown): ReviewA
   return null;
 };
 
-const operationsOf = (value: unknown): ReviewOperation[] =>
+const shouldFillClusterTermType = (operation: ReviewOperation) =>
+  operation.candidateType === "value" &&
+  (operation.action === "create_value" || operation.action === "update_term_type_value_kind");
+
+const operationsOf = (value: unknown, defaultTermType = ""): ReviewOperation[] =>
   asArray(value as ReviewOperation[])
     .map((operation) => {
       const candidateType = normalizeCandidateType(operation?.candidateType ?? (operation as any)?.candidate_type);
       const action = normalizeReviewAction(operation?.action ?? (operation as any)?.recommendedAction, candidateType);
       if (!candidateType || !operation?.candidateId || !action) return null;
       const rawPayload = (operation.payload ?? {}) as Record<string, unknown>;
+      const normalizedOperation = { ...operation, candidateType, action } as ReviewOperation;
+      const termType = firstText(
+        rawPayload.termType,
+        rawPayload.term_type,
+        (rawPayload as any).targetTermType,
+        (rawPayload as any).target_term_type,
+        (operation as any).termType,
+        (operation as any).term_type,
+        (operation as any).targetTermType,
+        (operation as any).target_term_type,
+        shouldFillClusterTermType(normalizedOperation) ? defaultTermType : "",
+      );
       const payload = {
         ...rawPayload,
-        termType:
-          rawPayload.termType ??
-          rawPayload.term_type ??
-          (rawPayload as any).targetTermType ??
-          (rawPayload as any).target_term_type ??
-          (operation as any).termType ??
-          (operation as any).term_type ??
-          (operation as any).targetTermType ??
-          (operation as any).target_term_type,
+        termType: termType || undefined,
         termId:
           rawPayload.termId ??
           rawPayload.term_id ??
@@ -103,13 +128,14 @@ const operationsOf = (value: unknown): ReviewOperation[] =>
 
 export function normalizeCluster(value: CandidateCluster): CandidateCluster {
   const suggestion = suggestionOf(value);
+  const defaultTermType = clusterTermType(value);
   return {
     ...value,
     id: value.id ?? value.clusterId ?? value.cluster_id,
     clusterId: value.clusterId ?? value.cluster_id ?? value.id,
     clusterKey: value.clusterKey ?? value.cluster_key,
     candidateType: normalizeCandidateType(value.candidateType ?? value.candidate_type),
-    termType: value.termType ?? value.term_type,
+    termType: defaultTermType,
     normalizedFieldName: value.normalizedFieldName ?? value.normalized_field_name,
     normalizedRawValue: value.normalizedRawValue ?? value.normalized_raw_value,
     candidateIds: asArray(value.candidateIds ?? value.candidate_ids),
@@ -121,7 +147,10 @@ export function normalizeCluster(value: CandidateCluster): CandidateCluster {
     commonContexts: stringArray(value.commonContexts ?? value.common_contexts),
     sampleOccurrences: asArray(value.sampleOccurrences ?? value.sample_occurrences),
     reviewSuggestion: suggestion,
-    batchOperationsPreview: operationsOf(value.batchOperationsPreview ?? value.batch_operations_preview ?? suggestion?.batchOperationsPreview ?? suggestion?.batch_operations_preview),
+    batchOperationsPreview: operationsOf(
+      value.batchOperationsPreview ?? value.batch_operations_preview ?? suggestion?.batchOperationsPreview ?? suggestion?.batch_operations_preview,
+      defaultTermType,
+    ),
   };
 }
 
@@ -255,10 +284,24 @@ export function annotateClusterSuggestions(clusters: CandidateCluster[], knownTe
 
 export function expandOperationToCluster(cluster: CandidateCluster, operation: ReviewOperation): ReviewOperation[] {
   const candidateIds = asArray(cluster.candidateIds).length ? asArray(cluster.candidateIds) : [operation.candidateId];
+  const defaultTermType = clusterTermType(cluster);
+  const effectiveOperation = {
+    ...operation,
+    candidateType: cluster.candidateType || operation.candidateType,
+  } as ReviewOperation;
   return candidateIds.map((candidateId) => ({
     ...operation,
     candidateId: String(candidateId),
-    candidateType: cluster.candidateType || operation.candidateType,
+    candidateType: effectiveOperation.candidateType,
+    payload: {
+      ...(operation.payload ?? {}),
+      termType:
+        firstText(
+          (operation.payload as any)?.termType,
+          (operation.payload as any)?.term_type,
+          shouldFillClusterTermType(effectiveOperation) ? defaultTermType : "",
+        ) || undefined,
+    },
   }));
 }
 

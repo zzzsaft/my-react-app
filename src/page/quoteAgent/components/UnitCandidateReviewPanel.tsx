@@ -5,6 +5,7 @@ import type { CandidateStatus, UnitCandidate } from "../types";
 import { json } from "../utils";
 import { parsedUnitValue, unitCandidateId, unitText } from "../unitCandidateReview.utils";
 import { UnitCandidateDeepSeekPromptModal } from "./UnitCandidateDeepSeekPromptModal";
+import { UnitCandidateManualReviewPanel } from "./UnitCandidateManualReviewPanel";
 import { UnitCandidateSuggestionCard } from "./UnitCandidateSuggestionCard";
 
 const display = (value: unknown) => unitText(value) || "-";
@@ -24,6 +25,7 @@ function UnitCandidateCard({
   suggestion,
   onToggleExpanded,
   onToggleSelected,
+  onOpenManualReview,
 }: {
   candidate: UnitCandidate;
   expanded: boolean;
@@ -32,6 +34,7 @@ function UnitCandidateCard({
   suggestion: ReturnType<typeof useUnitCandidateReviewState>["suggestionsById"][string];
   onToggleExpanded: () => void;
   onToggleSelected: () => void;
+  onOpenManualReview: () => void;
 }) {
   const parsedValue = parsedUnitValue(candidate);
 
@@ -73,6 +76,9 @@ function UnitCandidateCard({
             <button className="qa-btn qa-btn-quiet qa-btn-sm" type="button" onClick={onToggleExpanded}>
               {expanded ? "收起解析结果" : "展开解析结果"}
             </button>
+            <button className="qa-btn qa-btn-secondary qa-btn-sm" type="button" onClick={onOpenManualReview}>
+              手动审核
+            </button>
           </div>
         </div>
 
@@ -106,6 +112,7 @@ const promptText = (value: unknown) => {
 export function UnitCandidateReviewPanel() {
   const state = useUnitCandidateReviewState();
   const [promptOpen, setPromptOpen] = useState(false);
+  const [manualCandidate, setManualCandidate] = useState<UnitCandidate | null>(null);
   const prompt = promptText(state.reviewPrompt);
   const actionableSelectedCount = useMemo(
     () =>
@@ -184,6 +191,7 @@ export function UnitCandidateReviewPanel() {
                     suggestion={state.suggestionsById[candidateId]}
                     onToggleExpanded={() => state.toggleExpanded(candidateId)}
                     onToggleSelected={() => state.toggleSelected(candidateId)}
+                    onOpenManualReview={() => setManualCandidate(candidate)}
                   />
                 );
               })
@@ -202,6 +210,19 @@ export function UnitCandidateReviewPanel() {
         reviewPrompt={state.reviewPrompt}
         onClose={() => setPromptOpen(false)}
         onApply={state.applyManualSuggestions}
+      />
+      <UnitCandidateManualReviewPanel
+        candidate={manualCandidate}
+        suggestion={manualCandidate ? state.suggestionsById[unitCandidateId(manualCandidate)] : undefined}
+        onClose={() => setManualCandidate(null)}
+        onSave={(candidate, suggestion) => {
+          state.saveManualSuggestion(candidate, suggestion);
+          setManualCandidate(null);
+        }}
+        onSubmit={async (candidate, suggestion) => {
+          await state.submitCandidateSuggestion(candidate, suggestion);
+          setManualCandidate(null);
+        }}
       />
     </section>
   );

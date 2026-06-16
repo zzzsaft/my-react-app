@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { usePersistentFilterState } from "@/hook/usePersistentFilterState";
 import { quoteAgentService } from "../../quoteAgent/services/quoteAgent.service";
 import type { UnitAlias, UnitAliasPayload } from "../../quoteAgent/types";
 import {
@@ -27,10 +28,18 @@ const filterAliases = (aliases: UnitAlias[], keyword: string) => {
   );
 };
 
+const defaultUnitAliasFilters = {
+  keyword: "",
+};
+
 export function useUnitAliasManagerState() {
   const [initialCache] = useState(() => readUnitAliasesCache());
   const [aliases, setAliases] = useState<UnitAlias[]>(initialCache?.aliases ?? []);
-  const [keyword, setKeyword] = useState("");
+  const { filters, setFilters } = usePersistentFilterState(
+    "quoteAgent.unitAliasManager",
+    defaultUnitAliasFilters,
+  );
+  const keyword = filters.keyword;
   const [loading, setLoading] = useState(false);
   const [savingId, setSavingId] = useState<string | number | "new" | null>(null);
   const [message, setMessage] = useState("");
@@ -94,6 +103,6 @@ export function useUnitAliasManagerState() {
     savingId,
     load,
     saveAlias,
-    setKeyword,
+    setKeyword: (value: string) => setFilters({ keyword: value }),
   };
 }

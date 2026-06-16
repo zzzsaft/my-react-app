@@ -1,11 +1,21 @@
 import { useState } from "react";
+import { usePersistentFilterState } from "@/hook/usePersistentFilterState";
 import { quoteAgentService } from "../../services/quoteAgent.service";
 import type { ProductConfigSearchResponse } from "../../types";
 import { errorText } from "../../utils";
 
+const defaultProductConfigSearchFilters = {
+  productNumber: "",
+  customerId: "",
+};
+
 export function useProductConfigSearchState() {
-  const [productNumber, setProductNumber] = useState("");
-  const [customerId, setCustomerId] = useState("");
+  const { filters, setFilters } = usePersistentFilterState(
+    "quoteAgent.productConfigSearch",
+    defaultProductConfigSearchFilters,
+  );
+  const productNumber = filters.productNumber;
+  const customerId = filters.customerId;
   const [result, setResult] = useState<ProductConfigSearchResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -41,7 +51,7 @@ export function useProductConfigSearchState() {
     productNumber,
     result,
     search,
-    setCustomerId,
-    setProductNumber,
+    setCustomerId: (value: string) => setFilters({ customerId: value }),
+    setProductNumber: (value: string) => setFilters({ productNumber: value }),
   };
 }

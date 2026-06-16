@@ -6,6 +6,7 @@ import type { ArchiveItemField, DictionaryOptions, QuoteAgentField } from "../..
 import {
   fieldConfidence,
   fieldDisplayValue,
+  fieldDisplayValueDetail,
   fieldDisplayName,
   fieldDictionaryMatched,
   fieldEnumOptions,
@@ -15,6 +16,7 @@ import {
   isEnumField,
   isLowConfidence,
   isMainConfigField,
+  isSplitDerivedField,
   fieldValueKind,
   textValue,
 } from "../../utils";
@@ -75,13 +77,16 @@ export function FieldTable({
             const confidence = fieldConfidence(field);
             const evidence = (field as any).evidence;
             const missingEvidence = !hasEvidence(evidence);
+            const splitDerived = isSplitDerivedField(field);
+            const shouldWarnMissingEvidence = missingEvidence && !splitDerived;
             const matched = fieldDictionaryMatched(field);
             const displayName = fieldDisplayName(field, dictionaryOptions);
             const originalName = fieldOriginalName(field);
             const showOriginalHint = displayName !== originalName;
+            const valueDetail = fieldDisplayValueDetail(field);
             const hasRawValue = hasMeaningfulRawValue(field);
             const showUnmatchedWarning = !matched && hasRawValue;
-            const warnRow = (isLowConfidence(field) && hasRawValue) || missingEvidence;
+            const warnRow = (isLowConfidence(field) && hasRawValue) || shouldWarnMissingEvidence;
             const dirty = dirtyFieldIndexes.includes(index);
             return (
               <tr key={`${displayName}-${index}`} className={warnRow ? "bg-amber-50/45" : undefined}>
@@ -138,8 +143,19 @@ export function FieldTable({
                     />
                   ) : fieldValueKind(field, dictionaryOptions) === "enums" ? (
                     <EnumsValueTags field={field} dictionaryOptions={dictionaryOptions} />
+                  ) : valueDetail.showRawAndStandard ? (
+                    <div className="space-y-1">
+                      <div>
+                        <span className="text-xs text-slate-500">原始：</span>
+                        {valueDetail.rawValue}
+                      </div>
+                      <div>
+                        <span className="text-xs text-slate-500">标准：</span>
+                        {valueDetail.standardValue}
+                      </div>
+                    </div>
                   ) : (
-                    textValue(fieldDisplayValue(field))
+                    textValue(valueDetail.displayValue)
                   )}
                   {showUnmatchedWarning && <div className="mt-1 text-xs text-amber-700">未匹配，显示原始值</div>}
                 </td>
@@ -148,11 +164,19 @@ export function FieldTable({
                     <span className={isLowConfidence(field) && hasRawValue ? "qa-archive-badge-warn" : "qa-archive-badge"}>
                       {confidence ?? "-"}
                     </span>
-                    {missingEvidence && <span className="qa-archive-badge-warn">缺依据</span>}
+                    {shouldWarnMissingEvidence && <span className="qa-archive-badge-warn">缺依据</span>}
                   </div>
                 </td>
                 <td className="px-3 py-2 align-top">
-                  {missingEvidence ? <span className="text-xs text-amber-700">未提供</span> : <JsonBlock title=" 依据" value={evidence} />}
+                  {missingEvidence ? (
+                    splitDerived ? (
+                      <span className="text-xs text-slate-500">由原始复合字段拆分生成，未单独提供依据</span>
+                    ) : (
+                      <span className="text-xs text-amber-700">未提供</span>
+                    )
+                  ) : (
+                    <JsonBlock title=" 依据" value={evidence} />
+                  )}
                 </td>
               </tr>
             );

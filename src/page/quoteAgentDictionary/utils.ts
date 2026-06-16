@@ -4,7 +4,8 @@ import type { DictionaryValueFormValues, TermTypeFormValues } from "./types";
 
 export { asArray, errorText } from "../quoteAgent/utils";
 
-export const normalizeDictionaryText = (value: unknown) => String(value ?? "").trim().toLowerCase();
+export const normalizeDictionaryText = (value: unknown) =>
+  String(value ?? "").normalize("NFKC").trim().toLowerCase();
 
 export const aliasText = (alias: unknown) => {
   if (typeof alias === "string" || typeof alias === "number") return String(alias).trim();
@@ -48,6 +49,23 @@ export const termTypeKey = (record: DictionaryTermType) => String(record.id ?? r
 
 export const valueKey = (record: DictionaryValue) =>
   String(record.id ?? [record.termType, record.canonicalValue].filter(Boolean).join(":"));
+
+export function dedupeDictionaryValues(values: DictionaryValue[]) {
+  const seen = new Set<string>();
+
+  return values.filter((value) => {
+    const termType = normalizeDictionaryText(value.termType);
+    const canonicalValue = normalizeDictionaryText(value.canonicalValue);
+    const id = String(value.id ?? "").trim();
+    const key = id || (canonicalValue
+      ? `${termType}:${canonicalValue}`
+      : `${termType}:${normalizeDictionaryText(value.displayName)}`);
+
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
 
 export const termTypeLabel = (record: DictionaryTermType) =>
   [record.displayName, record.termType].filter(Boolean).join(" / ") || "-";

@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { usePersistentFilterState } from "@/hook/usePersistentFilterState";
 import { quoteAgentService } from "../../services/quoteAgent.service";
 import type { ContractArchiveStatus, ContractListItem, ContractSummary } from "../../types";
 import { errorText } from "../../utils";
-
-const storageKey = "quote-agent-contract-dashboard-query-v1";
 
 const defaultSummary: ContractSummary = {
   uploadedCount: 0,
@@ -12,7 +11,7 @@ const defaultSummary: ContractSummary = {
   archivedCount: 0,
 };
 
-type SavedQueryState = {
+type ContractDashboardFilters = {
   status: ContractArchiveStatus | "";
   q: string;
   productNumber: string;
@@ -21,7 +20,7 @@ type SavedQueryState = {
   pageSize: number;
 };
 
-const defaultQueryState: SavedQueryState = {
+const defaultContractDashboardFilters: ContractDashboardFilters = {
   status: "",
   q: "",
   productNumber: "",
@@ -30,47 +29,20 @@ const defaultQueryState: SavedQueryState = {
   pageSize: 20,
 };
 
-const validStatuses = new Set(["", "uploaded", "normalized", "archived"]);
-
-function readSavedQueryState(): SavedQueryState {
-  if (typeof window === "undefined") return defaultQueryState;
-  try {
-    const parsed = JSON.parse(window.localStorage.getItem(storageKey) || "{}") as Partial<SavedQueryState>;
-    const page = Number(parsed.page);
-    const pageSize = Number(parsed.pageSize);
-    return {
-      status: validStatuses.has(String(parsed.status ?? "")) ? (parsed.status as ContractArchiveStatus | "") : "",
-      q: String(parsed.q ?? ""),
-      productNumber: String(parsed.productNumber ?? ""),
-      customerId: String(parsed.customerId ?? ""),
-      page: Number.isFinite(page) && page > 0 ? page : defaultQueryState.page,
-      pageSize: Number.isFinite(pageSize) && pageSize > 0 ? pageSize : defaultQueryState.pageSize,
-    };
-  } catch {
-    return defaultQueryState;
-  }
-}
-
-function writeSavedQueryState(state: SavedQueryState) {
-  if (typeof window === "undefined") return;
-  try {
-    window.localStorage.setItem(storageKey, JSON.stringify(state));
-  } catch {
-    // localStorage can be unavailable in restricted browser contexts.
-  }
-}
-
 export function useContractDashboardState() {
   const navigate = useNavigate();
-  const [initialQueryState] = useState(readSavedQueryState);
+  const { filters, setFilters } = usePersistentFilterState(
+    "quoteAgent.contractDashboard",
+    defaultContractDashboardFilters,
+  );
   const [summary, setSummary] = useState<ContractSummary>(defaultSummary);
   const [contracts, setContracts] = useState<ContractListItem[]>([]);
-  const [status, setStatus] = useState<ContractArchiveStatus | "">(initialQueryState.status);
-  const [q, setQ] = useState(initialQueryState.q);
-  const [productNumber, setProductNumber] = useState(initialQueryState.productNumber);
-  const [customerId, setCustomerId] = useState(initialQueryState.customerId);
-  const [page, setPage] = useState(initialQueryState.page);
-  const [pageSize, setPageSize] = useState(initialQueryState.pageSize);
+  const status = filters.status;
+  const q = filters.q;
+  const productNumber = filters.productNumber;
+  const customerId = filters.customerId;
+  const page = Number(filters.page) || defaultContractDashboardFilters.page;
+  const pageSize = Number(filters.pageSize) || defaultContractDashboardFilters.pageSize;
   const [total, setTotal] = useState(0);
   const [selectedArchiveId, setSelectedArchiveId] = useState<string | number>("");
   const [loading, setLoading] = useState(false);
@@ -94,25 +66,23 @@ export function useContractDashboardState() {
       setSummary(summaryResponse);
       setContracts(listResponse.items ?? []);
       setTotal(Number(listResponse.total ?? 0));
-      setPage(Number(listResponse.page ?? nextPage));
-      setPageSize(Number(listResponse.pageSize ?? pageSize));
+      setFilters({
+        page: Number(listResponse.page ?? nextPage),
+        pageSize: Number(listResponse.pageSize ?? pageSize),
+      });
     } catch (error) {
       setError(errorText(error));
     } finally {
       setLoading(false);
     }
-  }, [customerId, page, pageSize, productNumber, q, status]);
+  }, [customerId, page, pageSize, productNumber, q, setFilters, status]);
 
   useEffect(() => {
     void load(page);
   }, [load]);
 
-  useEffect(() => {
-    writeSavedQueryState({ status, q, productNumber, customerId, page, pageSize });
-  }, [customerId, page, pageSize, productNumber, q, status]);
-
   const search = () => {
-    setPage(1);
+    setFilters({ page: 1 });
     void load(1);
   };
 
@@ -136,12 +106,6 @@ export function useContractDashboardState() {
     productNumber,
     q,
     closeArchiveModal,
-    setCustomerId,
-    setPage,
-    setPageSize,
-    setProductNumber,
-    setQ,
-    setStatus,
     selectedArchiveId,
     status,
     summary,
@@ -149,5 +113,11 @@ export function useContractDashboardState() {
     load,
     openContract,
     search,
+    setCustomerId: (value: string) => setFilters({ customerId: value }),
+    setPage: (value: number) => setFilters({ page: value }),
+    setPageSize: (value: number) => setFilters({ pageSize: value }),
+    setProductNumber: (value: string) => setFilters({ productNumber: value }),
+    setQ: (value: string) => setFilters({ q: value }),
+    setStatus: (value: ContractArchiveStatus | "") => setFilters({ status: value }),
   };
 }

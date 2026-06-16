@@ -21,9 +21,17 @@ import { CustomerService } from "@/api/services/customer.service";
 import { set } from "lodash-es";
 import { OpportunityService } from "@/api/services/opportunity.service";
 import { useQuoteStore } from "@/store/useQuoteStore";
+import { usePersistentFilterState } from "@/hook/usePersistentFilterState";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
+
+type SelectedCustomer = Array<{ label: string; value: string }> | null;
+
+const defaultOpportunitySearchFilters = {
+  selectedCustomer: null as SelectedCustomer,
+  selectedStatus: [] as string[],
+};
 
 // 状态选项配置
 const statusOptions = [
@@ -139,14 +147,12 @@ const statusOptions = [
 
 const OpportunitySearchPage = () => {
   const navigate = useNavigate();
-  const [selectedCustomer, setSelectedCustomer] = useState<
-    | {
-        label: string;
-        value: string;
-      }[]
-    | null
-  >(null);
-  const [selectedStatus, setSelectedStatus] = useState<string[]>([]);
+  const { filters, setFilters } = usePersistentFilterState(
+    "opportunity.search",
+    defaultOpportunitySearchFilters,
+  );
+  const selectedCustomer = filters.selectedCustomer;
+  const selectedStatus = filters.selectedStatus;
   const [loading, setLoading] = useState(false);
   const [opportunities, setOpportunities] = useState<any[]>([]);
   const { fetchQuotes } = useQuoteStore();
@@ -222,11 +228,11 @@ const OpportunitySearchPage = () => {
             value={selectedCustomer}
             onChange={(newValue) => {
               if (Array.isArray(newValue)) {
-                setSelectedCustomer(
-                  newValue as { label: string; value: string }[] | null
-                );
+                setFilters({
+                  selectedCustomer: newValue as { label: string; value: string }[],
+                });
               } else {
-                setSelectedCustomer(null);
+                setFilters({ selectedCustomer: null });
               }
             }}
             showSearch
@@ -235,7 +241,7 @@ const OpportunitySearchPage = () => {
             suffixIcon={<SearchOutlined />}
           />
 
-          <StatusSelector value={selectedStatus} onChange={setSelectedStatus} />
+          <StatusSelector value={selectedStatus} onChange={(value) => setFilters({ selectedStatus: value })} />
           <Space size={16}>
             <Button
               type="primary"

@@ -97,11 +97,11 @@ export function fieldDisplayName(field: ArchiveItemField | QuoteAgentField, opti
   const termType = fieldTermType(field);
   const term = options?.termTypes.find((item) => String(item.termType ?? (item as any).term_type ?? "") === termType);
   return String(
-    dictionary.quote_display_name ||
-      dictionary.quoteDisplayName ||
-      dictionary.display_name ||
-      dictionary.displayName ||
+    dictionary.normalized_field_name ||
+      dictionary.normalizedFieldName ||
       fieldOriginalName(field) ||
+      dictionary.quote_display_name ||
+      dictionary.quoteDisplayName ||
       term?.quoteDisplayName ||
       term?.displayName ||
       dictionary.term_display_name ||
@@ -134,13 +134,38 @@ export function fieldDictionaryDisplayName(field: ArchiveItemField | QuoteAgentF
       .filter(Boolean)
       .join(" / ");
   }
-  return dictionary.display_name || dictionary.displayName || dictionary.canonical_value || dictionary.canonicalValue || "";
+  return dictionary.display_name || dictionary.displayName || "";
 }
 
 export function fieldDisplayValue(field: ArchiveItemField | QuoteAgentField) {
   const displayName = fieldDictionaryDisplayName(field);
-  if (fieldDictionaryMatched(field) && displayName) return displayName;
+  if (displayName) return displayName;
   return hasMeaningfulRawValue(field) ? fieldRawValue(field) : "";
+}
+
+export function normalizedFieldText(value: unknown) {
+  return String(value ?? "").trim();
+}
+
+export function sameFieldText(left: unknown, right: unknown) {
+  return normalizedFieldText(left) === normalizedFieldText(right);
+}
+
+export function fieldDisplayValueDetail(field: ArchiveItemField | QuoteAgentField) {
+  const dictionary = (field as any).dictionary || {};
+  const rawValue = hasMeaningfulRawValue(field) ? normalizedFieldText(fieldRawValue(field)) : "";
+  const standardValue = normalizedFieldText(fieldDictionaryDisplayName(field));
+  const normalizedValue = normalizedFieldText(dictionary.normalized_value ?? dictionary.normalizedValue);
+  const displayValue = standardValue || rawValue;
+  const rawMatchesStandard = rawValue && standardValue && sameFieldText(rawValue, standardValue);
+  const rawMatchesNormalized = rawValue && normalizedValue && sameFieldText(rawValue, normalizedValue);
+
+  return {
+    displayValue,
+    rawValue,
+    standardValue,
+    showRawAndStandard: Boolean(rawValue && standardValue && !rawMatchesStandard && !rawMatchesNormalized),
+  };
 }
 
 export function fieldTermType(field: ArchiveItemField | QuoteAgentField) {
@@ -180,6 +205,11 @@ export function fieldEnumOptions(field: ArchiveItemField | QuoteAgentField, opti
 export function isSplitOriginalRetainedField(field: ArchiveItemField | QuoteAgentField) {
   const warningTypes = new Set(fieldWarnings(field).map((warning: any) => warning?.type));
   return (field as any).original === true || warningTypes.has("split_original_retained");
+}
+
+export function isSplitDerivedField(field: ArchiveItemField | QuoteAgentField) {
+  const warningTypes = new Set(fieldWarnings(field).map((warning: any) => String(warning?.type ?? "")));
+  return warningTypes.has("split_value_retained") || warningTypes.has("split_term_type_retained");
 }
 
 export const hiddenWarningTypes = new Set([

@@ -5,7 +5,7 @@ import { EditOutlined } from "@/components/ui/icons";
 import type { DictionaryTermType, DictionaryValue, ProductTypeOption } from "../../quoteAgent/types";
 import { DictionaryDataTable } from "./DictionaryDataTable";
 import { DictionaryDetailModal } from "./DictionaryDetailModal";
-import { filterAliasList, termTypeKey } from "../utils";
+import { dedupeDictionaryValues, filterAliasList, termTypeKey } from "../utils";
 
 type Props = {
   loading: boolean;
@@ -17,6 +17,7 @@ type Props = {
   onEditValue: (record: DictionaryValue) => void;
   onUpdateTermType: (record: DictionaryTermType, patch: Partial<DictionaryTermType>) => Promise<void>;
   onUpdateValue: (record: DictionaryValue, patch: Partial<DictionaryValue>) => Promise<void>;
+  onDeleteValue: (record: DictionaryValue) => Promise<void>;
 };
 
 const aliasesOf = (record: DictionaryTermType) => filterAliasList(record.aliasNames ?? record.aliases ?? []);
@@ -33,6 +34,7 @@ export function TermTypeTable({
   onEditValue,
   onUpdateTermType,
   onUpdateValue,
+  onDeleteValue,
 }: Props) {
   const [detailRecord, setDetailRecord] = useState<DictionaryTermType | null>(null);
 
@@ -163,7 +165,9 @@ export function TermTypeTable({
     ? rows.find((record) => termTypeKey(record) === termTypeKey(detailRecord)) ?? detailRecord
     : null;
   const detailValues = currentDetailRecord
-    ? values.filter((value) => String(value.termType ?? "") === String(currentDetailRecord.termType ?? ""))
+    ? dedupeDictionaryValues(
+        values.filter((value) => String(value.termType ?? "") === String(currentDetailRecord.termType ?? "")),
+      )
     : [];
 
   return (
@@ -202,6 +206,7 @@ export function TermTypeTable({
             : undefined
         }
         onUpdateValue={onUpdateValue}
+        onDeleteValue={onDeleteValue}
       />
     </>
   );

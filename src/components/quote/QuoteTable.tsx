@@ -8,6 +8,7 @@ import React, {
 import dayjs from "dayjs";
 import { Table, Tag, Form, Input } from "@/components/ui/core";
 import type { ColumnsType, TablePaginationConfig } from "@/components/ui/types";
+import { usePersistentFilterState } from "@/hook/usePersistentFilterState";
 import MemberAvatar from "../general/MemberAvatar";
 import QuoteModal from "./QuoteModal";
 import { useQuoteStore } from "@/store/useQuoteStore";
@@ -40,6 +41,23 @@ interface QuoteTableItem {
   createdAt: string;
 }
 
+interface QuoteTableFilters {
+  quoteName: string;
+  customerName: string;
+  pagination: TablePaginationConfig;
+  sorters: Array<{ field?: string; order?: string }>;
+}
+
+const defaultQuoteTableFilters: QuoteTableFilters = {
+  quoteName: "",
+  customerName: "",
+  pagination: {
+    current: 1,
+    pageSize: 20,
+  },
+  sorters: [],
+};
+
 const QuoteTable: React.FC<QuoteTableProps> = ({
   type,
   status,
@@ -50,25 +68,34 @@ const QuoteTable: React.FC<QuoteTableProps> = ({
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedQuote, setSelectedQuote] = useState<any>();
   const [searchForm] = Form.useForm();
-  const [pagination, setPagination] = useState<TablePaginationConfig>({
-    current: 1,
-    pageSize: 20,
-  });
-  const [sorters, setSorters] = useState<SorterResult<QuoteTableItem>[]>([]);
+  const filterKey = `quote.table.${type}.${status || "all"}.${approvalNode || "all"}.${currentApprover || "all"}`;
+  const { filters, setFilters } = usePersistentFilterState<QuoteTableFilters>(
+    filterKey,
+    defaultQuoteTableFilters,
+  );
+  const pagination = filters.pagination ?? defaultQuoteTableFilters.pagination;
+  const sorters = filters.sorters ?? [];
   const lastClickTime = useRef(0);
 
   useEffect(() => {
-    setPagination((p) => ({ ...p, total }));
-  }, [total]);
+    if (pagination.total === total) return;
+    setFilters({ pagination: { ...pagination, total } });
+  }, [pagination, setFilters, total]);
 
   useEffect(() => {
-    const values = searchForm.getFieldsValue();
+    searchForm.setFieldsValue({
+      quoteName: filters.quoteName,
+      customerName: filters.customerName,
+    });
+  }, [filters.customerName, filters.quoteName, searchForm]);
+
+  useEffect(() => {
     fetchQuotes({
       page: pagination.current,
       pageSize: pagination.pageSize,
       type,
-      quoteName: values.quoteName,
-      customerName: values.customerName,
+      quoteName: filters.quoteName,
+      customerName: filters.customerName,
       status,
       approvalNode,
       currentApprover,
@@ -78,6 +105,8 @@ const QuoteTable: React.FC<QuoteTableProps> = ({
     });
   }, [
     fetchQuotes,
+    filters.customerName,
+    filters.quoteName,
     pagination.current,
     pagination.pageSize,
     sorters,
@@ -88,14 +117,13 @@ const QuoteTable: React.FC<QuoteTableProps> = ({
   ]);
 
   const handleSearch = () => {
-    const values = searchForm.getFieldsValue();
-    setPagination((p) => ({ ...p, current: 1 }));
+    setFilters({ pagination: { ...pagination, current: 1 } });
     fetchQuotes({
       page: 1,
       pageSize: pagination.pageSize,
       type,
-      quoteName: values.quoteName,
-      customerName: values.customerName,
+      quoteName: filters.quoteName,
+      customerName: filters.customerName,
       status,
       approvalNode,
       currentApprover,
@@ -110,22 +138,21 @@ const QuoteTable: React.FC<QuoteTableProps> = ({
     _filters: any,
     sorter: SorterResult<QuoteTableItem> | SorterResult<QuoteTableItem>[]
   ) => {
-    setPagination(p);
     const sorterArr = Array.isArray(sorter) ? sorter : [sorter];
-    setSorters(sorterArr as SorterResult<QuoteTableItem>[]);
-    const values = searchForm.getFieldsValue();
+    const nextSorters = sorterArr
+      .filter((s) => s.order)
+      .map((s) => ({ field: s.field as string, order: s.order as string }));
+    setFilters({ pagination: p, sorters: nextSorters });
     fetchQuotes({
       page: p.current,
       pageSize: p.pageSize,
       type,
-      quoteName: values.quoteName,
-      customerName: values.customerName,
+      quoteName: filters.quoteName,
+      customerName: filters.customerName,
       status,
       approvalNode,
       currentApprover,
-      sorters: sorterArr
-        .filter((s) => s.order)
-        .map((s) => ({ field: s.field as string, order: s.order as string })),
+      sorters: nextSorters,
     });
   };
 
@@ -315,8 +342,19 @@ const QuoteTable: React.FC<QuoteTableProps> = ({
     <>
       <Form
         form={searchForm}
+        initialValues={{
+          quoteName: filters.quoteName,
+          customerName: filters.customerName,
+        }}
         layout="inline"
         style={{ marginBottom: 16 }}
+        onChange={() => {
+          const values = searchForm.getFieldsValue();
+          setFilters({
+            quoteName: values.quoteName ?? "",
+            customerName: values.customerName ?? "",
+          });
+        }}
         onFinish={handleSearch}
       >
         <Form.Item name="quoteName" label="报价名称">

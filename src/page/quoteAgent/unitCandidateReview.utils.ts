@@ -59,18 +59,26 @@ export const unitCandidatesForPrompt = (candidates: UnitCandidate[]) =>
   }));
 
 const normalizeAction = (value: unknown): UnitCandidateReviewAction | null => {
-  const action = String(value ?? "");
+  const action = String(value ?? "").trim();
   if (action === "approve" || action === "reject" || action === "needs_human_review") return action;
+  if (["approved", "accept", "accepted", "approve_alias", "add_alias"].includes(action)) return "approve";
+  if (["rejected", "deny", "denied"].includes(action)) return "reject";
   return null;
 };
 
 const suggestionId = (suggestion: any) =>
-  String(suggestion?.candidateId ?? suggestion?.candidate_id ?? suggestion?.id ?? "");
+  String(suggestion?.candidateId ?? suggestion?.candidate_id ?? suggestion?.unitCandidateId ?? suggestion?.unit_candidate_id ?? suggestion?.id ?? "");
 
 export const normalizeUnitSuggestion = (value: unknown): UnitCandidateReviewSuggestion | null => {
   const suggestion = value as any;
   const candidateId = suggestionId(suggestion);
-  const recommendedAction = normalizeAction(suggestion?.recommendedAction ?? suggestion?.recommended_action);
+  const recommendedAction = normalizeAction(
+    suggestion?.recommendedAction ??
+      suggestion?.recommended_action ??
+      suggestion?.action ??
+      suggestion?.decision ??
+      suggestion?.recommendation,
+  );
   if (!candidateId || !recommendedAction) return null;
   return {
     ...suggestion,
@@ -91,7 +99,15 @@ export const unitSuggestionsFromResponse = (response: unknown) => {
   return asArray(
     Array.isArray(value)
       ? value
-      : value?.suggestions ?? value?.unitCandidateSuggestions ?? value?.unit_candidate_suggestions ?? value?.items ?? value?.data,
+      : value?.suggestions ??
+          value?.unitSuggestions ??
+          value?.unit_suggestions ??
+          value?.unitCandidateSuggestions ??
+          value?.unit_candidate_suggestions ??
+          value?.reviewSuggestions ??
+          value?.review_suggestions ??
+          value?.items ??
+          value?.data,
   )
     .map(normalizeUnitSuggestion)
     .filter(Boolean) as UnitCandidateReviewSuggestion[];
