@@ -4,6 +4,7 @@ import { CheckSquareOutlined, CloseCircleOutlined, EditOutlined } from "@/compon
 import { useArchiveDetailState } from "../hooks/useArchiveDetailState";
 import { FieldTable } from "./FieldTable";
 import { JsonBlock } from "./JsonBlock";
+import { DerivedMasterDataModelRow, MasterDataStatus } from "./MasterDataStatus";
 import { ProductBindingsEditor } from "./ProductBindingsEditor";
 import { VersionHistoryPanel } from "./VersionHistoryPanel";
 import type { ArchiveItemField, ContractArchiveDetail, DictionaryOptions, QuoteAgentField } from "../../types";
@@ -103,7 +104,10 @@ export function ArchiveDetailPage({ archiveId, modal = false, onClose }: Archive
                   <article key={item.id} className="qa-archive-panel">
                     <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
                       <div className="min-w-0">
-                        <div className="font-semibold text-slate-900">明细 {item.itemIndex}</div>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <div className="font-semibold text-slate-900">明细 {item.itemIndex}</div>
+                          <MasterDataStatus item={item} />
+                        </div>
                         {!editable ? (
                           <div className="mt-1 text-sm text-slate-600">{textValue(item.itemName)}</div>
                         ) : (
@@ -124,6 +128,7 @@ export function ArchiveDetailPage({ archiveId, modal = false, onClose }: Archive
                     <div className="space-y-3">
                       <div>
                         <div className="qa-archive-section-title">配置字段</div>
+                        <DerivedMasterDataModelRow item={item} />
                         <FieldTable
                           fields={item.fields ?? []}
                           basePath={`items.${index}.fields`}

@@ -7,6 +7,7 @@ import MainLayout from "./components/MainLayout";
 
 const AuthCallback = lazy(() => import("./page/AuthCallback"));
 const CandidateClusterReviewPage = lazy(() => import("./page/quoteAgent/CandidateClusterReviewPage"));
+const ConceptResolverReviewPage = lazy(() => import("./page/quoteAgent/conceptResolver"));
 const ExternalContactBindingPage = lazy(() => import("./page/externalContact"));
 const HistoryQuoteTablePage = lazy(() => import("./page/quote/HistoryQuoteTablePage"));
 const JdyRedirect = lazy(() => import("./page/JdyRedirect"));
@@ -53,6 +54,7 @@ const App: React.FC = () => {
               <Route path="quote-agent/review" element={<QuoteAgentReviewPage />} />
               <Route path="quote-agent/review/:documentId" element={<QuoteAgentReviewPage />} />
               <Route path="quote-agent/clusters" element={<CandidateClusterReviewPage />} />
+              <Route path="quote-agent/concept-resolver" element={<ConceptResolverReviewPage />} />
               <Route path="quote-agent/dictionary" element={<QuoteAgentDictionaryPage />} />
             </Route>
             <Route path="/jdy_redirect" element={<JdyRedirect />} />

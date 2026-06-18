@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useContractDetailState } from "../hooks/useContractDetailState";
 import { FieldTable } from "./FieldTable";
 import { JsonBlock } from "./JsonBlock";
+import { DerivedMasterDataModelRow, MasterDataStatus } from "./MasterDataStatus";
 import type { ArchiveItemField, QuoteAgentField } from "../../types";
 import { formatDateTime, isMainConfigField, isUnmatchedConfigField, textValue } from "../../utils";
 
@@ -76,12 +77,16 @@ export function ContractDetailPage() {
               <article key={String(item.item_index ?? index)} className="qa-archive-panel">
                 <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
                   <div>
-                    <div className="font-semibold text-slate-900">Item {textValue(item.item_index ?? index + 1)}</div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <div className="font-semibold text-slate-900">Item {textValue(item.item_index ?? index + 1)}</div>
+                      <MasterDataStatus item={item} />
+                    </div>
                     <div className="text-xs text-slate-500">数量：{textValue(item.item_quantity)}</div>
                   </div>
                   <JsonBlock title=" item JSON" value={item} />
                 </div>
                 <div className="qa-archive-section-title">配置字段</div>
+                <DerivedMasterDataModelRow item={item} />
                 <FieldTable fields={item.fields ?? []} />
                 <HiddenFieldsDisclosure fields={item.fields ?? []} />
               </article>

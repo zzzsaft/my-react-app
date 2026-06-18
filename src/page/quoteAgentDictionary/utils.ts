@@ -51,15 +51,29 @@ export const valueKey = (record: DictionaryValue) =>
   String(record.id ?? [record.termType, record.canonicalValue].filter(Boolean).join(":"));
 
 export function dedupeDictionaryValues(values: DictionaryValue[]) {
+  const businessKeysWithId = new Set(
+    values
+      .filter((value) => String(value.id ?? "").trim())
+      .map((value) => {
+        const termType = normalizeDictionaryText(value.termType);
+        const canonicalValue = normalizeDictionaryText(value.canonicalValue);
+        return canonicalValue ? `${termType}:${canonicalValue}` : "";
+      })
+      .filter(Boolean),
+  );
   const seen = new Set<string>();
 
   return values.filter((value) => {
     const termType = normalizeDictionaryText(value.termType);
     const canonicalValue = normalizeDictionaryText(value.canonicalValue);
     const id = String(value.id ?? "").trim();
-    const key = id || (canonicalValue
+    const businessKey = canonicalValue
       ? `${termType}:${canonicalValue}`
-      : `${termType}:${normalizeDictionaryText(value.displayName)}`);
+      : `${termType}:${normalizeDictionaryText(value.displayName)}`;
+    if (!id && businessKeysWithId.has(businessKey)) return false;
+    const key = id || (canonicalValue
+      ? businessKey
+      : businessKey);
 
     if (!key || seen.has(key)) return false;
     seen.add(key);

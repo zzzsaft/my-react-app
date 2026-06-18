@@ -21,6 +21,9 @@ const objectValue = (value: unknown): FilterPreferenceValue | null => {
   return value as FilterPreferenceValue;
 };
 
+const hasChangedFilterValue = (current: FilterPreferenceValue, patch: FilterPreferenceValue) =>
+  Object.entries(patch).some(([key, value]) => current[key] !== value);
+
 export const useFilterPreferenceStore = create<FilterPreferenceState>()(
   persist(
     (set, get) => ({
@@ -29,15 +32,19 @@ export const useFilterPreferenceStore = create<FilterPreferenceState>()(
       backendSyncErrorByKey: {},
 
       setFilters: (key, filters) => {
-        set((state) => ({
-          filtersByKey: {
-            ...state.filtersByKey,
-            [key]: {
-              ...(state.filtersByKey[key] ?? {}),
-              ...filters,
-            } as FilterPreferenceValue,
-          },
-        }));
+        set((state) => {
+          const current = state.filtersByKey[key] ?? {};
+          if (!hasChangedFilterValue(current, filters as FilterPreferenceValue)) return state;
+          return {
+            filtersByKey: {
+              ...state.filtersByKey,
+              [key]: {
+                ...current,
+                ...filters,
+              } as FilterPreferenceValue,
+            },
+          };
+        });
       },
 
       replaceFilters: (key, filters) => {

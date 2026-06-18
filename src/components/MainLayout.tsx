@@ -63,6 +63,7 @@ const navEntries: NavEntry[] = [
       { key: "/quote-agent/product-configs", label: "产品配置查询", description: "按产品编号检索归档配置", icon: <DatabaseOutlined /> },
       { key: "/quote-agent/review", label: "文档审核", description: "按文档逐条审核字典候选", icon: <FileSearchOutlined /> },
       { key: "/quote-agent/clusters", label: "候选簇审核", description: "按候选簇批量治理字典候选", icon: <ClusterOutlined /> },
+      { key: "/quote-agent/concept-resolver", label: "概念解析审核", description: "审核解析器历史结果", icon: <ClusterOutlined /> },
       { key: "/quote-agent/dictionary", label: "字典管理", description: "维护 termType 与 alias 属性", icon: <DatabaseOutlined /> },
     ],
   },

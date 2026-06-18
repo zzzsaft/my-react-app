@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useFilterPreferenceStore } from "@/store/useFilterPreferenceStore";
 
 export function usePersistentFilterState<T extends object>(
@@ -30,8 +30,12 @@ export function usePersistentFilterState<T extends object>(
     return () => window.clearTimeout(timer);
   }, [backendLoaded, debounceMs, filters, key, syncToBackend]);
 
+  const setFilters = useCallback((nextFilters: Partial<T>) => {
+    setStoreFilters<T>(key, nextFilters);
+  }, [key, setStoreFilters]);
+
   return {
     filters,
-    setFilters: (nextFilters: Partial<T>) => setStoreFilters<T>(key, nextFilters),
+    setFilters,
   };
 }

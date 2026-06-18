@@ -3,6 +3,7 @@ import { QuestionCircleOutlined } from "@/components/ui/icons";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/components/ui/utils";
 import type { ArchiveItemField, DictionaryOptions, QuoteAgentField } from "../../types";
+import { fieldIsModelField, fieldMasterDataMatch, masterDataMatchMethod, masterDataSourceAndId } from "../masterData";
 import {
   fieldConfidence,
   fieldDisplayValue,
@@ -107,6 +108,7 @@ export function FieldTable({
                       </span>
                     )}
                   </span>
+                  <FieldMasterDataMeta field={field} />
                 </td>
                 <td className="px-3 py-2 align-top">
                   {editable && mode === "mainConfig" && fieldValueKind(field, dictionaryOptions) === "enums" ? (
@@ -360,6 +362,29 @@ function EnumsFieldEditor({
         )}
       </PopoverContent>
     </Popover>
+  );
+}
+
+function FieldMasterDataMeta({ field }: { field: ArchiveItemField | QuoteAgentField }) {
+  const match = fieldMasterDataMatch(field);
+  if (!match || !fieldIsModelField(field)) return null;
+  const matchMethod = masterDataMatchMethod(match);
+  const sourceAndId = masterDataSourceAndId(match);
+  if (!matchMethod && !sourceAndId) return null;
+
+  return (
+    <div className="mt-1 flex flex-wrap gap-1.5 text-[11px] leading-5">
+      {matchMethod && (
+        <span className="rounded border border-blue-100 bg-blue-50 px-1.5 text-blue-700">
+          {matchMethod}
+        </span>
+      )}
+      {sourceAndId && (
+        <span className="rounded border border-slate-200 bg-slate-50 px-1.5 text-slate-500">
+          {sourceAndId}
+        </span>
+      )}
+    </div>
   );
 }
 

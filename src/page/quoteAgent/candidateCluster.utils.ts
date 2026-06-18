@@ -87,10 +87,14 @@ const operationsOf = (value: unknown, defaultTermType = ""): ReviewOperation[] =
       const termType = firstText(
         rawPayload.termType,
         rawPayload.term_type,
+        (rawPayload as any).suggestedTermType,
+        (rawPayload as any).suggested_term_type,
         (rawPayload as any).targetTermType,
         (rawPayload as any).target_term_type,
         (operation as any).termType,
         (operation as any).term_type,
+        (operation as any).suggestedTermType,
+        (operation as any).suggested_term_type,
         (operation as any).targetTermType,
         (operation as any).target_term_type,
         shouldFillClusterTermType(normalizedOperation) ? defaultTermType : "",
@@ -98,6 +102,51 @@ const operationsOf = (value: unknown, defaultTermType = ""): ReviewOperation[] =
       const payload = {
         ...rawPayload,
         termType: termType || undefined,
+        displayName:
+          rawPayload.displayName ??
+          rawPayload.display_name ??
+          (rawPayload as any).suggestedDisplayName ??
+          (rawPayload as any).suggested_display_name ??
+          (operation as any).displayName ??
+          (operation as any).display_name ??
+          (operation as any).suggestedDisplayName ??
+          (operation as any).suggested_display_name,
+        quoteDisplayName:
+          rawPayload.quoteDisplayName ??
+          rawPayload.quote_display_name ??
+          (rawPayload as any).suggestedQuoteDisplayName ??
+          (rawPayload as any).suggested_quote_display_name ??
+          (rawPayload as any).suggestedDisplayName ??
+          (rawPayload as any).suggested_display_name ??
+          (operation as any).quoteDisplayName ??
+          (operation as any).quote_display_name ??
+          (operation as any).suggestedQuoteDisplayName ??
+          (operation as any).suggested_quote_display_name ??
+          (operation as any).suggestedDisplayName ??
+          (operation as any).suggested_display_name,
+        category:
+          rawPayload.category ??
+          (rawPayload as any).suggestedCategory ??
+          (rawPayload as any).suggested_category ??
+          (operation as any).category ??
+          (operation as any).suggestedCategory ??
+          (operation as any).suggested_category,
+        description:
+          rawPayload.description ??
+          (rawPayload as any).suggestedDescription ??
+          (rawPayload as any).suggested_description ??
+          (operation as any).description ??
+          (operation as any).suggestedDescription ??
+          (operation as any).suggested_description,
+        applicableProductTypes:
+          rawPayload.applicableProductTypes ??
+          rawPayload.applicable_product_types ??
+          (rawPayload as any).suggestedApplicableProductTypes ??
+          (rawPayload as any).suggested_applicable_product_types ??
+          (operation as any).applicableProductTypes ??
+          (operation as any).applicable_product_types ??
+          (operation as any).suggestedApplicableProductTypes ??
+          (operation as any).suggested_applicable_product_types,
         termId:
           rawPayload.termId ??
           rawPayload.term_id ??
@@ -111,10 +160,22 @@ const operationsOf = (value: unknown, defaultTermType = ""): ReviewOperation[] =
           rawPayload.aliasNames ??
           rawPayload.alias_names ??
           (rawPayload as any).aliases ??
+          (rawPayload as any).suggestedAliases ??
+          (rawPayload as any).suggested_aliases ??
           (operation as any).aliasNames ??
           (operation as any).alias_names ??
-          (operation as any).aliases,
-        valueKind: rawPayload.valueKind ?? rawPayload.value_kind ?? (operation as any).valueKind ?? (operation as any).value_kind,
+          (operation as any).aliases ??
+          (operation as any).suggestedAliases ??
+          (operation as any).suggested_aliases,
+        valueKind:
+          rawPayload.valueKind ??
+          rawPayload.value_kind ??
+          (rawPayload as any).suggestedValueKind ??
+          (rawPayload as any).suggested_value_kind ??
+          (operation as any).valueKind ??
+          (operation as any).value_kind ??
+          (operation as any).suggestedValueKind ??
+          (operation as any).suggested_value_kind,
       };
       return {
         ...operation,

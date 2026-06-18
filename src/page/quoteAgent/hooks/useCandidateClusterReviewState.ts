@@ -18,6 +18,7 @@ import {
   termTypeSetFromClusterResponse,
 } from "../candidateCluster.utils";
 import { usePersistentFilterState } from "@/hook/usePersistentFilterState";
+import { useDictionaryOptionsStore } from "../../quoteAgentDictionary/store/useDictionaryOptionsStore";
 import { quoteAgentService } from "../services/quoteAgent.service";
 import type {
   CandidateCluster,
@@ -53,6 +54,9 @@ const renormalizeBatchText = (result: RenormalizeBatchResponse) => {
 const clusterSummaryFromResponse = (response: CandidateClustersResponse): CandidateClusterSummary =>
   response.summary ?? {};
 
+const termTypeSetFromOptions = (termTypes: DictionaryOptions["termTypes"]) =>
+  new Set(termTypes.map((item) => String(item.termType ?? "")).filter(Boolean));
+
 export function useCandidateClusterReviewState() {
   const requestIdRef = useRef(0);
   const { filters, setFilters } = usePersistentFilterState(
@@ -75,7 +79,15 @@ export function useCandidateClusterReviewState() {
   const [reviewPrompt, setReviewPrompt] = useState<CandidateClusterReviewPromptResponse | string>("");
   const [clusterSummary, setClusterSummary] = useState<CandidateClusterSummary>({});
   const [knownTermTypes, setKnownTermTypes] = useState<Set<string>>(() => new Set());
-  const [options, setOptions] = useState<DictionaryOptions>({ termTypes: [], values: [], productTypes: [] });
+  const termTypes = useDictionaryOptionsStore((state) => state.termTypes);
+  const values = useDictionaryOptionsStore((state) => state.values);
+  const productTypes = useDictionaryOptionsStore((state) => state.productTypes);
+  const loadDictionaryOptions = useDictionaryOptionsStore((state) => state.load);
+  const mergeDictionaryOptions = useDictionaryOptionsStore((state) => state.mergeOptions);
+  const options = useMemo<DictionaryOptions>(
+    () => ({ termTypes, values, productTypes }),
+    [productTypes, termTypes, values],
+  );
   const [promptData, setPromptData] = useState<CandidateClusterPromptData>({
     productTypes: [],
     termTypes: [],
@@ -126,9 +138,13 @@ export function useCandidateClusterReviewState() {
           "候选簇接口返回结构不正确，未找到 clusters/items/data 列表。请检查后端 /productConfigAgent/candidates/clusters 路由。",
         );
       }
-      const nextKnownTermTypes = termTypeSetFromClusterResponse(response);
+      mergeDictionaryOptions(dictionaryOptionsFromClusterResponse(response));
+      const storeTermTypes = useDictionaryOptionsStore.getState().termTypes;
+      const nextKnownTermTypes = new Set([
+        ...Array.from(termTypeSetFromClusterResponse(response)),
+        ...Array.from(termTypeSetFromOptions(storeTermTypes)),
+      ]);
       setKnownTermTypes(nextKnownTermTypes);
-      setOptions(dictionaryOptionsFromClusterResponse(response));
       setPromptData(promptDataFromClusterResponse(response));
       setClusterSummary(clusterSummaryFromResponse(response));
       setClusters(annotateClusterSuggestions(clustersFromResponse(response), nextKnownTermTypes));
@@ -140,7 +156,7 @@ export function useCandidateClusterReviewState() {
     } finally {
       if (requestId === requestIdRef.current) setLoading(false);
     }
-  }, [candidateType, documentId, limit, status]);
+  }, [candidateType, documentId, limit, mergeDictionaryOptions, status]);
 
   const generateSuggestions = useCallback(async () => {
     setSuggesting(true);
@@ -336,6 +352,14 @@ export function useCandidateClusterReviewState() {
   useEffect(() => {
     void loadReviewPrompt();
   }, [loadReviewPrompt]);
+
+  useEffect(() => {
+    void loadDictionaryOptions();
+  }, [loadDictionaryOptions]);
+
+  useEffect(() => {
+    setKnownTermTypes((current) => new Set([...Array.from(current), ...Array.from(termTypeSetFromOptions(termTypes))]));
+  }, [termTypes]);
 
   useEffect(() => {
     void loadClusters();
