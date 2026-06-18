@@ -249,6 +249,15 @@ function payloadFor(action: ReviewAction, state: FormState) {
   return { reason: state.reason };
 }
 
+function withFieldQualifier(payload: Record<string, unknown>, field: QuoteAgentField) {
+  const qualifier = field.qualifier;
+  if (!qualifier || typeof qualifier !== "object" || !Object.keys(qualifier).length) return payload;
+  return {
+    ...payload,
+    qualifier: { ...qualifier },
+  };
+}
+
 export function FieldReviewPanel({ field, candidate, candidateType, options, draft, onSaveDraft, onSubmit, onClose }: Props) {
   const actions = candidateType === "term_type" ? termActions : valueActions;
   const [action, setAction] = useState<ReviewAction | "">(draft?.action || "");
@@ -316,7 +325,12 @@ export function FieldReviewPanel({ field, candidate, candidateType, options, dra
       ? "create_term_type"
       : action as ReviewAction
   );
-  const operation = (): ReviewOperation => ({ candidateType, candidateId: String(candidate.id), action: effectiveAction(), payload: payloadFor(effectiveAction(), state) });
+  const operation = (): ReviewOperation => ({
+    candidateType,
+    candidateId: String(candidate.id),
+    action: effectiveAction(),
+    payload: withFieldQualifier(payloadFor(effectiveAction(), state), field),
+  });
   const save = () => {
     onSaveDraft({ ...operation(), label: actions.find((item) => item.value === action)?.label || action, updatedAt: Date.now() });
     onClose();

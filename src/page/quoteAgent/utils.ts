@@ -5,6 +5,7 @@ import type {
   CandidateType,
   DictionaryOptions,
   ExtractionDetail,
+  FieldQualifierPosition,
   ProductBinding,
   ProductBindingPayload,
   QuoteAgentDocument,
@@ -82,6 +83,29 @@ export const isLowConfidence = (field: ArchiveItemField | QuoteAgentField) => {
   return confidence !== null && confidence < 0.75;
 };
 
+export const qualifierLabelMap: Record<FieldQualifierPosition, string> = {
+  upper_mold: "上模",
+  lower_mold: "下模",
+  pre_pump: "泵前",
+  post_pump: "泵后",
+  pre_mesh: "网前",
+  post_mesh: "网后",
+  inlet: "入口",
+  c_inlet: "C入口",
+};
+
+const knownQualifierPositions = new Set<string>(Object.keys(qualifierLabelMap));
+
+export function fieldQualifierPosition(field: ArchiveItemField | QuoteAgentField) {
+  const position = String((field as any).qualifier?.position ?? "");
+  return knownQualifierPositions.has(position) ? position as FieldQualifierPosition : "";
+}
+
+export function fieldQualifierLabel(field: ArchiveItemField | QuoteAgentField) {
+  const position = fieldQualifierPosition(field);
+  return position ? qualifierLabelMap[position] : "";
+}
+
 export const fieldOriginalName = (field: ArchiveItemField | QuoteAgentField) =>
   String(
     (field as any).field_name ||
@@ -111,8 +135,30 @@ export function fieldDisplayName(field: ArchiveItemField | QuoteAgentField, opti
   );
 }
 
+export function fieldDisplayNameWithQualifier(field: ArchiveItemField | QuoteAgentField, options?: DictionaryOptions) {
+  const displayName = fieldDisplayName(field, options);
+  const qualifierLabel = fieldQualifierLabel(field);
+  return qualifierLabel ? `${displayName} · ${qualifierLabel}` : displayName;
+}
+
 export const fieldRawValue = (field: ArchiveItemField | QuoteAgentField) =>
   (field as any).raw_value ?? (field as any).rawValue ?? (field as any).value ?? "";
+
+export function fieldStableKey(
+  field: ArchiveItemField | QuoteAgentField,
+  itemIndex: string | number | undefined,
+  index: string | number,
+  candidateId?: string | number,
+) {
+  return [
+    itemIndex ?? "x",
+    fieldTermType(field),
+    fieldQualifierPosition(field),
+    (field as any).field_name ?? (field as any).fieldName ?? "",
+    fieldRawValue(field),
+    candidateId ?? index,
+  ].map((value) => String(value ?? "")).join(":");
+}
 
 export function hasMeaningfulRawValue(field: ArchiveItemField | QuoteAgentField) {
   const value = String(fieldRawValue(field) ?? "").trim();
@@ -166,6 +212,29 @@ export function fieldDisplayValueDetail(field: ArchiveItemField | QuoteAgentFiel
     standardValue,
     showRawAndStandard: Boolean(rawValue && standardValue && !rawMatchesStandard && !rawMatchesNormalized),
   };
+}
+
+export function roughnessDisplayText(field: ArchiveItemField | QuoteAgentField) {
+  const roughness = (field as any).dictionary?.roughness;
+  if (!roughness || typeof roughness !== "object") return "";
+
+  const unit = String(roughness.unit || "").trim();
+  const rangeMin = roughness.rangeMin;
+  const rangeMax = roughness.rangeMax;
+  const value = roughness.value;
+  const bound = String(roughness.bound || "");
+  const grade = String(roughness.grade || "").trim();
+  const parts: string[] = [];
+
+  if (grade) parts.push(`等级 ${grade}`);
+  if (rangeMin !== undefined && rangeMin !== null && rangeMax !== undefined && rangeMax !== null) {
+    parts.push(`范围 ${rangeMin}-${rangeMax}${unit ? ` ${unit}` : ""}`);
+  } else if (value !== undefined && value !== null) {
+    const symbol = bound === "lt" ? "<" : bound === "lte" ? "<=" : bound === "gt" ? ">" : bound === "gte" ? ">=" : "";
+    parts.push(`${symbol}${symbol ? " " : ""}${value}${unit ? ` ${unit}` : ""}`);
+  }
+
+  return parts.join("，") || String(roughness.raw || "");
 }
 
 export function fieldTermType(field: ArchiveItemField | QuoteAgentField) {

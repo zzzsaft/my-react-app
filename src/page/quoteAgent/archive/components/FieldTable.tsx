@@ -9,9 +9,11 @@ import {
   fieldDisplayValue,
   fieldDisplayValueDetail,
   fieldDisplayName,
+  fieldDisplayNameWithQualifier,
   fieldDictionaryMatched,
   fieldEnumOptions,
   fieldOriginalName,
+  fieldStableKey,
   hasMeaningfulRawValue,
   hasEvidence,
   isEnumField,
@@ -19,6 +21,7 @@ import {
   isMainConfigField,
   isSplitDerivedField,
   fieldValueKind,
+  roughnessDisplayText,
   textValue,
 } from "../../utils";
 import { JsonBlock } from "./JsonBlock";
@@ -81,16 +84,18 @@ export function FieldTable({
             const splitDerived = isSplitDerivedField(field);
             const shouldWarnMissingEvidence = missingEvidence && !splitDerived;
             const matched = fieldDictionaryMatched(field);
-            const displayName = fieldDisplayName(field, dictionaryOptions);
+            const baseDisplayName = fieldDisplayName(field, dictionaryOptions);
+            const displayName = fieldDisplayNameWithQualifier(field, dictionaryOptions);
             const originalName = fieldOriginalName(field);
-            const showOriginalHint = displayName !== originalName;
+            const showOriginalHint = baseDisplayName !== originalName;
             const valueDetail = fieldDisplayValueDetail(field);
             const hasRawValue = hasMeaningfulRawValue(field);
             const showUnmatchedWarning = !matched && hasRawValue;
             const warnRow = (isLowConfidence(field) && hasRawValue) || shouldWarnMissingEvidence;
             const dirty = dirtyFieldIndexes.includes(index);
+            const roughnessText = roughnessDisplayText(field);
             return (
-              <tr key={`${displayName}-${index}`} className={warnRow ? "bg-amber-50/45" : undefined}>
+              <tr key={fieldStableKey(field, basePath || "archive", index)} className={warnRow ? "bg-amber-50/45" : undefined}>
                 <td className="px-3 py-2 align-top text-slate-800">
                   <span className="inline-flex max-w-full items-center gap-1">
                     <span className="truncate">{displayName}</span>
@@ -159,6 +164,7 @@ export function FieldTable({
                   ) : (
                     textValue(valueDetail.displayValue)
                   )}
+                  {roughnessText && <div className="mt-1 text-xs text-slate-500">{roughnessText}</div>}
                   {showUnmatchedWarning && <div className="mt-1 text-xs text-amber-700">未匹配，显示原始值</div>}
                 </td>
                 <td className="px-3 py-2 align-top">

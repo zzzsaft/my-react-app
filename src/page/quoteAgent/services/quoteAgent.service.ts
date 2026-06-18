@@ -362,7 +362,8 @@ export const quoteAgentService = {
     };
   },
 
-  async getDictionaryValues(termType?: string): Promise<DictionaryValue[]> {
+  async getDictionaryValues(params?: string | { termType?: string; qualifierPosition?: string; productType?: string }): Promise<DictionaryValue[]> {
+    const termType = typeof params === "string" ? params : params?.termType;
     const response = await apiClient.get<{ values: DictionaryValue[] }>("/productConfigAgent/dictionary/values", {
       params: termType ? { termType } : undefined,
       ...slowRequest,

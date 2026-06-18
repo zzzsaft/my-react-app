@@ -10,13 +10,17 @@ import {
   dictionaryValue,
   draftKey,
   fieldDisplayName,
+  fieldDisplayNameWithQualifier,
+  fieldQualifierLabel,
   fieldOriginalName,
+  fieldStableKey,
   fieldStatus,
   json,
   matchCandidate,
   productMasterDataMatch,
   productMasterDataTermType,
   reviewKind,
+  roughnessDisplayText,
   toneClass,
 } from "../utils";
 
@@ -55,7 +59,7 @@ export function ItemBlock(props: {
     const type = candidateTypeOf(field, candidate);
     const productTermType = productMasterDataTermType(field);
     const status = fieldStatus(field);
-    const fieldKey = `${item.item_index ?? "x"}:${index}:${field.field_name ?? ""}:${field.raw_value ?? ""}:${candidate?.id ?? ""}`;
+    const fieldKey = fieldStableKey(field, item.item_index, index, candidate?.id);
     const candidateDraftKey = candidate && type ? draftKey(type, candidate.id) : "";
     const draft = candidateDraftKey ? props.drafts[candidateDraftKey] : undefined;
     const canReview = Boolean(candidate && type && !productTermType);
@@ -73,6 +77,7 @@ export function ItemBlock(props: {
     : null;
   const hiddenFieldCount = fieldEntries.filter((entry) => !entry.canReview && !entry.showsProductMasterData).length;
   const visibleFieldEntries = showAllFields ? fieldEntries : fieldEntries.filter((entry) => entry.canReview || entry.showsProductMasterData);
+  const visibleFieldSections = groupFieldEntriesByQualifier(visibleFieldEntries);
   return (
     <article className="border border-slate-200 bg-white">
       <div className="border-b border-slate-200 bg-slate-50 px-3 py-2">
@@ -108,16 +113,25 @@ export function ItemBlock(props: {
             />
           </div>
         )}
-        {visibleFieldEntries.map(({ field, index, candidate, type, productTermType, status, fieldKey, candidateDraftKey, draft, canReview, needsProductApplicability, reviewMeta }) => {
+        {visibleFieldSections.map((section) => (
+          <div key={section.key} className="divide-y divide-slate-100">
+            {section.label && (
+              <div className="bg-slate-50/70 px-3 py-1.5 text-xs font-semibold text-slate-600">
+                {section.label}
+              </div>
+            )}
+            {section.entries.map(({ field, index, candidate, type, productTermType, status, fieldKey, candidateDraftKey, draft, canReview, needsProductApplicability, reviewMeta }) => {
           const active = props.activeFieldKey === fieldKey;
           const expanded = props.expandedFieldKey === fieldKey;
           const masterDataMatch = productMasterDataMatch(field);
-          const fieldName = fieldDisplayName(field, props.options);
+          const baseFieldName = fieldDisplayName(field, props.options);
+          const fieldName = fieldDisplayNameWithQualifier(field, props.options);
           const originalFieldName = fieldOriginalName(field);
-          const showOriginalFieldName = fieldName !== originalFieldName;
+          const showOriginalFieldName = baseFieldName !== originalFieldName;
           const displayValue = productTermType
             ? String(masterDataMatch?.model || masterDataMatch?.matchedModel || masterDataMatch?.matched_model || dictionaryValue(field) || "-")
             : dictionaryValue(field) || "-";
+          const roughnessText = roughnessDisplayText(field);
 
           return (
             <div key={fieldKey} className={`relative grid grid-cols-1 gap-2 px-3 py-2 text-sm md:grid-cols-[28px_minmax(120px,150px)_minmax(140px,1fr)_minmax(90px,0.65fr)_96px_118px] md:items-start ${canReview ? "bg-amber-50/40" : "bg-white"}`}>
@@ -144,6 +158,9 @@ export function ItemBlock(props: {
               </div>
               <div className="min-w-0">
                 <div className="break-words text-slate-700">{displayValue}</div>
+                {roughnessText && (
+                  <div className="mt-1 break-words text-xs text-slate-500">{roughnessText}</div>
+                )}
                 <div className="text-[11px] text-slate-400">{productTermType ? "主数据型号" : "字典匹配值"}</div>
               </div>
               <div className="flex flex-wrap items-center gap-1 md:min-h-9">
@@ -195,10 +212,38 @@ export function ItemBlock(props: {
               )}
             </div>
           );
-        })}
+            })}
+          </div>
+        ))}
       </div>
     </article>
   );
+}
+
+function groupFieldEntriesByQualifier<T extends { field: QuoteAgentField }>(entries: T[]) {
+  const plainEntries: T[] = [];
+  const groups: Array<{ key: string; label: string; entries: T[] }> = [];
+  const groupByLabel = new Map<string, { key: string; label: string; entries: T[] }>();
+
+  entries.forEach((entry) => {
+    const label = fieldQualifierLabel(entry.field);
+    if (!label) {
+      plainEntries.push(entry);
+      return;
+    }
+    const key = `qualifier:${label}`;
+    const group = groupByLabel.get(label) ?? { key, label, entries: [] };
+    group.entries.push(entry);
+    if (!groupByLabel.has(label)) {
+      groupByLabel.set(label, group);
+      groups.push(group);
+    }
+  });
+
+  return [
+    ...(plainEntries.length ? [{ key: "plain", label: "", entries: plainEntries }] : []),
+    ...groups,
+  ];
 }
 
 function productMasterTermTypeOfItem(item: QuoteAgentItem): ProductMasterDataTermType | null {

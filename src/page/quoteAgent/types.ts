@@ -121,10 +121,42 @@ export interface DictionarySummary {
   [key: string]: unknown;
 }
 
+export type FieldQualifierPosition =
+  | "upper_mold"
+  | "lower_mold"
+  | "pre_pump"
+  | "post_pump"
+  | "pre_mesh"
+  | "post_mesh"
+  | "inlet"
+  | "c_inlet";
+
+export interface FieldQualifier {
+  position?: FieldQualifierPosition;
+  sourceText?: string;
+  [key: string]: unknown;
+}
+
+export interface FieldRoughness {
+  raw: string;
+  grade?: string;
+  bound?: "lt" | "lte" | "gt" | "gte";
+  value?: number;
+  rangeMin?: number;
+  rangeMax?: number;
+  unit?: "μm" | "um";
+  [key: string]: unknown;
+}
+
+export interface FieldDictionary extends Record<string, any> {
+  roughness?: FieldRoughness;
+}
+
 export interface QuoteAgentField {
   field_name?: string;
   raw_value?: string;
-  dictionary?: Record<string, any>;
+  qualifier?: FieldQualifier;
+  dictionary?: FieldDictionary;
   masterDataMatch?: Record<string, any> | null;
   master_data_match?: Record<string, any> | null;
   candidate?: Record<string, any> | null;
@@ -475,7 +507,8 @@ export interface ProductBindingPayload {
 export interface ArchiveItemField {
   field_name?: string;
   raw_value?: unknown;
-  dictionary?: Record<string, any>;
+  qualifier?: FieldQualifier;
+  dictionary?: FieldDictionary;
   evidence?: unknown;
   confidence?: number | string | null;
   [key: string]: any;
