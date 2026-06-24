@@ -24,3 +24,6 @@ dist-ssr
 *.sln
 *.sw?
 .npm-cache/
+.dist/dist.tar.gz
+/.vscode
+.vscode/settings.json

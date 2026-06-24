@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "extract:fields": "node scripts/extractFormFields.cjs"
+    "extract:fields": "node scripts/extractFormFields.cjs",
+    "deploy": "powershell -ExecutionPolicy Bypass -File scripts/deploy.ps1"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

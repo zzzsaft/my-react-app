@@ -76,9 +76,9 @@ export const useAuthStore = create<AuthState>()(
             name: user.name,
             avatar: user.avatar,
           });
-        } catch {
+        } catch (error) {
           set({ userid: null, isAuthenticated: false });
-          throw new Error("登录失败");
+          throw error;
         } finally {
           set({ isLoading: false });
         }

@@ -11,6 +11,7 @@ const ConceptResolverReviewPage = lazy(() => import("./page/quoteAgent/conceptRe
 const ExternalContactBindingPage = lazy(() => import("./page/externalContact"));
 const HistoryQuoteTablePage = lazy(() => import("./page/quote/HistoryQuoteTablePage"));
 const JdyRedirect = lazy(() => import("./page/JdyRedirect"));
+const LoginFailedPage = lazy(() => import("./page/LoginFailedPage"));
 const OAQuoteTablePage = lazy(() => import("./page/quote/OAQuoteTablePage"));
 const NoPermissionPage = lazy(() =>
   import("./page/NoPermissionPage").then((module) => ({ default: module.NoPermissionPage })),
@@ -61,7 +62,7 @@ const App: React.FC = () => {
           </Route>
           <Route path="/auth-callback" element={<AuthCallback />} />
           <Route path="/quote/share/:uuid" element={<QuoteSharePage />} />
-          <Route path="/login" element={<div />} />
+          <Route path="/login" element={<LoginFailedPage />} />
           <Route path="/error/no-permission" element={<NoPermissionPage />} />
         </Routes>
       </BrowserRouter>

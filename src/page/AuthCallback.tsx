@@ -4,6 +4,28 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Spin } from "@/components/ui/core";
 import { useAuthStore } from "../store/useAuthStore";
 import useApp from "@/components/ui/useApp";
+import axios from "axios";
+
+function getLoginErrorMessage(error: unknown) {
+  if (axios.isAxiosError(error)) {
+    const data = error.response?.data;
+    if (typeof data === "string" && data.trim()) return data;
+    if (data && typeof data === "object") {
+      const record = data as Record<string, unknown>;
+      const message = record.message ?? record.detail ?? record.error ?? record.msg;
+      if (typeof message === "string" && message.trim()) return message;
+    }
+    if (error.response?.status) return `服务端返回 ${error.response.status}`;
+    if (error.message) return error.message;
+  }
+
+  if (error instanceof Error && error.message) return error.message;
+  return "登录失败，请稍后重试。";
+}
+
+function toLoginFailedPath(reason: string) {
+  return `/login?reason=${encodeURIComponent(reason)}`;
+}
 
 export default function AuthCallback() {
   const location = useLocation();
@@ -16,8 +38,7 @@ export default function AuthCallback() {
       const code = searchParams.get("code");
       const state = searchParams.get("state");
       if (!code) {
-        message.error("缺少认证参数");
-        // navigate("/login");
+        navigate(toLoginFailedPath("缺少认证参数 code"), { replace: true });
         return;
       }
       // console.log("code", code);
@@ -39,8 +60,9 @@ export default function AuthCallback() {
         }
         navigate(redirect, { replace: true });
       } catch (error) {
-        message.error("登录失败");
-        navigate("/login");
+        const reason = getLoginErrorMessage(error);
+        message.error(reason);
+        navigate(toLoginFailedPath(reason), { replace: true });
       }
     };
 
